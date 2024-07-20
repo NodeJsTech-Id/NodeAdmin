@@ -1,0 +1,54 @@
+<div class="row m-0 p-4 p-md-0 min-vh-100 justify-content-between">
+    <div class="col-12 col-md-8 align-items-center mx-auto">
+        <div class="row h-100 align-items-center bg-success">
+            <div class="col">
+                <img class="img-fluid my-auto text-center" src="<%= getFile('/modules/setting/login-image.png') %>" width="max-content">
+            </div>
+        </div>
+    </div>
+
+    <div class="col-12 col-md-4 mt-5 mt-md-0 bg-light text-center text-black px-md-3 align-items-center">
+        <div class="row m-0 h-100 align-items-center justify-content-center">
+            <div class="col-11 m-0">
+                <div class="col-3 mb-5">
+                    <img class="img-fluid" src="<%= getFile(setting.logo) %>" alt="Laravel">
+                </div>
+        
+                <% if(getFlashMessage('error')) { %>
+                    <div class="card shadow bg-danger text-white" style="margin-bottom:20px;">
+                        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('error').message %></div>
+                    </div>
+                <% } %>
+                <% if(getFlashMessage('success')) { %>
+                    <div class="card shadow bg-success text-white" style="margin-bottom:20px;">
+                        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('success').message %></div>
+                    </div>
+                <% } %>
+        
+                <div class="text-start mb-5">
+                    <p class="h5 fw-bold text-success">Hello, Welcome Back!</p>
+                    <p class="small text-muted">Enter your Email to continue</p>
+                </div>
+        
+                <form method="post" action="/admin/v1/auth/reset/request">
+                    <div class="form-group row mb-3" id="div_email">
+                        <label for="email" class="col-md-3 col-form-label text-md-right">Email</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="email" type="email" class="form-control form-control-user <% if(getError('email')) { %> is-invalid <% } %>" name="email" value="" autocomplete="email">
+                            <% if(getError('email')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('email')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success col-12 mb-3">Send OTP</button>
+                </form>
+                <hr class="border border-dark border-5 my-4">
+                <div class="text-center small">
+                    <a class="text-black" href="/auth/login">back?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

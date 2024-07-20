@@ -1,0 +1,217 @@
+<% if(getFlashMessage('error')) { %>
+    <div class="card shadow bg-danger text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('error').message %></div>
+    </div>
+<% } %>
+<% if(getFlashMessage('success')) { %>
+    <div class="card shadow bg-success text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('success').message %></div>
+    </div>
+<% } %>
+<style>
+    .preview {
+        margin-top: 20px;
+    }
+    .preview img {
+        max-width: 100%;
+        max-height: 300px;
+    }
+</style>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">User Management</h1>
+</div>
+<!-- Content Row -->
+<div class="row">
+    <!-- Area Chart -->
+    <div class="col-xl-12 col-lg-12">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">User Form</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body" style="overflow-x:auto;padding:20px;">
+                <form method="POST" action="/admin/v1/access/user/<%= data.id %>/update?_method=PUT" enctype="multipart/form-data">
+                    <div class="form-group row" id="div_code">
+                        <label for="code" class="col-md-3 col-form-label text-md-right">Code</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="code" type="text" class="form-control form-control-user <% if(getError('code')) { %> is-invalid <% } %>" name="code" value="<%= data.code %>" autocomplete="code">
+                            <% if(getError('code')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('code')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_name">
+                        <label for="name" class="col-md-3 col-form-label text-md-right">Name</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="name" type="text" class="form-control form-control-user <% if(getError('name')) { %> is-invalid <% } %>" name="name" value="<%= data.name %>" autocomplete="name">
+                            <% if(getError('name')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('name')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_phone">
+                        <label for="phone" class="col-md-3 col-form-label text-md-right">Phone Number</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="phone" type="text" class="form-control form-control-user <% if(getError('phone')) { %> is-invalid <% } %>" name="phone" value="<%= data.phone %>" autocomplete="phone">
+                            <% if(getError('phone')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('phone')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_email">
+                        <label for="email" class="col-md-3 col-form-label text-md-right">Email</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="email" type="email" class="form-control form-control-user <% if(getError('email')) { %> is-invalid <% } %>" name="email" value="<%= data.email %>" autocomplete="email">
+                            <% if(getError('email')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('email')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_password">
+                        <label for="password" class="col-md-3 col-form-label text-md-right">Password</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="password" type="password" class="form-control form-control-user <% if(getError('password')) { %> is-invalid <% } %>" name="password" value="" autocomplete="password">
+                            <% if(getError('password')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('password')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_password_confirm">
+                        <label for="password_confirmation" class="col-md-3 col-form-label text-md-right">Password Confirm</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="password_confirmation" type="password" class="form-control form-control-user <% if(getError('password_confirmation')) { %> is-invalid <% } %>" name="password_confirmation" value="" autocomplete="password_confirmation">
+                            <% if(getError('password_confirmation')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('password_confirmation')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_status">
+                        <label for="status" class="col-md-3 col-form-label text-md-right">Status</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select name="status" id="status" class="form-control form-control-user <% if(getError('status')) { %> is-invalid <% } %>" value="" required autocomplete="status">
+                                <option value="Active" <%= (data.status == 'Active') ? 'selected' : '' %>>Active</option>
+                                <option value="Inactive" <%= (data.status == 'Inactive') ? 'selected' : '' %>>Inactive</option>
+                            </select>
+                            <% if(getError('status')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('status')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="picture" class="col-md-3 col-form-label text-md-right">Picture</label>
+                        <div class="col-md-8 mb-3 mb-sm-0" style="text-align:center;padding:10px;">
+                            <div class="preview mb-3" id="preview">
+                                <img src="<%= getFile(data.picture??'modules/access/user/user.png') %>">
+                            </div>
+                            <input id="picture" type="file" class="form-control form-control-user <% if(getError('picture')) { %> is-invalid <% } %>" name="picture" value="" autocomplete="picture" onchange="previewImage(event)">
+                            <% if(getError('picture')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('picture')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_blocked">
+                        <label for="blocked" class="col-md-3 col-form-label text-md-right">Blocked</label>
+                        <div class="col-md-9 mb-3 mb-sm-0">
+                            <div class="col-md-13 mb-4 mb-sm-0" style="float: left; padding: 5px;">
+                                <input id="blocked" type="checkbox" class="form-control-user <% if(getError('blocked')) { %> is-invalid <% } %>" name="blocked" value="" autocomplete="blocked" <% (data.blocked) ? 'checked' : '' %>>
+                            </div>
+                            <% if(getError('blocked')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('blocked')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>                                                        
+                    <div class="form-group row" id="div_blocked_reason">
+                        <label for="blocked_reason" class="col-md-3 col-form-label text-md-right">Blocked Reason</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="blocked_reason" type="text" class="form-control form-control-user <% if(getError('blocked_reason')) { %> is-invalid <% } %>" name="blocked_reason" value="" autocomplete="blocked_reason">
+                            <% if(getError('blocked_reason')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('blocked_reason')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="roles" class="col-md-3 col-form-label text-md-right">Role</label>
+                        <div class="col-md-8 mb-3 mb-sm-0 <% if(getError('roles')) { %> rounded border border-danger <% } %>">
+                            <% let i = 0; %>
+                            <% roles.forEach(role => { %>
+                                <div class="col-md-13 mb-4 mb-sm-0" style="float: left; padding: 5px;">
+                                    <input id="roles<%= i %>" type="checkbox" class="form-control-user <% if(getError('roles')) { %> is-invalid <% } %>" name="roles[]" value="<%= role.id %>" <% if(data.roles.some(r => r.name === role.name)) { %>checked<% } %> autocomplete="role">
+                                    <label for="roles<%= i %>" class="col-form-label" style="padding-bottom:5px;"><%= role.name %></label>
+                                </div>
+                            <% i++; }); %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-6 offset-md-12">
+                            <button type="submit" class="btn btn-user btn-primary btn-block">
+                                Save
+                            </button>
+                        </div>
+                        <div class="col-md-6 offset-md-12">
+                            <a href="/admin/v1/access/user" type="submit" class="btn btn-user btn-danger btn-block text-white">
+                                Back
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>                
+    </div>
+</div>
+<script>
+    function previewImage(event) {
+        const preview = document.getElementById('preview');
+        preview.innerHTML = ''; // Clear previous content
+
+        const file = event.target.files[0];
+        console.log(file);
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                preview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.innerHTML = '<p>No image selected</p>';
+        }
+    }
+    $(document).ready(function(){            
+        if($('#blocked').val() == 1){
+            $('#div_blocked_reason').show();
+        }else{
+            $('#div_blocked_reason').hide();
+        }
+        $('#blocked').click(function(){
+            if(this.checked){
+                $('#div_blocked_reason').show();
+            }else{
+                $('#blocked_reason').val('');
+                $('#div_blocked_reason').hide();
+            }
+        });
+    });
+</script>

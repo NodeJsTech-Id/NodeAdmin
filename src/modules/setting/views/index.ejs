@@ -1,0 +1,243 @@
+<% if(getFlashMessage('error')) { %>
+    <div class="card shadow bg-danger text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('error').message %></div>
+    </div>
+<% } %>
+<% if(getFlashMessage('success')) { %>
+    <div class="card shadow bg-success text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('success').message %></div>
+    </div>
+<% } %>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Setting Management</h1>
+</div>
+<!-- Content Row -->
+<div class="row">
+    <!-- Area Chart -->
+    <div class="col-xl-12 col-lg-12">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Setting Form</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body" style="overflow-x:auto;padding:20px;">
+                <form method="POST" action="/admin/v1/setting/update?_method=PUT" enctype="multipart/form-data">
+                    <div class="form-group row">
+                        <label for="initial" class="col-md-3 col-form-label text-md-right">Company Initial [initial]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="initial" type="text" class="form-control form-control-user <% if(getError('initial')) { %> is-invalid <% } %>" name="initial" value="<%= data.initial %>" autocomplete="initial">
+                            <% if(getError('initial')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('initial')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="name" class="col-md-3 col-form-label text-md-right">Company Name [name]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="name" type="text" class="form-control form-control-user <% if(getError('name')) { %> is-invalid <% } %>" name="name" value="<%= data.name %>" autocomplete="name">
+                            <% if(getError('name')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('name')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="description" class="col-md-3 col-form-label text-md-right">Description [description]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <textarea id="description" class="form-control form-control-user <% if(getError('description')) { %> is-invalid <% } %>" name="description" autocomplete="description"><%= data.description %></textarea>
+                            <% if(getError('description')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('description')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" style="padding-bottom: 30px;">
+                        <label for="icon" class="col-md-3 col-form-label text-md-right">Company Icon [icon]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0" style="text-align:left;padding:10px;">
+                            <img src="<%= getFile(data.icon) %>" width="150px" height="150px" style="padding:10px;"/>
+                            <input id="icon" type="file" class="form-control form-control-user <% if(getError('icon')) { %> is-invalid <% } %>" name="icon" value="<%= data.icon %>" autocomplete="icon">
+                            <% if(getError('icon')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('icon')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>                            
+                    <div class="form-group row" style="padding-bottom: 30px;">
+                        <label for="logo" class="col-md-3 col-form-label text-md-right">Company Logo [logo]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0" style="text-align:left;padding:10px;">
+                            <img src="<%= getFile(data.logo) %>" width="150px" height="150px" style="padding:10px;"/>
+                            <input id="logo" type="file" class="form-control form-control-user <% if(getError('logo')) { %> is-invalid <% } %>" name="logo" value="<%= data.logo %>" autocomplete="logo">
+                            <% if(getError('logo')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('logo')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>                            
+                    <div class="form-group row" style="padding-bottom: 30px;">
+                        <label for="login_image" class="col-md-3 col-form-label text-md-right">Login Image [login_image]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0" style="text-align:left;padding:10px;">
+                            <img src="<%= getFile(data.login_image) %>" width="150px" height="150px" style="padding:10px;"/>
+                            <input id="login_image" type="file" class="form-control form-control-user <% if(getError('login_image')) { %> is-invalid <% } %>" name="login_image" value="<%= data.login_image %>" autocomplete="login_image">
+                            <% if(getError('login_image')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('login_image')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+             
+                    <div class="form-group row">
+                        <label for="phone" class="col-md-3 col-form-label text-md-right">Phone [phone]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="phone" type="text" class="form-control form-control-user <% if(getError('phone')) { %> is-invalid <% } %>" name="phone" value="<%= data.phone %>" autocomplete="phone">
+                            <% if(getError('phone')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('phone')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="address" class="col-md-3 col-form-label text-md-right">Address [address]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="address" type="text" class="form-control form-control-user <% if(getError('address')) { %> is-invalid <% } %>" name="address" value="<%= data.address %>" autocomplete="address">
+                            <% if(getError('address')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('address')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div class="form-group row">
+                        <label for="email" class="col-md-3 col-form-label text-md-right">Email [email]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="email" type="email" class="form-control form-control-user <% if(getError('email')) { %> is-invalid <% } %>" name="email" value="<%= data.email %>" autocomplete="email">
+                            <% if(getError('email')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('email')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="facebook" class="col-md-3 col-form-label text-md-right">Facebook Link [facebook]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="facebook" type="text" class="form-control form-control-user <% if(getError('facebook')) { %> is-invalid <% } %>" name="facebook" value="<%= data.facebook %>" autocomplete="facebook">
+                            <% if(getError('facebook')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('facebook')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="twitter" class="col-md-3 col-form-label text-md-right">Twitter Link [twitter]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="twitter" type="text" class="form-control form-control-user <% if(getError('twitter')) { %> is-invalid <% } %>" name="twitter" value="<%= data.twitter %>" autocomplete="twitter">
+                            <% if(getError('twitter')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('twitter')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="google" class="col-md-3 col-form-label text-md-right">Google+ Link [google]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="google" type="text" class="form-control form-control-user <% if(getError('google')) { %> is-invalid <% } %>" name="google" value="<%= data.google %>" autocomplete="google">
+                            <% if(getError('google')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('google')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="instagram" class="col-md-3 col-form-label text-md-right">Instagram Link [instagram]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="instagram" type="text" class="form-control form-control-user <% if(getError('instagram')) { %> is-invalid <% } %>" name="instagram" value="<%= data.instagram %>" autocomplete="instagram">
+                            <% if(getError('instagram')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('instagram')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+              
+                    <div class="form-group row">
+                        <label for="copyright" class="col-md-3 col-form-label text-md-right">Copyright Text [copyright]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0" style="text-align:left;padding:10px;">
+                            <input id="copyright" type="text" class="form-control form-control-user <% if(getError('copyright')) { %> is-invalid <% } %>" name="copyright" value="<%= data.copyright %>" autocomplete="copyright">
+                            <% if(getError('copyright')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('copyright')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>                            
+
+                    <div class="form-group row">
+                        <label for="maps_key" class="col-md-3 col-form-label text-md-right">Maps Key [maps_key]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="maps_key" type="text" class="form-control form-control-user <% if(getError('maps_key')) { %> is-invalid <% } %>" name="maps_key" value="<%= data.maps_key %>" autocomplete="maps_key">
+                            <% if(getError('maps_key')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('maps_key')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="latitude" class="col-md-3 col-form-label text-md-right">Latitude [latitude]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="latitude" type="text" class="form-control form-control-user <% if(getError('latitude')) { %> is-invalid <% } %>" name="latitude" value="<%= data.latitude %>" autocomplete="latitude">
+                            <% if(getError('latitude')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('latitude')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="longitude" class="col-md-3 col-form-label text-md-right">Longitude [longitude]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="longitude" type="text" class="form-control form-control-user <% if(getError('longitude')) { %> is-invalid <% } %>" name="longitude" value="<%= data.longitude %>" autocomplete="longitude">
+                            <% if(getError('longitude')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('longitude')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="api_key" class="col-md-3 col-form-label text-md-right">API Key Mutasi Bank [api_key]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="api_key" type="text" class="form-control form-control-user <% if(getError('api_key')) { %> is-invalid <% } %>" name="api_key" value="<%= data.api_key %>" autocomplete="api_key">
+                            <% if(getError('api_key')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('api_key')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-12 offset-md-12">
+                            <button type="submit" class="btn btn-user btn-primary btn-block">
+                                Save
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>                
+    </div>
+</div>

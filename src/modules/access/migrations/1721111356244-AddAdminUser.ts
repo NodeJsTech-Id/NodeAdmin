@@ -1,0 +1,40 @@
+import { MigrationInterface, QueryRunner } from "typeorm";
+import { User } from "../models/user.entity";
+import { v6 as uuidv6 } from 'uuid';
+import { StatusEnum } from "../../../enums/StatusEnum";
+import bcrypt from 'bcryptjs';
+import { Role } from "../models/role.entity";
+
+export class AddAdminUser1721111356244 implements MigrationInterface {
+
+    public async up(queryRunner: QueryRunner): Promise<void> {
+        const idUser = uuidv6()
+        const idRole = uuidv6()
+        await queryRunner.manager.insert(User, {
+            id: idUser,
+            code: "0000000001",
+            name: "Administrator",
+            phone: "12345678910",
+            email: "admin@admin.com",
+            email_verified_at: new Date().toISOString(),
+            password: await bcrypt.hash("12345678", 10),
+            status: StatusEnum.ACTIVE,
+            blocked: false,
+            blocked_reason: "",
+        })
+        await queryRunner.manager.insert(Role, {
+            id: idRole,
+            name: "Administrator",
+            status: StatusEnum.ACTIVE,
+            desc: "",
+        })
+        await queryRunner.query(`
+            INSERT INTO users_roles VALUES ('${idUser}', '${idRole}');
+        `)
+    }
+
+    public async down(queryRunner: QueryRunner): Promise<void> {
+        //
+    }
+
+}
