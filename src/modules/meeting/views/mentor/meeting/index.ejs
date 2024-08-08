@@ -1,0 +1,188 @@
+<% if(getFlashMessage('error')) { %>
+    <div class="card shadow bg-danger text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('error').message %></div>
+    </div>
+<% } %>
+<% if(getFlashMessage('success')) { %>
+    <div class="card shadow bg-success text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('success').message %></div>
+    </div>
+<% } %>
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Meeting Management</h1>
+    <div class="d-none d-sm-inline-block">
+    </div>
+</div>
+<!-- Content Row -->
+<div class="row">
+    <!-- Area Chart -->
+    <div class="col-xl-12 col-lg-12">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Meeting List</h6>
+                <div class="btn-group btn-sm nospiner" >
+                </div>                                      
+            </div>
+            <!-- Card Body -->
+            <div class="card-body" style="overflow-x:auto;padding:20px;">          
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <form id="searchform">
+                            <tr>
+                                <th width="7%">
+                                    <select name="q_page_size" id="q_page_size"  class="form-control form-control-user" value="" autocomplete="q_page_size">
+                                        <option value="10" <%= ((!filter.q_page_size) ? 'selected' : (filter.q_page_size == 10)) ? 'selected' : '' %>>10</option>
+                                        <option value="20" <%= ((!filter.q_page_size) ? '' : (filter.q_page_size == 20)) ? 'selected' : '' %>>20</option>
+                                        <option value="50" <%= ((!filter.q_page_size) ? '' : (filter.q_page_size == 50)) ? 'selected' : '' %>>50</option>
+                                        <option value="100" <%= ((!filter.q_page_size) ? '' : (filter.q_page_size == 100)) ? 'selected' : '' %>>100</option>
+                                    </select>
+                                </th>
+                                <th width="12%">
+                                    <select name="q_class_id" id="q_class_id"  class="form-control form-control-user" value="" autocomplete="q_class_id">
+                                        <option disabled="disabled" selected="selected">Select</option>
+                                        <% classes.forEach(classData => { %>
+                                            <option value="<%= classData.id %>" <%= ((!filter.q_class_id) ? '' : (filter.q_class_id == classData.id)) ? 'selected' : '' %>><%= classData.name %></option>
+                                        <% }); %>
+                                    </select>
+                                </th>
+                                <th width="12%">
+                                    <select name="q_room_id" id="q_room_id"  class="form-control form-control-user" value="" autocomplete="q_room_id">
+                                        <option disabled="disabled" selected="selected">Select</option>
+                                        <% rooms.forEach(room => { %>
+                                            <option value="<%= room.id %>" <%= ((!filter.q_room_id) ? '' : (filter.q_room_id == room.id)) ? 'selected' : '' %>><%= room.name %></option>
+                                        <% }); %>
+                                    </select>
+                                </th>
+                                <th width="12%">
+                                    <select name="q_mentor_id" id="q_mentor_id"  class="form-control form-control-user" value="" autocomplete="q_mentor_id">
+                                        <option disabled="disabled" selected="selected">Select</option>
+                                        <% users.forEach(mentor => { %>
+                                            <option value="<%= mentor.id %>" <%= ((!filter.q_mentor_id) ? '' : (filter.q_mentor_id == mentor.id)) ? 'selected' : '' %>><%= mentor.name %> | <%= mentor.email %></option>
+                                        <% }); %>
+                                    </select>
+                                </th>
+                                <th width="12%">
+                                    <select name="q_schedule_id" id="q_schedule_id"  class="form-control form-control-user" value="" autocomplete="q_schedule_id">
+                                        <option disabled="disabled" selected="selected">Select</option>
+                                        <% schedules.forEach(schedule => { %>
+                                            <option value="<%= schedule.id %>" <%= ((!filter.q_schedule_id) ? '' : (filter.q_schedule_id == schedule.id)) ? 'selected' : '' %>><%= schedule.name %> (<%= schedule.day %> / <%= schedule.start %> S.D <%= schedule.end %>)</option>
+                                        <% }); %>
+                                    </select>
+                                </th>
+                                <th width="10%">
+                                    <select name="q_status" id="q_status"  class="form-control form-control-user" value="" autocomplete="q_status">
+                                        <option disabled="disabled" selected="selected">Select</option>                                        
+                                        <option value="Active" <%= ((!filter.q_status) ? '' : (filter.q_status == 'Active')) ? 'selected' : '' %>>Active</option>
+                                        <option value="Inactive" <%= ((!filter.q_status) ? '' : (filter.q_status == 'Inactive')) ? 'selected' : '' %>>Inactive</option>
+                                    </select>
+                                </th>
+                                <th width="15%">
+                                    <input id="q_meeting_number" type="text" class="form-control form-control-user" name="q_meeting_number" value="<%= filter.q_meeting_number %>" autocomplete="q_meeting_number">
+                                </th>
+                                <th width="10%">
+									<div class="row">
+										<div class="col">
+										    <input id="q_date_start_start" type="date" class="form-control form-control-user" name="q_date_start_start" value="<%= filter.q_date_start_start %>" autocomplete="q_date_start_start">
+										</div>
+										<div class="col">
+										    <input id="q_date_start_end" type="date" class="form-control form-control-user" name="q_date_start_end" value="<%= filter.q_date_start_end %>" autocomplete="q_date_start_end">
+										</div>
+									</div>
+								</th>
+                                <th width="10%">
+									<div class="row">
+										<div class="col">
+										    <input id="q_date_end_start" type="date" class="form-control form-control-user" name="q_date_end_start" value="<%= filter.q_date_end_start %>" autocomplete="q_date_end_start">
+										</div>
+										<div class="col">
+										    <input id="q_date_end_end" type="date" class="form-control form-control-user" name="q_date_end_end" value="<%= filter.q_date_end_end %>" autocomplete="q_date_end_end">
+										</div>
+									</div>
+								</th>
+                                <th width="15%">
+                                    <input id="q_desc" type="text" class="form-control form-control-user" name="q_desc" value="<%= filter.q_desc %>" autocomplete="q_desc">
+                                </th>
+                                <th width="5%" class="text-center align-middle">
+                                    <div class="btn-group nospiner" >
+                                        <button type="submit" form="searchform" class="btn btn-sm btn-success">
+                                            <i class="fas fa-fw fa-search"></i>
+                                        </button>
+                                        <a  href="/admin/v1/meeting/mentor"  class="btn btn-sm btn-danger">
+                                            <i class="fas fa-fw fa-times"></i>                                            
+                                        </a>
+                                    </div>                                      
+                                </th>
+                            </tr>                              
+                            <tr>
+                                <th width="5%">No</th>
+                                <th width="15%">Class</th>
+                                <th width="20%">Room</th>
+                                <th width="20%">Mentor</th>
+                                <th width="20%">Schedule</th>
+                                <th width="15%">Status</th>
+                                <th width="15%">Meeting Number</th>
+                                <th width="15%">Date Start</th>
+                                <th width="10%">Date End</th>
+                                <th width="10%">Description</th>
+                                <th width="5%">Action</th>
+                            </tr>
+                        </form>
+                    </thead>
+                    <tbody>
+                        <form id="selection">
+                            <% datas.forEach((data,i) => { %>
+                            <tr>
+                                <td><%= (i+1)+(paginate_data.page_size*(paginate_data.current_page-1)) %></td>
+                                <td class="text-nowrap"><%= data.class.name %></td>
+                                <td class="text-nowrap"><%= data.room.name %></td>
+                                <td class="text-nowrap"><%= data.mentor.name %> | <%= data.mentor.email %></td>
+                                <td>
+                                    <% data.schedules.forEach(schedule => { %>
+                                        <span class="badge text-bg-primary"><%= schedule.name %> (<%= schedule.day %> / <%= schedule.start %> S.D <%= schedule.end %>)</span>
+                                    <% }); %>
+                                </td>
+                                <td><center><img src="<%= (data.status == 'Active') ? getFile('modules/access/true.png') : getFile('modules/access/false.png') %>" width="30px" height="30px"></center></td>
+                                <td><%= data.meeting_number %></td>
+                                <td><%= formatDate(data.date_start,true) %></td>
+                                <td><%= formatDate(data.date_end,true) %></td>
+                                <td><%= data.desc %></td>
+                                <td align="center">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Action
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a href="/admin/v1/meeting/mentor/<%= data.id %>/details" class="dropdown-item">Details</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </form>
+                    </tbody>
+                </table>
+                <div class="d-flex justify-content-center">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <% if(paginate_data.current_page != 1) { %>
+                            <li class="page-item"><a class="page-link" href="<%= addOrUpdateQueryParam(fullUrl, 'q_page', paginate_data.current_page-1) %>">Previous</a></li>
+                            <% } %>
+                            <% for(let index = 1; index <= paginate_data.total_page; index++) { %>
+                            <li class="page-item <%= (index==paginate_data.current_page)?'active':'' %>"><a class="page-link" href="<%= addOrUpdateQueryParam(fullUrl, 'q_page', index) %>"><%= index %></a></li>
+                            <% } %>
+                            <% if(paginate_data.current_page != paginate_data.total_page && paginate_data.total_page!=0) { %>
+                            <li class="page-item"><a class="page-link" href="<%= addOrUpdateQueryParam(fullUrl, 'q_page', paginate_data.current_page+1) %>">Next</a></li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>                
+    </div>
+</div>
+<script>
+    $("#checkall").click(function(){
+        $('input:checkbox').not(this).prop('checked', this.checked);
+    });        
+</script>

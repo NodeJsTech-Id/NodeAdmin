@@ -1,75 +1,199 @@
-<div class="row m-0 p-4 p-md-0 min-vh-100 justify-content-between">
-  <div class="col-12 col-md-8 align-items-center mx-auto">
-      <div class="row h-100 align-items-center bg-success">
-          <div class="col">
-              <img class="img-fluid my-auto text-center" src="<%= getFile('/modules/setting/login-image.png') %>" width="max-content">
-          </div>
-      </div>
-  </div>
+<!-- select2 -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+<style>
+    .select2-container--default .select2-selection--single,
+    .select2-selection .select2-selection--single {
+        border: 1px solid #d2d6de;
+        border-radius: 0 !important;
+        padding: 6px 12px;
+        height: 40px !important;
+    }
 
-  <div class="col-12 col-md-4 mt-5 mt-md-0 bg-light text-center text-black px-md-3 align-items-center">
-      <div class="row m-0 h-100 align-items-center justify-content-center">
-          <div class="col-11 m-0">
-              <div class="col-3 mb-5">
-                  <img class="img-fluid" src="<%= getFile(setting.logo) %>" alt="Laravel">
-              </div>
-      
-                <% if (errorMessages.length > 0) { %>
-                <div class="alert alert-danger">
-                    <ul>
-                        <% errorMessages.forEach(function(message) { %>
-                            <li><%= message %></li>
-                        <% }); %>
-                    </ul>
-                </div>
-                <% } %>
-      
-              <div class="text-start mb-5">
-                  <p class="h5 fw-bold text-success">Hello, Welcome Back!</p>
-                  <p class="small text-muted">Enter your credentials to continue</p>
-              </div>
-      
-              <form method="post" action="/auth/register">
-                <div class="form-group row mb-1" id="div_name">
-                  <label for="name" class="col-md-3 col-form-label text-md-right">Name</label>
-                  <div class="col-md-8 mb-3 mb-sm-0">
-                      <input id="name" type="text" class="form-control form-control-user <% if(getError('name')) { %> is-invalid <% } %>" name="name" value="" autocomplete="name">
-                      <% if(getError('name')) { %>
-                          <span class="invalid-feedback" status="alert">
-                              <strong><%= getError('name')['msg'] %></strong>
-                          </span>
-                      <% } %>
-                  </div>
-              </div>
-              <div class="form-group row mb-1" id="div_email">
-                  <label for="email" class="col-md-3 col-form-label text-md-right">Email</label>
-                  <div class="col-md-8 mb-3 mb-sm-0">
-                      <input id="email" type="email" class="form-control form-control-user <% if(getError('email')) { %> is-invalid <% } %>" name="email" value="" autocomplete="email">
-                      <% if(getError('email')) { %>
-                          <span class="invalid-feedback" status="alert">
-                              <strong><%= getError('email')['msg'] %></strong>
-                          </span>
-                      <% } %>
-                  </div>
-              </div>
-              <div class="form-group row mb-1" id="div_password">
-                <label for="password" class="col-md-3 col-form-label text-md-right">Password</label>
-                <div class="col-md-8 mb-3 mb-sm-0">
-                    <input id="password" type="password" class="form-control form-control-user <% if(getError('password')) { %> is-invalid <% } %>" name="password" value="" autocomplete="password">
-                    <% if(getError('password')) { %>
-                        <span class="invalid-feedback" status="alert">
-                            <strong><%= getError('password')['msg'] %></strong>
-                        </span>
-                    <% } %>
-                </div>
-            </div>
-                  <button type="submit" class="btn btn-danger col-12 mb-3">Create Account</button>
-              </form>
-              <hr class="border border-dark border-5 my-4">
-              <div class="text-center small">
-                  <a class="text-black" href="/auth/login">Already have an account?</a>
-              </div>
+    .select2-container--default .select2-selection--single .select2-selection__arrow {
+        height: 26px;
+        position: absolute;
+        top: 6px !important;
+        right: 1px;
+    }
+</style>
+<div class="row m-0 p-4 p-md-0 min-vh-100 justify-content-between">
+    <div class="col-12 col-md-7 align-items-center mx-auto">
+        <div class="row h-100 align-items-center bg-success">
+            <div class="col">
+                <img class="img-fluid my-auto text-center" src="<%= getFile('/modules/setting/login-image.png') %>">
             </div>
         </div>
     </div>
-  </div>
+
+    <div class="col-12 col-md-5 mt-5 mt-md-0 bg-light text-center text-black px-md-3 align-items-center">
+        <div class="row m-0 align-items-center justify-content-center overflow-scroll" style="height: 100vh !important;">
+            <div class="col-11 m-0">
+                <div class="col-3 my-5">
+                    <img class="img-fluid" src="<%= getFile(setting.logo) %>" alt="Laravel">
+                </div>
+                <div class="text-start mb-5">
+                    <p class="h5 fw-bold text-success">Hello, Welcome Back!</p>
+                    <p class="small text-muted">Enter your credentials to continue</p>
+                </div>
+                <form method="post" action="/auth/register">
+                    <div class="form-group row mb-3" id="div_name">
+                        <label for="name" class="col-md-4 col-form-label text-md-right">Name</label>
+                        <div class="col-md-8 mb-sm-0">
+                            <input id="name" type="text" class="form-control form-control-user <% if(getError('name')) { %> is-invalid <% } %>" name="name" value="<%= getOld('name') %>" autocomplete="name">
+                            <% if(getError('name')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('name')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3" id="div_phone">
+                        <label for="phone" class="col-md-4 col-form-label text-md-right">Phone Number</label>
+                        <div class="col-md-8 mb-sm-0">
+                            <input id="phone" type="text" class="form-control form-control-user <% if(getError('phone')) { %> is-invalid <% } %>" name="phone" value="<%= getOld('phone') %>" autocomplete="phone">
+                            <% if(getError('phone')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('phone')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3" id="div_email">
+                        <label for="email" class="col-md-4 col-form-label text-md-right">Email</label>
+                        <div class="col-md-8 mb-sm-0">
+                            <input id="email" type="email" class="form-control form-control-user <% if(getError('email')) { %> is-invalid <% } %>" name="email" value="<%= getOld('email') %>" autocomplete="email">
+                            <% if(getError('email')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('email')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3" id="div_password">
+                        <label for="password" class="col-md-4 col-form-label text-md-right">Password</label>
+                        <div class="col-md-8 mb-sm-0">
+                            <input id="password" type="password" class="form-control form-control-user <% if(getError('password')) { %> is-invalid <% } %>" name="password" value="" autocomplete="password">
+                            <% if(getError('password')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('password')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3" id="div_password_confirm">
+                        <label for="password_confirmation" class="col-md-4 col-form-label text-md-right">Password Confirm</label>
+                        <div class="col-md-8 mb-sm-0">
+                            <input id="password_confirmation" type="password" class="form-control form-control-user <% if(getError('password_confirmation')) { %> is-invalid <% } %>" name="password_confirmation" value="" autocomplete="password_confirmation">
+                            <% if(getError('password_confirmation')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('password_confirmation')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-3">
+                        <label for="profession_id" class="col-md-4 col-form-label text-md-right">Register For</label>
+                        <div class="col-md-8 mb-sm-0">
+                            <input type="radio" name="roles" id="mentor" value="Mentor" checked> <label for="mentor" class="mr-3">Mentor</label>
+                            <input type="radio" name="roles" id="mentee" value="Mentee"> <label for="mentee" class="mr-3">Mentee</label>
+                        </div>
+                    </div>
+
+                    <div class="form-group row mb-3">
+                        <label for="profession_id" class="col-md-4 col-form-label text-md-right">Profession</label>
+                        <div class="col-md-8 mb-sm-0">
+                            <select name="profession_id" id="profession_id" class="select2 form-control form-control-user <% if(getError('profession_id')) { %> is-invalid <% } %>" value="" autocomplete="profession_id">
+                                <option disabled="disabled" selected="selected">Select an option</option>
+                                <% professions.forEach(profession => { %>
+                                    <option value="<%= profession.id %>" <%= (profession.id == getOld('profession_id')) ? 'selected' : '' %>><%= profession.name %></option>
+                                <% }) %>
+                            </select>
+                            <% if(getError('profession_id')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('profession_id')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3" id="div_address">
+                        <label for="address" class="col-md-4 col-form-label text-md-right">Address</label>
+                        <div class="col-md-8 mb-sm-0">
+                            <input id="address" type="text" class="form-control form-control-user <% if(getError('address')) { %> is-invalid <% } %>" name="address" value="<%= getOld('address') %>" autocomplete="address">
+                            <% if(getError('address')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('address')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3" id="div_biography">
+                        <label for="biography" class="col-md-4 col-form-label text-md-right">Biography</label>
+                        <div class="col-md-8 mb-sm-0">
+                            <input id="biography" type="text" class="form-control form-control-user <% if(getError('biography')) { %> is-invalid <% } %>" name="biography" value="<%= getOld('biography') %>" autocomplete="biography">
+                            <% if(getError('biography')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('biography')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3" id="div_office_name">
+                        <label for="office_name" class="col-md-4 col-form-label text-md-right">Office Name</label>
+                        <div class="col-md-8 mb-sm-0">
+                            <input id="office_name" type="text" class="form-control form-control-user <% if(getError('office_name')) { %> is-invalid <% } %>" name="office_name" value="<%= getOld('office_name') %>" autocomplete="office_name">
+                            <% if(getError('office_name')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('office_name')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row mb-3" id="div_office_address">
+                        <label for="office_address" class="col-md-4 col-form-label text-md-right">Office Address</label>
+                        <div class="col-md-8 mb-sm-0">
+                            <input id="office_address" type="text" class="form-control form-control-user <% if(getError('office_address')) { %> is-invalid <% } %>" name="office_address" value="<%= getOld('office_address') %>" autocomplete="office_address">
+                            <% if(getError('office_address')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('office_address')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success col-12 mb-3">Create Account</button>
+                </form>
+                <hr class="border border-dark border-5 my-4">
+                <div class="text-center small mb-3">
+                    <a class="text-black" href="/auth/login">Already have an account?</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    $(".select2").select2();
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const radios = document.querySelectorAll('input[name="roles"]');
+        radios.forEach(radio => {
+            radio.addEventListener('change', function() {
+                if (this.checked) {
+                    if (this.value === 'Mentor') {
+                        document.getElementById('office_name').disabled = false;
+                        document.getElementById('office_address').disabled = false;
+                    } else if (this.value === 'Mentee') {
+                        document.getElementById('office_name').value = "";
+                        document.getElementById('office_address').value = "";
+                        document.getElementById('office_name').disabled = true;
+                        document.getElementById('office_address').disabled = true;
+                    }
+                }
+            });
+        });
+    });
+</script>
+
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

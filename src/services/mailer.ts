@@ -1,5 +1,5 @@
-import nodemailer from 'nodemailer';
-import SMTPTransport from 'nodemailer/lib/smtp-transport';
+import nodemailer from 'nodemailer'
+import SMTPTransport from 'nodemailer/lib/smtp-transport'
 import 'dotenv/config'
 
 // Konfigurasi transporter
@@ -11,7 +11,7 @@ const transporter = nodemailer.createTransport({
         user: process.env.MAIL_USERNAME, // Ganti dengan email Anda
         pass: process.env.MAIL_PASSWORD // Ganti dengan password email Anda
     }
-} as SMTPTransport.Options);
+} as SMTPTransport.Options)
 
 // Fungsi untuk mengirim email
 export const sendMail = async (to: string, subject: string, text: string, html?: string) => {
@@ -21,12 +21,12 @@ export const sendMail = async (to: string, subject: string, text: string, html?:
         subject: subject,
         text: text,
         html: html,
-    };
-    try {
-        const info = await transporter.sendMail(mailOptions);
-        console.log('Email sent: ' + info.response);
-    } catch (error) {
-        console.error('Error sending email:', error);
-        throw error;
     }
-};
+    try {
+        const info = await transporter.sendMail(mailOptions)
+        console.log('Email sent: ' + info.response)
+    } catch (error) {
+        console.error('Error sending email:', error)
+        throw error
+    }
+}

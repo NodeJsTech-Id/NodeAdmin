@@ -1,0 +1,71 @@
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title><%= meeting.meeting.class.name %></title>
+    <link rel="icon" type="image/png" href="/media/setting/laravel.png">
+</head>
+<body>
+    <!-- Dependencies for client view and component view -->
+    <script src="https://source.zoom.us/3.8.0/lib/vendor/react.min.js"></script>
+    <script src="https://source.zoom.us/3.8.0/lib/vendor/react-dom.min.js"></script>
+    <script src="https://source.zoom.us/3.8.0/lib/vendor/redux.min.js"></script>
+    <script src="https://source.zoom.us/3.8.0/lib/vendor/redux-thunk.min.js"></script>
+    <script src="https://source.zoom.us/3.8.0/lib/vendor/lodash.min.js"></script>
+
+    <!-- For Client View -->
+    <script src="https://source.zoom.us/zoom-meeting-3.8.0.min.js"></script>
+    <script>
+        ZoomMtg.preLoadWasm()
+        ZoomMtg.prepareWebSDK()
+        ZoomMtg.i18n.load('en-US')
+        ZoomMtg.i18n.reload('en-US')
+
+        const meeting_number = "<%- meeting.meeting_code %>"
+        const meeting_password = "<%- credential.encrypted_password %>"
+        const meeting_username = "<%- user.name %>"
+        const meeting_email = "<%- user.email %>"
+        const meeting_signature = "<%- join_token %>"
+
+        const sdkKey = "<%= sdkKey %>"
+        const meetingNumber = meeting_number
+        const passWord = meeting_password
+        const userName = meeting_username
+        const userEmail = meeting_email
+        const leaveUrl = "/admin/v1/meeting/mentor/<%= meeting.meeting.id %>/details/<%= meeting.id %>/finish_meeting"
+
+        function startMeeting() {
+            document.getElementById('zmmtg-root').style.display = 'block'
+
+            ZoomMtg.init({
+                leaveUrl: leaveUrl,
+                patchJsMedia: true,
+                leaveOnPageUnload: true,
+                success: (success) => {
+                    console.log(success)
+                    ZoomMtg.join({
+                        sdkKey: sdkKey,
+                        signature: meeting_signature,
+                        meetingNumber: meetingNumber,
+                        passWord: passWord,
+                        userName: userName,
+                        userEmail: userEmail,
+                        success: (success) => {
+                            console.log('success')
+                            console.log(success)
+                        },
+                        error: (error) => {
+                            console.log('error')
+                            console.log(error)
+                        },
+                    })
+                },
+                error: (error) => {
+                    console.log('error')
+                    console.log(error)
+                }
+            })
+        }
+
+        startMeeting()
+    </script>
+</body>

@@ -50,13 +50,13 @@ const AccessMiddleware = async (req: Request, res: Response, next: NextFunction)
         relations: ['roles', 'roles.accesses']
     })
 
-    const hasAccess = roles?.roles.some((role: { accesses: { url: string; method: string }[] }) =>
-        role.accesses.some((access: { url: string; method: string }) =>
+    const hasAccess = roles?.roles.some((role: { accesses: { url: string, method: string }[] }) =>
+        role.accesses.some((access: { url: string, method: string }) =>
             access.url === routeName && access.method === method
         )
     )
     const isApi = roles?.roles.some((role: { accesses: any[] }) =>
-        role.accesses.some((access: { url: string | string[]; method: string }) =>
+        role.accesses.some((access: { url: string | string[], method: string }) =>
             access.url === routeName && access.method === method && access.url.includes('/api/')
         )
     )

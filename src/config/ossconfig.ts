@@ -1,8 +1,8 @@
 
-import * as dotenv from 'dotenv';
-import OSS from 'ali-oss';
+import * as dotenv from 'dotenv'
+import OSS from 'ali-oss'
 
-dotenv.config();
+dotenv.config()
 
 const oss = new OSS({
     // Obtain access credentials from environment variables. Before you run the sample code, make sure that the OSS_ACCESS_KEY_ID and OSS_ACCESS_KEY_SECRET environment variables are configured. 
@@ -12,6 +12,6 @@ const oss = new OSS({
     region: process.env.OSS_REGION,
     // Specify the name of the bucket. 
     bucket: process.env.OSS_BUCKET as string
-});
+})
 
-export default oss;
+export default oss

@@ -79,7 +79,7 @@ export default class UserController {
     public async delete_selected(req: Request, res: Response) {
         req.body.selected.forEach(async (id: string) => {
             await this.userService.delete(id)
-        });
+        })
         req.session.flashMessage = { key: 'success', message: 'Delete User Success.' }
         res.redirect('/admin/v1/access/user')
     }

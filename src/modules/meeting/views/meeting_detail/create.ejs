@@ -1,0 +1,113 @@
+<% if(getFlashMessage('error')) { %>
+    <div class="card shadow bg-danger text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('error').message %></div>
+    </div>
+<% } %>
+<% if(getFlashMessage('success')) { %>
+    <div class="card shadow bg-success text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('success').message %></div>
+    </div>
+<% } %>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Meeting Detail Management</h1>
+</div>
+<!-- Content Row -->
+<div class="row">
+    <!-- Area Chart -->
+    <div class="col-xl-12 col-lg-12">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Meeting Detail Form</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body" style="overflow-x:auto;padding:20px;">
+                <form method="POST" action="/admin/v1/meeting/<%= meeting_id %>/details/store">
+                    <div class="form-group row" id="div_date_start">
+                        <label for="date_start" class="col-md-3 col-form-label text-md-right">Date Start</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="date_start" type="date" class="form-control form-control-user <% if(getError('date_start')) { %> is-invalid <% } %>" name="date_start" value="<%= getOld('date_start') %>" autocomplete="date_start">
+                            <% if(getError('date_start')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('date_start')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_date_end">
+                        <label for="date_end" class="col-md-3 col-form-label text-md-right">Date End</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="date_end" type="date" class="form-control form-control-user <% if(getError('date_end')) { %> is-invalid <% } %>" name="date_end" value="<%= getOld('date_end') %>" autocomplete="date_end">
+                            <% if(getError('date_end')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('date_end')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_time_start">
+                        <label for="time_start" class="col-md-3 col-form-label text-md-right">Time Start</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="time_start" type="time" class="form-control form-control-user <% if(getError('time_start')) { %> is-invalid <% } %>" name="time_start" value="<%= getOld('time_start') %>" autocomplete="time_start">
+                            <% if(getError('time_start')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('time_start')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_time_end">
+                        <label for="time_end" class="col-md-3 col-form-label text-md-right">Time End</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="time_end" type="time" class="form-control form-control-user <% if(getError('time_end')) { %> is-invalid <% } %>" name="time_end" value="<%= getOld('time_end') %>" autocomplete="time_end">
+                            <% if(getError('time_end')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('time_end')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_status">
+                        <label for="status" class="col-md-3 col-form-label text-md-right">Status</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select name="status" id="status" class="form-control form-control-user <% if(getError('status')) { %> is-invalid <% } %>" value="" required autocomplete="status">
+                                <option value="Not Start" <% (getOld('status') == 'Not Start') ? 'selected' : '' %>>Not Start</option>
+                                <option value="On Going" <% (getOld('status') == 'On Going') ? 'selected' : '' %>>On Going</option>
+                                <option value="Finished" <% (getOld('status') == 'Finished') ? 'selected' : '' %>>Finished</option>
+                            </select>
+                            <% if(getError('status')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('status')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_desc">
+                        <label for="desc" class="col-md-3 col-form-label text-md-right">Description</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="desc" type="text" class="form-control form-control-user <% if(getError('desc')) { %> is-invalid <% } %>" name="desc" value="<%= getOld('desc') %>" autocomplete="desc">
+                            <% if(getError('desc')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('desc')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-6 offset-md-12">
+                            <button type="submit" class="btn btn-user btn-primary btn-block">
+                                Save
+                            </button>
+                        </div>
+                        <div class="col-md-6 offset-md-12">
+                            <a href="/admin/v1/meeting/<%= meeting_id %>/details" type="submit" class="btn btn-user btn-danger btn-block text-white">
+                                Back
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>                
+    </div>
+</div>

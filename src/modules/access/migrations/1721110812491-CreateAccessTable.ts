@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex } from "typeorm";
+import { MigrationInterface, QueryRunner, Table, TableIndex } from "typeorm"
 
 export class CreateAccessTable1721110812491 implements MigrationInterface {
 

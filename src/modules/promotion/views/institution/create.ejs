@@ -1,0 +1,62 @@
+<% if(getFlashMessage('error')) { %>
+    <div class="card shadow bg-danger text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('error').message %></div>
+    </div>
+<% } %>
+<% if(getFlashMessage('success')) { %>
+    <div class="card shadow bg-success text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('success').message %></div>
+    </div>
+<% } %>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Promotion <bold><%= promotion.code %></bold> Institution Management</h1>
+</div>
+<!-- Content Row -->
+<div class="row">
+    <!-- Area Chart -->
+    <div class="col-xl-12 col-lg-12">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Promotion Institution Form</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body" style="overflow-x:auto;padding:20px;">
+                <form method="POST" action="/admin/v1/promotion/<%= promotion.id %>/institution/store">
+                    <div class="form-group row">
+                        <label for="institution_id" class="col-md-3 col-form-label text-md-right">Institution</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select name="institution_id" id="institution_id" class="select2 form-control form-control-user <% if(getError('institution_id')) { %> is-invalid <% } %>" value="" autocomplete="institution_id">
+                                <option disabled="disabled" selected="selected">Select an option</option>
+                                <% institutions.forEach(institution => { %>
+                                    <option value="<%= institution.id %>" <%= (institution.id == getOld('institution_id')) ? 'selected' : '' %>><%= institution.name %></option>
+                                <% }) %>
+                            </select>
+                            <% if(getError('institution_id')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('institution_id')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-6 offset-md-12">
+                            <button type="submit" class="btn btn-user btn-primary btn-block">
+                                Save
+                            </button>
+                        </div>
+                        <div class="col-md-6 offset-md-12">
+                            <a href="/admin/v1/promotion/<%= promotion.id %>/institution" type="submit" class="btn btn-user btn-danger btn-block text-white">
+                                Back
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>                
+    </div>
+</div>
+<script>
+    $(".select2").select2();
+</script>

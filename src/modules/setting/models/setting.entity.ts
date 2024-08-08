@@ -1,88 +1,88 @@
-import { Entity, Column, PrimaryColumn, Index, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Entity, Column, PrimaryColumn, Index, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 
 @Entity('settings')
 export class Setting {
     @PrimaryColumn({ type: 'char', length: 36, collation: 'utf8mb4_unicode_ci' })
-    id?: string;
+    id?: string
 
     @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
     @Index()
-    initial?: string;
+    initial?: string
 
     @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
     @Index()
-    name?: string;
+    name?: string
 
     @Column({ type: 'longtext', nullable: true, collation: 'utf8mb4_unicode_ci' })
-    description?: string;
+    description?: string
 
     @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
     @Index()
-    icon?: string;
+    icon?: string
 
     @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
     @Index()
-    logo?: string;
+    logo?: string
 
     @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
     @Index()
-    login_image?: string;
+    login_image?: string
 
     @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
     @Index()
-    phone?: string;
+    phone?: string
 
     @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
-    address?: string;
+    address?: string
 
     @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
     @Index('settings__setting_email')
-    email?: string;
+    email?: string
 
     @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
     @Index()
-    facebook?: string;
+    facebook?: string
 
     @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
     @Index()
-    twitter?: string;
+    twitter?: string
 
     @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
     @Index()
-    google?: string;
+    google?: string
 
     @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
     @Index()
-    instagram?: string;
+    instagram?: string
 
     @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
     @Index()
-    copyright?: string;
+    copyright?: string
 
     @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
     @Index()
-    maps_key?: string;
+    maps_key?: string
 
     @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
     @Index()
-    latitude?: string;
+    latitude?: string
 
     @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
     @Index()
-    longitude?: string;
+    longitude?: string
 
     @Column({ type: 'text', nullable: true, collation: 'utf8mb4_unicode_ci' })
-    api_key?: string;
+    api_key?: string
 
     @Column({ type: 'char', length: 36, nullable: true, collation: 'utf8mb4_unicode_ci' })
-    created_by?: string;
+    created_by?: string
 
     @Column({ type: 'char', length: 36, nullable: true, collation: 'utf8mb4_unicode_ci' })
-    updated_by?: string;
+    updated_by?: string
 
     @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
-    created_at?: Date;
+    created_at?: Date
 
     @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
-    updated_at?: Date;
+    updated_at?: Date
 }

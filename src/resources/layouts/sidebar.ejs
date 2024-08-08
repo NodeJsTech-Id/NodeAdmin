@@ -22,7 +22,368 @@
             </a>
         </li>
 
-        <p class="fw-bold text-dark">Maintenance</p>
+        <% if (hasRole('Administrator')) { %>
+        <p class="fw-bold text-dark m-0">Module</p>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#category"
+                aria-expanded="true" aria-controls="category">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Category</span>
+            </a>
+            <div id="category" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/category">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Category</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#subject"
+                aria-expanded="true" aria-controls="subject">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Subject</span>
+            </a>
+            <div id="subject" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/subject">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Subject</span>
+                    </a>
+                    <a class="collapse-item" href="/admin/v1/subject_sub">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Subject Sub</span>
+                    </a>
+                    <a class="collapse-item" href="/admin/v1/subject_sub_detail">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Subject Sub Detail</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#class"
+                aria-expanded="true" aria-controls="class">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Class</span>
+            </a>
+            <div id="class" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/class">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Class</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#schedule"
+                aria-expanded="true" aria-controls="schedule">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Schedule</span>
+            </a>
+            <div id="schedule" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/schedule">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Schedule</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#room"
+                aria-expanded="true" aria-controls="room">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Room</span>
+            </a>
+            <div id="room" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/room">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Room</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#meeting"
+                aria-expanded="true" aria-controls="meeting">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Meeting</span>
+            </a>
+            <div id="meeting" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/meeting">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Meeting</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#profession"
+                aria-expanded="true" aria-controls="profession">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Profession</span>
+            </a>
+            <div id="profession" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/profession">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Profession</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#institution"
+                aria-expanded="true" aria-controls="institution">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Institution</span>
+            </a>
+            <div id="institution" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/institution">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Institution</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#promotion"
+                aria-expanded="true" aria-controls="promotion">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Promotion</span>
+            </a>
+            <div id="promotion" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/promotion">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Promotion</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <% } %>
+
+        <% if (hasRole('Academic')) { %>
+        <p class="fw-bold text-dark m-0">Academic</p>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#categoryAcademic"
+                aria-expanded="true" aria-controls="categoryAcademic">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Category</span>
+            </a>
+            <div id="categoryAcademic" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/category">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Category</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#subjectAcademic"
+                aria-expanded="true" aria-controls="subjectAcademic">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Subject</span>
+            </a>
+            <div id="subjectAcademic" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/subject">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Subject</span>
+                    </a>
+                    <a class="collapse-item" href="/admin/v1/subject_sub">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Subject Sub</span>
+                    </a>
+                    <a class="collapse-item" href="/admin/v1/subject_sub_detail">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Subject Sub Detail</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <% } %>
+
+        <% if (hasRole('Admin')) { %>
+        <p class="fw-bold text-dark m-0">Admin</p>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#classAdmin"
+                aria-expanded="true" aria-controls="classAdmin">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Class</span>
+            </a>
+            <div id="classAdmin" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/class">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Class</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#scheduleAdmin"
+                aria-expanded="true" aria-controls="scheduleAdmin">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Schedule</span>
+            </a>
+            <div id="scheduleAdmin" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/schedule">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Schedule</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#roomAdmin"
+                aria-expanded="true" aria-controls="roomAdmin">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Room</span>
+            </a>
+            <div id="roomAdmin" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/room">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Room</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#meetingAdmin"
+                aria-expanded="true" aria-controls="meetingAdmin">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Meeting</span>
+            </a>
+            <div id="meetingAdmin" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/meeting">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Meeting</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <% } %>
+
+        <% if (hasRole('Mentor')) { %>
+        <p class="fw-bold text-dark m-0">Mentor</p>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#classMentor"
+                aria-expanded="true" aria-controls="classMentor">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Class</span>
+            </a>
+            <div id="classMentor" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/class/mentor">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Class</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#meetingMentor"
+                aria-expanded="true" aria-controls="meetingMentor">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Meeting</span>
+            </a>
+            <div id="meetingMentor" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/meeting/mentor">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Meeting</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <% } %>
+
+        <% if (hasRole('Mentee')) { %>
+        <p class="fw-bold text-dark m-0">Mentee</p>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#classMentee"
+                aria-expanded="true" aria-controls="classMentee">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Class</span>
+            </a>
+            <div id="classMentee" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/class/mentee">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Class</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#meetingMentee"
+                aria-expanded="true" aria-controls="meetingMentee">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Meeting</span>
+            </a>
+            <div id="meetingMentee" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/meeting/mentee">  
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Meeting</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <% } %>
+
+        <% if (hasRole('Partner')) { %>
+        <p class="fw-bold text-dark m-0">Partner</p>
+        <li class="nav-item">
+            <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#institutionPartner"
+                aria-expanded="true" aria-controls="institutionPartner">
+                <i class="bi bi-building-gear fw-bold"></i>
+                <span class="">Institution</span>
+            </a>
+            <div id="institutionPartner" class="collapse" aria-labelledby="headingUtilities"
+                data-parent="#accordionSidebar">
+                <div class="bg-white py-2 collapse-inner rounded">
+                    <a class="collapse-item" href="/admin/v1/institution/partner">
+                        <i class="bi bi-circle-fill me-1 small"></i>
+                        <span>Institution</span>
+                    </a>
+                </div>
+            </div>
+        </li>
+        <% } %>
+
+        <% if (hasRole('Administrator')) { %>
+        <p class="fw-bold text-dark m-0">Maintenance</p>
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#system"
                 aria-expanded="true" aria-controls="system">
@@ -51,6 +412,7 @@
                 </div>
             </div>
         </li>
+        <% } %>
         
         <!-- Sidebar Toggler (Sidebar) -->
         <div class="text-center d-none d-md-inline mt-5">

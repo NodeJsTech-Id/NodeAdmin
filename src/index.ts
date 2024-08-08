@@ -47,23 +47,23 @@ clientRedis.on('error', (err) => {
 
 const connectRedis = async () => {
     try {
-        await clientRedis.connect();
-        console.log('Connected to Redis');
+        await clientRedis.connect()
+        console.log('Connected to Redis')
     } catch (err) {
-        console.error('Could not connect to Redis:', err);
+        console.error('Could not connect to Redis:', err)
     }
 }
 
 const ensureRedisConnected = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     if (!clientRedis.isOpen) {
         try {
-            await clientRedis.connect();
+            await clientRedis.connect()
         } catch (err) {
-            console.error('Could not reconnect to Redis:', err);
-            return ResponseHandler.error(res, "Internal server error", null, 500);
+            console.error('Could not reconnect to Redis:', err)
+            return ResponseHandler.error(res, "Internal server error", null, 500)
         }
     }
-    next();
+    next()
 }
 
 // express config
@@ -116,6 +116,8 @@ passport.use(new JwtStrategy({
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
     secretOrKey: process.env.JWT_SECRET || 'secret'
 }, async (jwtPayload, done) => {
+    console.log(jwtPayload)
+    console.log(jwtPayload.id)
     const user = await userRepository.findOne(jwtPayload.id)
     if (!user) {
         return done(null, false)
@@ -130,7 +132,7 @@ passport.serializeUser((user: any, done) => {
 
 passport.deserializeUser(async (id: string, done) => {
     try {
-        const user = await userRepository.findOne({ where: { id } })
+        const user = await userRepository.findOne({ where: { id }, relations: ['roles', 'roles.accesses'] })
         done(null, user)
     } catch (err) {
         done(err, null)

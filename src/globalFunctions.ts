@@ -48,5 +48,38 @@ export const globalFunctions = async (req: Request, res: Response, next: NextFun
 		return fileService.getFile(fileName)
 	}
 
+	res.locals.formatDate = (date: Date, onlyDate: boolean = false) => {
+		const year = date.getFullYear();
+		const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() returns 0-indexed month
+		const day = String(date.getDate()).padStart(2, '0');
+		const hours = String(date.getHours()).padStart(2, '0');
+		const minutes = String(date.getMinutes()).padStart(2, '0');
+		const seconds = String(date.getSeconds()).padStart(2, '0');
+		if (onlyDate) {
+			return `${year}-${month}-${day}`;
+		} else {
+			return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+		}
+	}
+
+	res.locals.hasAccess = (url: string, method: string) => {
+		const user = req.user as User
+		const found = user?.roles.some((role: { accesses: { url: string, method: string }[] }) =>
+			role.accesses.some((access: { url: string, method: string }) =>
+				access.url === url && access.method === method
+			)
+		)
+		return (typeof found == undefined) ? false:found
+	}
+
+	res.locals.hasRole = (roleName: string) => {
+		const user = req.user as User
+		const found = user?.roles.some((role: { name: string }) =>
+			role.name === roleName
+		)
+		return (typeof found == undefined) ? false:found
+	}
+
+
 	next()
 }

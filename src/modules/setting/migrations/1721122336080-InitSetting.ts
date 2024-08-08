@@ -1,6 +1,6 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
-import { v6 as uuidv6 } from 'uuid';
-import { Setting } from "../models/setting.entity";
+import { MigrationInterface, QueryRunner } from "typeorm"
+import { v6 as uuidv6 } from 'uuid'
+import { Setting } from "../models/setting.entity"
 
 export class InitSetting1721122336080 implements MigrationInterface {
 

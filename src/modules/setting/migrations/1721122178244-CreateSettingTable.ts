@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table } from "typeorm";
+import { MigrationInterface, QueryRunner, Table } from "typeorm"
 
 export class CreateSettingTable1721122178244 implements MigrationInterface {
 
@@ -232,11 +232,11 @@ export class CreateSettingTable1721122178244 implements MigrationInterface {
                     columnNames: ["longitude"]
                 }
             ]
-        }), true);
+        }), true)
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable("settings");
+        await queryRunner.dropTable("settings")
     }
 
 }

@@ -1,0 +1,147 @@
+<% if(getFlashMessage('error')) { %>
+    <div class="card shadow bg-danger text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('error').message %></div>
+    </div>
+<% } %>
+<% if(getFlashMessage('success')) { %>
+    <div class="card shadow bg-success text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('success').message %></div>
+    </div>
+<% } %>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Meeting Mentee Presences Management</h1>
+</div>
+<!-- Content Row -->
+<div class="row">
+    <!-- Area Chart -->
+    <div class="col-xl-12 col-lg-12">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Meeting Mentee Presences List</h6>
+                <div class="btn-group btn-sm nospiner" >
+                    <button type="submit" form="selection" formmethod="post" formaction="/admin/v1/meeting/mentor/<%= meeting_id %>/details/<%= meeting_detail_id %>/user_presences/present_selected" onclick="return confirm('Are you sure?')" class="btn btn-success btn-sm">
+                        Present Selected
+                    </button>
+                    <button type="submit" form="selection" formmethod="post" formaction="/admin/v1/meeting/mentor/<%= meeting_id %>/details/<%= meeting_detail_id %>/user_presences/absent_selected" onclick="return confirm('Are you sure?')" class="btn btn-danger btn-sm">
+                        Absent Selected
+                    </button>
+                    <a  href="/admin/v1/meeting/mentor/<%= meeting_id %>/details"  class="btn btn-warning btn-sm" >
+                        <i class="fas fa-fw fa-arrow-left"></i> Back
+                    </a>
+                </div> 
+            </div>
+            <!-- Card Body -->
+            <div class="card-body" style="overflow-x:auto;padding:20px;">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th width="5%"><input type="checkbox" id="checkall"/></th>
+                            <th width="5%">No</th>
+                            <th width="15%">Code</th>
+                            <th width="20%">Name</th>
+                            <th width="20%">Phone</th>
+                            <th width="15%">Email</th>
+                            <th width="15%">Picture</th>
+                            <th width="15%">Status</th>
+                            <th width="15%">Description</th>
+                            <th width="5%">Action</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <form id="selection">
+                            <% datas.forEach((data,i) => { %>
+                            <tr>
+                                <td><input name="selected[]" value="<%= data.id %>" type="checkbox" /></td>
+                                <td><%= i+1 %></td>
+                                <td><%= data.user.code %></td>
+                                <td><%= data.user.name %></td>
+                                <td><%= data.user.phone %></td>
+                                <td><%= data.user.email %></td>
+                                <td>
+                                <center>
+                                    <img src="<%= getFile(data.user.picture??'modules/access/user/user.png') %>" style="max-width: 100px;">
+                                </center>
+                                </td>
+                                <td>
+                                    <% if (data.status === 'Absent') { %>
+                                        <span class="badge text-bg-danger"><%= data.status %></span>
+                                    <% } else { %>
+                                        <span class="badge text-bg-success"><%= data.status %></span>
+                                    <% } %>
+                                </td>
+                                <td><%- data.desc %></td>
+                                <td align="center">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Action
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <a type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#Present-<%= data.id %>">Present</a>                                              
+                                            <a type="button" class="dropdown-item" data-bs-toggle="modal" data-bs-target="#Absent-<%= data.id %>">Absent</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </form>
+                    </tbody>
+                </table>
+            </div>
+        </div>                
+    </div>
+</div>
+<% datas.forEach((data,i) => { %>
+<div class="modal fade" id="Present-<%= data.id %>" tabindex="-1" aria-labelledby="Present-<%= data.id %>Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <form action="/admin/v1/meeting/mentor/<%= meeting_id %>/details/<%= meeting_detail_id %>/user_presences/<%= data.id %>/present" method="post">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="Absent-<%= data.id %>Label">Absent Form</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="mb-3">
+                            <label for="desc" class="form-label">Description</label>
+                            <input type="text" name="desc" value="<%= data.desc %>" id="desc" class="form-control">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<div class="modal fade" id="Absent-<%= data.id %>" tabindex="-1" aria-labelledby="Absent-<%= data.id %>Label" aria-hidden="true">
+    <div class="modal-dialog">
+        <form action="/admin/v1/meeting/mentor/<%= meeting_id %>/details/<%= meeting_detail_id %>/user_presences/<%= data.id %>/absent" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="Absent-<%= data.id %>Label">Absent Form</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="exampleInputEmail1" class="form-label">Description</label>
+                        <input type="text" name="desc" value="<%= data.desc %>" id="desc" class="form-control">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<% }); %>
+<script>
+    $("#checkall").click(function(){
+        $('input:checkbox').not(this).prop('checked', this.checked);
+    });
+</script>

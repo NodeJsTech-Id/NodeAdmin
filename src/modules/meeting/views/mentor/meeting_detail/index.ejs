@@ -1,0 +1,188 @@
+<% if(getFlashMessage('error')) { %>
+    <div class="card shadow bg-danger text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('error').message %></div>
+    </div>
+<% } %>
+<% if(getFlashMessage('success')) { %>
+    <div class="card shadow bg-success text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('success').message %></div>
+    </div>
+<% } %>
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Meeting Detail Management</h1>
+    <div class="d-none d-sm-inline-block">
+    </div>
+</div>
+<!-- Content Row -->
+<div class="row">
+    <!-- Area Chart -->
+    <div class="col-xl-12 col-lg-12">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Meeting Detail List</h6>
+                <div class="btn-group btn-sm nospiner" >
+                    <a  href="/admin/v1/meeting/mentor"  class="btn btn-warning btn-sm" >
+                        <i class="fas fa-fw fa-arrow-left"></i> Back
+                    </a>
+                </div>                                      
+            </div>
+            <!-- Card Body -->
+            <div class="card-body" style="overflow-x:auto;padding:20px;">          
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <form id="searchform">
+                            <tr>
+                                <th width="7%">
+                                    <select name="q_page_size" id="q_page_size"  class="form-control form-control-user" value="" autocomplete="q_page_size">
+                                        <option value="10" <%= ((!filter.q_page_size) ? 'selected' : (filter.q_page_size == 10)) ? 'selected' : '' %>>10</option>
+                                        <option value="20" <%= ((!filter.q_page_size) ? '' : (filter.q_page_size == 20)) ? 'selected' : '' %>>20</option>
+                                        <option value="50" <%= ((!filter.q_page_size) ? '' : (filter.q_page_size == 50)) ? 'selected' : '' %>>50</option>
+                                        <option value="100" <%= ((!filter.q_page_size) ? '' : (filter.q_page_size == 100)) ? 'selected' : '' %>>100</option>
+                                    </select>
+                                </th>
+                                <th width="10%">
+									<div class="row">
+										<div class="col">
+										    <input id="q_date_start_start" type="date" class="form-control form-control-user" name="q_date_start_start" value="<%= filter.q_date_start_start %>" autocomplete="q_date_start_start">
+										</div>
+										<div class="col">
+										    <input id="q_date_start_end" type="date" class="form-control form-control-user" name="q_date_start_end" value="<%= filter.q_date_start_end %>" autocomplete="q_date_start_end">
+										</div>
+									</div>
+								</th>
+                                <th width="10%">
+									<div class="row">
+										<div class="col">
+										    <input id="q_date_end_start" type="date" class="form-control form-control-user" name="q_date_end_start" value="<%= filter.q_date_end_start %>" autocomplete="q_date_end_start">
+										</div>
+										<div class="col">
+										    <input id="q_date_end_end" type="date" class="form-control form-control-user" name="q_date_end_end" value="<%= filter.q_date_end_end %>" autocomplete="q_date_end_end">
+										</div>
+									</div>
+								</th>
+                                <th>
+									<div class="row" style="width: 200px!important;">
+										<div class="col">
+										    <input id="q_time_start_start" type="time" class="form-control form-control-user" name="q_time_start_start" value="<%= filter.q_time_start_start %>" autocomplete="q_time_start_start">
+										</div>
+										<div class="col">
+										    <input id="q_time_start_end" type="time" class="form-control form-control-user" name="q_time_start_end" value="<%= filter.q_time_start_end %>" autocomplete="q_time_start_end">
+										</div>
+									</div>
+								</th>
+                                <th>
+									<div class="row" style="width: 200px!important;">
+										<div class="col">
+										    <input id="q_time_end_start" type="time" class="form-control form-control-user" name="q_time_end_start" value="<%= filter.q_time_end_start %>" autocomplete="q_time_end_start">
+										</div>
+										<div class="col">
+										    <input id="q_time_end_end" type="time" class="form-control form-control-user" name="q_time_end_end" value="<%= filter.q_time_end_end %>" autocomplete="q_time_end_end">
+										</div>
+									</div>
+								</th>
+                                <th></th>
+                                <th width="15%">
+                                    <input id="q_meeting_code" type="text" class="form-control form-control-user" name="q_meeting_code" value="<%= filter.q_meeting_code %>" autocomplete="q_meeting_code">
+                                </th>
+                                <th width="10%">
+                                    <select name="q_status" id="q_status"  class="form-control form-control-user" value="" autocomplete="q_status">
+                                        <option disabled="disabled" selected="selected">Select</option>                                        
+                                        <option value="Not Start" <%= ((!filter.q_status) ? '' : (filter.q_status == 'Not Start')) ? 'selected' : '' %>>Not Start</option>
+                                        <option value="On Going" <%= ((!filter.q_status) ? '' : (filter.q_status == 'On Going')) ? 'selected' : '' %>>On Going</option>
+                                        <option value="Finished" <%= ((!filter.q_status) ? '' : (filter.q_status == 'Finished')) ? 'selected' : '' %>>Finished</option>
+                                    </select>
+                                </th>
+                                <th width="15%">
+                                    <input id="q_desc" type="text" class="form-control form-control-user" name="q_desc" value="<%= filter.q_desc %>" autocomplete="q_desc">
+                                </th>
+                                <th width="5%" class="text-center align-middle">
+                                    <div class="btn-group nospiner" >
+                                        <button type="submit" form="searchform" class="btn btn-sm btn-success">
+                                            <i class="fas fa-fw fa-search"></i>
+                                        </button>
+                                        <a  href="/admin/v1/meeting/mentor/<%= meeting_id %>/details"  class="btn btn-sm btn-danger">
+                                            <i class="fas fa-fw fa-times"></i>                                            
+                                        </a>
+                                    </div>                                      
+                                </th>
+                            </tr>                              
+                            <tr>
+                                <th width="5%">No</th>
+                                <th width="15%">Date Start</th>
+                                <th width="10%">Date End</th>
+                                <th width="15%">Time Start</th>
+                                <th width="10%">Time End</th>
+                                <th width="10%">Duration</th>
+                                <th width="15%">Meeting Code</th>
+                                <th width="15%">Status</th>
+                                <th width="10%">Description</th>
+                                <th width="5%">Action</th>
+                            </tr>
+                        </form>
+                    </thead>
+                    <tbody>
+                        <form id="selection">
+                            <% datas.forEach((data,i) => { %>
+                            <tr>
+                                <td><%= (i+1)+(paginate_data.page_size*(paginate_data.current_page-1)) %></td>
+                                <td class="text-nowrap"><%= formatDate(data.date_start,true) %></td>
+                                <td class="text-nowrap"><%= formatDate(data.date_end,true) %></td>
+                                <td class="text-nowrap"><%= data.time_start %></td>
+                                <td class="text-nowrap"><%= data.time_end %></td>
+                                <td class="text-nowrap"><%= data.duration %> Minute</td>
+                                <td class="text-nowrap"><%= data.meeting_code %></td>
+                                <td>
+                                    <% if (data.status === 'Not Start') { %>
+                                        <span class="badge text-bg-warning"><%= data.status %></span>
+                                    <% } else if (data.status === 'On Going') { %>
+                                        <span class="badge text-bg-success"><%= data.status %></span>
+                                    <% } else { %>
+                                        <span class="badge text-bg-danger"><%= data.status %></span>
+                                    <% } %>
+                                </td>
+                                <td><%= data.desc %></td>
+                                <td align="center">
+                                    <div class="btn-group">
+                                        <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                            Action
+                                        </button>
+                                        <div class="dropdown-menu">
+                                            <% if (!data.meeting_code) { %>
+                                            <a href="/admin/v1/meeting/mentor/<%= meeting_id %>/details/<%= data.id %>/start_meeting" class="dropdown-item" target="_blank">Start Meeting</a>
+                                            <% } else if (data.status === 'On Going') { %>
+                                            <a href="/admin/v1/meeting/mentor/<%= meeting_id %>/details/<%= data.id %>/join_meeting" class="dropdown-item"  target="_blank">Join Meeting</a>
+                                            <% } %>
+                                            <a href="/admin/v1/meeting/mentor/<%= meeting_id %>/details/<%= data.id %>/user_presences" class="dropdown-item">Presences</a>
+                                        </div>
+                                    </div>
+                                </td>
+                            </tr>
+                            <% }); %>
+                        </form>
+                    </tbody>
+                </table>
+                <div class="d-flex justify-content-center">
+                    <nav aria-label="Page navigation example">
+                        <ul class="pagination">
+                            <% if(paginate_data.current_page != 1) { %>
+                            <li class="page-item"><a class="page-link" href="<%= addOrUpdateQueryParam(fullUrl, 'q_page', paginate_data.current_page-1) %>">Previous</a></li>
+                            <% } %>
+                            <% for(let index = 1; index <= paginate_data.total_page; index++) { %>
+                            <li class="page-item <%= (index==paginate_data.current_page)?'active':'' %>"><a class="page-link" href="<%= addOrUpdateQueryParam(fullUrl, 'q_page', index) %>"><%= index %></a></li>
+                            <% } %>
+                            <% if(paginate_data.current_page != paginate_data.total_page && paginate_data.total_page!=0) { %>
+                            <li class="page-item"><a class="page-link" href="<%= addOrUpdateQueryParam(fullUrl, 'q_page', paginate_data.current_page+1) %>">Next</a></li>
+                            <% } %>
+                        </ul>
+                    </nav>
+                </div>
+            </div>
+        </div>                
+    </div>
+</div>
+<script>
+    $("#checkall").click(function(){
+        $('input:checkbox').not(this).prop('checked', this.checked);
+    });        
+</script>

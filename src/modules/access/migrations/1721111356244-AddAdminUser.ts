@@ -1,9 +1,9 @@
-import { MigrationInterface, QueryRunner } from "typeorm";
-import { User } from "../models/user.entity";
-import { v6 as uuidv6 } from 'uuid';
-import { StatusEnum } from "../../../enums/StatusEnum";
-import bcrypt from 'bcryptjs';
-import { Role } from "../models/role.entity";
+import { MigrationInterface, QueryRunner } from "typeorm"
+import { User } from "../models/user.entity"
+import { v6 as uuidv6 } from 'uuid'
+import { StatusEnum } from "../../../enums/StatusEnum"
+import bcrypt from 'bcryptjs'
+import { Role } from "../models/role.entity"
 
 export class AddAdminUser1721111356244 implements MigrationInterface {
 
@@ -29,7 +29,7 @@ export class AddAdminUser1721111356244 implements MigrationInterface {
             desc: "",
         })
         await queryRunner.query(`
-            INSERT INTO users_roles VALUES ('${idUser}', '${idRole}');
+            INSERT INTO users_roles VALUES ('${idUser}', '${idRole}')
         `)
     }
 

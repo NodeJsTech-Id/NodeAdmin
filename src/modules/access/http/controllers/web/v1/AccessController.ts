@@ -91,7 +91,7 @@ export default class AccessController {
     public async delete_selected(req: Request, res: Response) {
         req.body.selected.forEach(async (id: string) => {
             await this.accessService.delete(id)
-        });
+        })
         req.session.flashMessage = { key: 'success', message: 'Delete Access Success.' }
         res.redirect('/admin/v1/access/access')
     }

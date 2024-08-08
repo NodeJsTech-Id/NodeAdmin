@@ -1,6 +1,6 @@
-import { Request, Response, NextFunction } from 'express';
-import Joi, { ObjectSchema } from 'joi';
-import ResponseHandler from '../../../../ResponseHandler';
+import { Request, Response, NextFunction } from 'express'
+import Joi, { ObjectSchema } from 'joi'
+import ResponseHandler from '../../../../ResponseHandler'
 
 const userSchema: ObjectSchema = Joi.object({
     otp: Joi.string().required(),
@@ -9,17 +9,17 @@ const userSchema: ObjectSchema = Joi.object({
     password_confirmation: Joi.string().valid(Joi.ref('password')).required().messages({
         'any.only': 'Password & confirm password not match.'
     }),
-});
+})
 
 const ResetPasswordProcessValidator = (req: Request, res: Response, next: NextFunction): void => {
     let errorTotal: any[] = []
 
-    const { error } = userSchema.validate(req.body, { abortEarly: false });
+    const { error } = userSchema.validate(req.body, { abortEarly: false })
     if (error) {
         const errors = error.details.map(detail => ({
             path: detail.context?.key,
             msg: detail.message,
-        }));
+        }))
         errorTotal = errors
     }
 
@@ -35,7 +35,7 @@ const ResetPasswordProcessValidator = (req: Request, res: Response, next: NextFu
         }
     }
 
-    next();
-};
+    next()
+}
 
-export { ResetPasswordProcessValidator };
+export { ResetPasswordProcessValidator }

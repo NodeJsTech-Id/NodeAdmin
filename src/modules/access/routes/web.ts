@@ -8,6 +8,8 @@ import { roleValidationRules } from '../http/validators/RoleValidator'
 import { accessValidationRules } from '../http/validators/AccessValidator'
 import { upload, UserCreateValidator } from '../http/validators/UserCreateValidator'
 import { UserUpdateValidator } from '../http/validators/UserUpdateValidator'
+import UserProfileController from '../http/controllers/web/v1/UserProfileController '
+import { UserProfileUpdateValidator } from '../http/validators/UserProfileUpdateValidator'
 
 const router = Router()
 
@@ -22,6 +24,12 @@ userRoute.get('/admin/v1/access/user/:id/edit', AccessMiddleware, ensureAuthenti
 userRoute.put('/admin/v1/access/user/:id/update', AccessMiddleware, ensureAuthenticated, upload.any(), UserUpdateValidator, userController.update.bind(userController))
 userRoute.get('/admin/v1/access/user/:id/delete', AccessMiddleware, ensureAuthenticated, userController.delete.bind(userController))
 userRoute.post('/admin/v1/access/user/delete_selected', AccessMiddleware, ensureAuthenticated, userController.delete_selected.bind(userController))
+
+const userProfileRoute = Router()
+
+const userProfileController = new UserProfileController()
+userProfileRoute.get('/admin/v1/access/user/:user_id/user_profile', AccessMiddleware, ensureAuthenticated, userProfileController.index.bind(userProfileController))
+userProfileRoute.put('/admin/v1/access/user/:user_id/user_profile/update', AccessMiddleware, ensureAuthenticated, upload.any(), UserProfileUpdateValidator, userProfileController.update.bind(userProfileController))
 
 // define route & set middleware access
 const accessRoute = Router()
@@ -52,6 +60,6 @@ roleRoute.put('/admin/v1/access/role/:id/update', AccessMiddleware, ensureAuthen
 roleRoute.get('/admin/v1/access/role/:id/delete', AccessMiddleware, ensureAuthenticated, roleController.delete.bind(roleController))
 roleRoute.post('/admin/v1/access/role/delete_selected', AccessMiddleware, ensureAuthenticated, roleController.delete_selected.bind(roleController))
 
-router.use(userRoute,accessRoute,roleRoute)
+router.use(userRoute,accessRoute,roleRoute,userProfileRoute)
 
 export default router

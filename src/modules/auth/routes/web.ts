@@ -1,8 +1,8 @@
 import { Router } from 'express'
 import passport from 'passport'
 import AuthController from '../http/controllers/web/v1/AuthController'
-import { UserCreateValidator } from '../../access/http/validators/UserCreateValidator'
 import { ResetPasswordProcessValidator } from '../http/validators/ResetPasswordProcessValidator'
+import { RegisterValidator } from '../../access/http/validators/RegisterValidator'
 
 const router = Router()
 
@@ -15,7 +15,7 @@ authRoute.post('/auth/login', passport.authenticate('local', {
     failureFlash: true
 }))
 authRoute.get('/auth/register', authController.getRegister.bind(authController))
-authRoute.post('/auth/register', UserCreateValidator, authController.postRegister.bind(authController))
+authRoute.post('/auth/register', RegisterValidator, authController.postRegister.bind(authController))
 authRoute.post('/auth/logout', authController.logout.bind(authController))
 
 authRoute.get('/admin/v1/auth/reset/req', authController.request_view.bind(authController))

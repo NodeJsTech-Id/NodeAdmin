@@ -62,9 +62,10 @@ export default class UserService {
   public async store(request: any, files: any = null, forRegister: boolean = false) {
     try {
       request.id = uuidv6()
-      let roles;
+      let roles
       if (forRegister) {
-        roles = await this.roleRepository.findBy({ name: "User" })
+        roles = await this.roleRepository.findBy({ name: request.roles })
+        delete request.roles
       } else {
         roles = await this.roleRepository.findBy({ id: In(request.roles) })
         if (!roles.length) {
@@ -74,12 +75,12 @@ export default class UserService {
       if (files) {
         const fileName = request.id
         const uploadResults = await Promise.all(
-          files.map((file: { originalname: any; buffer: any }) => {
+          files.map((file: { originalname: any, buffer: any }) => {
             const path = Module.filePath+"user/"+fileName+"."+file.originalname.split('.').pop().toLowerCase()
             fileService.uploadFile(path, file.buffer)
             request.picture = path
           })
-        );
+        )
       }
       request = functions.removeEmptyFields(request)
 			request.password = await bcrypt.hash(request.password, 10)
@@ -117,12 +118,12 @@ export default class UserService {
       if (files) {
         const fileName = id
         const uploadResults = await Promise.all(
-          files.map((file: { originalname: any; buffer: any }) => {
+          files.map((file: { originalname: any, buffer: any }) => {
             const path = Module.filePath+"user/"+fileName+"."+file.originalname.split('.').pop().toLowerCase()
             fileService.uploadFile(path, file.buffer)
             request.picture = path
           })
-        );
+        )
       }
       const data = this.userRepository.merge(user, { ...request, roles })
       const result = await this.userRepository.save(data)

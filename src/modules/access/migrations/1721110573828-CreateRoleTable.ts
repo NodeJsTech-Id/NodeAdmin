@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, Table, TableIndex } from "typeorm";
+import { MigrationInterface, QueryRunner, Table, TableIndex } from "typeorm"
 
 export class CreateRoleTable1721110573828 implements MigrationInterface {
 

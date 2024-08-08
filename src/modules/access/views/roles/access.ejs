@@ -9,7 +9,7 @@
     </div>
 <% } %>
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Access Management</h1>
+    <h1 class="h3 mb-0 text-gray-800">Access <bold><%= role.name %></bold> Management</h1>
     <div class="d-none d-sm-inline-block">
     </div>
 </div>
@@ -28,6 +28,9 @@
                     <button type="submit" form="selection" formmethod="post" formaction="/admin/v1/access/role/<%= role.id %>/access/unassign_selected" onclick="return confirm('Confirm Unassign')" class="btn btn-danger btn-sm">
                         <i class="fas fa-fw fa-times"></i> Unassign Selected
                     </button>
+                    <a href="/admin/v1/access/role" class="btn btn-warning btn-sm">
+                        <i class="fas fa-fw fa-arrow-left"></i> Back
+                    </a>
                 </div>                                      
             </div>
             <!-- Card Body -->
@@ -47,6 +50,16 @@
                                 </th>
                                 <th width="20%">
                                     <input id="q_url" type="text" class="form-control form-control-user" name="q_url" value="<%= filter.q_url %>" autocomplete="q_url">
+                                </th>
+                                <th width="20%">
+                                    <select name="q_method" id="q_method"  class="form-control form-control-user" value="" autocomplete="q_method">
+                                        <option disabled="disabled" selected="selected">Select</option>                                        
+                                        <option value="GET" <%= ((!filter.q_method) ? '' : (filter.q_method == 'GET')) ? 'selected' : '' %>>GET</option>
+                                        <option value="POST" <%= ((!filter.q_method) ? '' : (filter.q_method == 'POST')) ? 'selected' : '' %>>POST</option>
+                                        <option value="PATCH" <%= ((!filter.q_method) ? '' : (filter.q_method == 'PATCH')) ? 'selected' : '' %>>PATCH</option>
+                                        <option value="PUT" <%= ((!filter.q_method) ? '' : (filter.q_method == 'PUT')) ? 'selected' : '' %>>PUT</option>
+                                        <option value="DELETE" <%= ((!filter.q_method) ? '' : (filter.q_method == 'DELETE')) ? 'selected' : '' %>>DELETE</option>
+                                    </select>
                                 </th>
                                 <th width="10%">
                                     <select name="q_status" id="q_status"  class="form-control form-control-user" value="" autocomplete="q_status">
@@ -73,6 +86,7 @@
                                 <th width="5%"><input type="checkbox" id="checkall"/></th>
                                 <th width="5%">No</th>
                                 <th width="20%">Url</th>
+                                <th width="15%">Method</th>
                                 <th width="15%">Status</th>
                                 <th width="10%">Description</th>
                                 <th width="5%">Action</th>
@@ -86,6 +100,7 @@
                                 <td><input name="selected[]" value="<%= data.id %>" type="checkbox" /></td>
                                 <td><%= (i+1)+(paginate_data.page_size*(paginate_data.current_page-1)) %></td>
                                 <td><%= data.url %></td>
+                                <td><%= data.method %></td>
                                 <td><center><img src="<%= (role.accesses.some(r => r.id === data.id)) ? getFile('modules/access/true.png') : getFile('modules/access/false.png') %>" width="30px" height="30px"></center></td>
                                 <td><%= data.desc %></td>
                                 <td align="center">

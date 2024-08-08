@@ -64,7 +64,7 @@ export default class RoleController {
     public async delete_selected(req: Request, res: Response) {
         req.body.selected.forEach(async (id: string) => {
             await this.roleService.delete(id)
-        });
+        })
         return ResponseHandler.success(res, 'Success')
     }
 

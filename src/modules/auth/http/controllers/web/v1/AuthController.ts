@@ -1,13 +1,13 @@
 import path from 'path'
 import Module from '../../../../Module'
 import { Request, Response } from 'express'
-import { validationResult } from 'express-validator'
 import UserService from '../../../../../access/http/services/v1/UserService'
 import AppDataSource from '../../../../../../config/ormconfig'
 import { User } from '../../../../../access/models/user.entity'
 import { app } from '../../../../../..'
 import { sendMail } from '../../../../../../services/mailer'
 import bcrypt from 'bcryptjs'
+import { Profession } from '../../../../../profession/models/profession.entity'
 
 const generateOTP = (length: number = 6): string => {
 	let otp = ''
@@ -32,19 +32,17 @@ export default class AuthController {
     }
 
 	public async getRegister(req: Request, res: Response) {
+		const professions = await AppDataSource.getRepository(Profession).find()
         res.render(path.resolve(Module.path, 'views/register'), {
+			professions,
             layout: './layouts/full-width'
         })
     }
 
 	public async postRegister(req: Request, res: Response) {
 		try {
-            const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                req.session.errors = errors.array()
-                return res.redirect('/auth/register')
-            }
-            const result = await this.userService.store(req.body)
+            req.body.blocked = (!req.body.blocked) ? false : true
+            const result = await this.userService.store(req.body,req.files,true)
             if (result instanceof Error) {
                 throw new Error(result.message)
             }
@@ -52,6 +50,7 @@ export default class AuthController {
             res.redirect('/auth/login')
         } catch (err: any) {
             req.session.flashMessage = { key: 'error', message: err.message }
+            req.session.old = req.body
             return res.redirect('/auth/register')
         }
 	}
@@ -84,8 +83,8 @@ export default class AuthController {
 					otp,
 					layout: './mails/main'
 				}, (err, html) => {
-					if (err) reject(err);
-					else resolve(html);
+					if (err) reject(err)
+					else resolve(html)
 				})
 			})
             await sendMail(user.email, 'Request Reset Password', `Your OTP is ${otp}`, html)

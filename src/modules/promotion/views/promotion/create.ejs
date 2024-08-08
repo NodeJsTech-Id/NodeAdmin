@@ -1,0 +1,174 @@
+<% if(getFlashMessage('error')) { %>
+    <div class="card shadow bg-danger text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('error').message %></div>
+    </div>
+<% } %>
+<% if(getFlashMessage('success')) { %>
+    <div class="card shadow bg-success text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('success').message %></div>
+    </div>
+<% } %>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Promotion Management</h1>
+</div>
+<!-- Content Row -->
+<div class="row">
+    <!-- Area Chart -->
+    <div class="col-xl-12 col-lg-12">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Promotion Form</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body" style="overflow-x:auto;padding:20px;">
+                <form method="POST" action="/admin/v1/promotion/store">
+                    <div class="form-group row" id="div_code">
+                        <label for="code" class="col-md-3 col-form-label text-md-right">Code</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="code" type="text" class="form-control form-control-user <% if(getError('code')) { %> is-invalid <% } %>" name="code" value="<%= getOld('code') %>" autocomplete="code">
+                            <% if(getError('code')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('code')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                        <button id="generate-code" type="button" class="col btn btn-sm btn-info">Generate</button>
+                    </div>
+                    <div class="form-group row" id="div_desc">
+                        <label for="desc" class="col-md-3 col-form-label text-md-right">Description</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="desc" type="text" class="form-control form-control-user <% if(getError('desc')) { %> is-invalid <% } %>" name="desc" value="<%= getOld('desc') %>" autocomplete="desc">
+                            <% if(getError('desc')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('desc')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_discount_percent_status">
+                        <label for="discount_percent_status" class="col-md-3 col-form-label text-md-right">Discount Percent Status</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select name="discount_percent_status" id="discount_percent_status" class="form-control form-control-user <% if(getError('discount_percent_status')) { %> is-invalid <% } %>" value="" required autocomplete="discount_percent_status">
+                                <option value="Active" <% (getOld('discount_percent_status') == 'Active') ? 'selected' : '' %>>Active</option>
+                                <option value="Inactive" <% (getOld('discount_percent_status') == 'Inactive') ? 'selected' : '' %>>Inactive</option>
+                            </select>
+                            <% if(getError('discount_percent_status')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('discount_percent_status')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_discount_percent">
+                        <label for="discount_percent" class="col-md-3 col-form-label text-md-right">Discount Percent</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="discount_percent" type="number" class="form-control form-control-user <% if(getError('discount_percent')) { %> is-invalid <% } %>" name="discount_percent" value="<%= getOld('discount_percent') %>" autocomplete="discount_percent">
+                            <% if(getError('discount_percent')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('discount_percent')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_discount_amount_status">
+                        <label for="discount_amount_status" class="col-md-3 col-form-label text-md-right">Discount Amount Status</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select name="discount_amount_status" id="discount_amount_status" class="form-control form-control-user <% if(getError('discount_amount_status')) { %> is-invalid <% } %>" value="" required autocomplete="discount_amount_status">
+                                <option value="Active" <% (getOld('discount_amount_status') == 'Active') ? 'selected' : '' %>>Active</option>
+                                <option value="Inactive" <% (getOld('discount_amount_status') == 'Inactive') ? 'selected' : '' %>>Inactive</option>
+                            </select>
+                            <% if(getError('discount_amount_status')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('discount_amount_status')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_discount_amount">
+                        <label for="discount_amount" class="col-md-3 col-form-label text-md-right">Discount Amount</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="discount_amount" type="number" class="form-control form-control-user <% if(getError('discount_amount')) { %> is-invalid <% } %>" name="discount_amount" value="<%= getOld('discount_amount') %>" autocomplete="discount_amount">
+                            <% if(getError('discount_amount')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('discount_amount')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_period_type">
+                        <label for="period_type" class="col-md-3 col-form-label text-md-right">Type</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select name="period_type" id="period_type" class="form-control form-control-user <% if(getError('period_type')) { %> is-invalid <% } %>" value="" required autocomplete="period_type">
+                                <option value="Unlimited" <% (getOld('period_type') == 'Unlimited') ? 'selected' : '' %>>Unlimited</option>
+                                <option value="Limited" <% (getOld('period_type') == 'Limited') ? 'selected' : '' %>>Limited</option>
+                            </select>
+                            <% if(getError('period_type')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('period_type')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_period_start">
+                        <label for="period_start" class="col-md-3 col-form-label text-md-right">Period Start</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="period_start" type="date" class="form-control form-control-user <% if(getError('period_start')) { %> is-invalid <% } %>" name="period_start" value="<%= getOld('period_start') %>" autocomplete="period_start">
+                            <% if(getError('period_start')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('period_start')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_period_end">
+                        <label for="period_end" class="col-md-3 col-form-label text-md-right">Period End</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="period_end" type="date" class="form-control form-control-user <% if(getError('period_end')) { %> is-invalid <% } %>" name="period_end" value="<%= getOld('period_end') %>" autocomplete="period_end">
+                            <% if(getError('period_end')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('period_end')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_number">
+                        <label for="number" class="col-md-3 col-form-label text-md-right">Number</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="number" type="number" class="form-control form-control-user <% if(getError('number')) { %> is-invalid <% } %>" name="number" value="<%= getOld('number') %>" autocomplete="number">
+                            <% if(getError('number')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('number')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-6 offset-md-12">
+                            <button type="submit" class="btn btn-user btn-primary btn-block">
+                                Save
+                            </button>
+                        </div>
+                        <div class="col-md-6 offset-md-12">
+                            <a href="/admin/v1/promotion" type="submit" class="btn btn-user btn-danger btn-block text-white">
+                                Back
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>                
+    </div>
+</div>
+<script>
+    $(document).ready(function(){
+        $("#generate-code").click(function(){
+            // Contoh penggunaan $.get
+            $.get("/admin/v1/promotion/generate_code", function(data){
+                // Menampilkan data yang diterima di elemen dengan id "result"
+                $("#code").val(data.code);
+            });
+        });
+    });
+</script>

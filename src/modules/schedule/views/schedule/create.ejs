@@ -1,0 +1,106 @@
+<% if(getFlashMessage('error')) { %>
+    <div class="card shadow bg-danger text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('error').message %></div>
+    </div>
+<% } %>
+<% if(getFlashMessage('success')) { %>
+    <div class="card shadow bg-success text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('success').message %></div>
+    </div>
+<% } %>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Schedule Management</h1>
+</div>
+<!-- Content Row -->
+<div class="row">
+    <!-- Area Chart -->
+    <div class="col-xl-12 col-lg-12">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Schedule Form</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body" style="overflow-x:auto;padding:20px;">
+                <form method="POST" action="/admin/v1/schedule/store">
+                    <div class="form-group row" id="div_name">
+                        <label for="name" class="col-md-3 col-form-label text-md-right">Name</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="name" type="text" class="form-control form-control-user <% if(getError('name')) { %> is-invalid <% } %>" name="name" value="<%= getOld('name') %>" autocomplete="name">
+                            <% if(getError('name')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('name')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_day">
+                        <label for="day" class="col-md-3 col-form-label text-md-right">Day</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select name="day" id="day" class="form-control form-control-user <% if(getError('day')) { %> is-invalid <% } %>" value="" required autocomplete="day">
+                                <option value="Senin" <% (getOld('day') == 'Senin') ? 'selected' : '' %>>Senin</option>
+                                <option value="Selasa" <% (getOld('day') == 'Selasa') ? 'selected' : '' %>>Selasa</option>
+                                <option value="Rabu" <% (getOld('day') == 'Rabu') ? 'selected' : '' %>>Rabu</option>
+                                <option value="Kamis" <% (getOld('day') == 'Kamis') ? 'selected' : '' %>>Kamis</option>
+                                <option value="Jumat" <% (getOld('day') == 'Jumat') ? 'selected' : '' %>>Jumat</option>
+                                <option value="Sabtu" <% (getOld('day') == 'Sabtu') ? 'selected' : '' %>>Sabtu</option>
+                                <option value="Minggu" <% (getOld('day') == 'Minggu') ? 'selected' : '' %>>Minggu</option>
+                            </select>
+                            <% if(getError('day')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('day')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_start">
+                        <label for="start" class="col-md-3 col-form-label text-md-right">Start</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="start" type="time" class="form-control form-control-user <% if(getError('start')) { %> is-invalid <% } %>" name="start" value="<%= getOld('start') %>" autocomplete="start">
+                            <% if(getError('start')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('start')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_end">
+                        <label for="end" class="col-md-3 col-form-label text-md-right">End</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="end" type="time" class="form-control form-control-user <% if(getError('end')) { %> is-invalid <% } %>" name="end" value="<%= getOld('end') %>" autocomplete="end">
+                            <% if(getError('end')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('end')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_desc">
+                        <label for="desc" class="col-md-3 col-form-label text-md-right">Description</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="desc" type="text" class="form-control form-control-user <% if(getError('desc')) { %> is-invalid <% } %>" name="desc" value="<%= getOld('desc') %>" autocomplete="desc">
+                            <% if(getError('desc')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('desc')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-6 offset-md-12">
+                            <button type="submit" class="btn btn-user btn-primary btn-block">
+                                Save
+                            </button>
+                        </div>
+                        <div class="col-md-6 offset-md-12">
+                            <a href="/admin/v1/schedule" type="submit" class="btn btn-user btn-danger btn-block text-white">
+                                Back
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>                
+    </div>
+</div>

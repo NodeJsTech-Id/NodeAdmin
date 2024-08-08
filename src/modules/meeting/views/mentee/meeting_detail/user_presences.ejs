@@ -1,0 +1,74 @@
+<% if(getFlashMessage('error')) { %>
+    <div class="card shadow bg-danger text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('error').message %></div>
+    </div>
+<% } %>
+<% if(getFlashMessage('success')) { %>
+    <div class="card shadow bg-success text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('success').message %></div>
+    </div>
+<% } %>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Meeting Mentee Presences Management</h1>
+</div>
+<!-- Content Row -->
+<div class="row">
+    <!-- Area Chart -->
+    <div class="col-xl-12 col-lg-12">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Meeting Mentee Presences List</h6>
+                <div class="btn-group btn-sm nospiner" >
+                    <a  href="/admin/v1/meeting/mentee/<%= meeting_id %>/details"  class="btn btn-warning btn-sm" >
+                        <i class="fas fa-fw fa-arrow-left"></i> Back
+                    </a>
+                </div> 
+            </div>
+            <!-- Card Body -->
+            <div class="card-body" style="overflow-x:auto;padding:20px;">
+                <table class="table table-bordered table-hover">
+                    <thead>
+                        <tr>
+                            <th width="5%">No</th>
+                            <th width="15%">Code</th>
+                            <th width="20%">Name</th>
+                            <th width="20%">Phone</th>
+                            <th width="15%">Email</th>
+                            <th width="15%">Picture</th>
+                            <th width="15%">Status</th>
+                            <th width="15%">Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <form id="selection">
+                            <% datas.forEach((data,i) => { %>
+                            <tr>
+                                <td><%= i+1 %></td>
+                                <td><%= data.user.code %></td>
+                                <td><%= data.user.name %></td>
+                                <td><%= data.user.phone %></td>
+                                <td><%= data.user.email %></td>
+                                <td>
+                                <center>
+                                    <img src="<%= getFile(data.user.picture??'modules/access/user/user.png') %>" style="max-width: 100px;">
+                                </center>
+                                </td>
+                                <td>
+                                    <% if (data.status === 'Absent') { %>
+                                        <span class="badge text-bg-danger"><%= data.status %></span>
+                                    <% } else { %>
+                                        <span class="badge text-bg-success"><%= data.status %></span>
+                                    <% } %>
+                                </td>
+                                <td><%- data.desc %></td>
+                            </tr>
+                            <% }); %>
+                        </form>
+                    </tbody>
+                </table>
+            </div>
+        </div>                
+    </div>
+</div>

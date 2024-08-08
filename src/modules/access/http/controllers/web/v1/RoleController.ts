@@ -89,7 +89,7 @@ export default class RoleController {
     public async delete_selected(req: Request, res: Response) {
         req.body.selected.forEach(async (id: string) => {
             await this.roleService.delete(id)
-        });
+        })
         req.session.flashMessage = { key: 'success', message: 'Delete Role Success.' }
         res.redirect('/admin/v1/access/role')
     }

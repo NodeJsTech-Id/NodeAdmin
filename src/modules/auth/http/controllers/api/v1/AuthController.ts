@@ -83,8 +83,8 @@ export default class AuthController {
 					otp,
 					layout: './mails/main'
 				}, (err, html) => {
-					if (err) reject(err);
-					else resolve(html);
+					if (err) reject(err)
+					else resolve(html)
 				})
 			})
 			await sendMail(user.email, 'Request Reset Password', `Your OTP is ${otp}`, html)

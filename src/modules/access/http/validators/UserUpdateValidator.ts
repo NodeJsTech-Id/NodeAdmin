@@ -1,8 +1,8 @@
-import { Request, Response, NextFunction } from 'express';
-import Joi, { ObjectSchema } from 'joi';
-import multer, { FileFilterCallback } from 'multer';
-import app from '../../../../config/app';
-import ResponseHandler from '../../../../ResponseHandler';
+import { Request, Response, NextFunction } from 'express'
+import Joi, { ObjectSchema } from 'joi'
+import multer, { FileFilterCallback } from 'multer'
+import app from '../../../../config/app'
+import ResponseHandler from '../../../../ResponseHandler'
 
 const fileSchema = Joi.object({
     fieldname: Joi.string().optional(),
@@ -11,7 +11,7 @@ const fileSchema = Joi.object({
     originalname: Joi.string().required(),
     mimetype: Joi.string().valid('image/jpeg', 'image/jpg', 'image/png', 'image/webp').required(),
     size: Joi.number().max(app.max_photo_size).required() // Maksimum ukuran file 2MB
-});
+})
 
 const userSchema: ObjectSchema = Joi.object({
     code: Joi.string().required(),
@@ -30,13 +30,13 @@ const userSchema: ObjectSchema = Joi.object({
     password_confirmation: Joi.string().valid(Joi.ref('password')).optional().allow('').messages({
         'any.only': 'Password & confirm password not match.'
     }),
-});
+})
 
 const UserUpdateValidator = (req: Request, res: Response, next: NextFunction): void => {
-    const files: { [fieldname: string]: Express.Multer.File[] } = req.files as { [fieldname: string]: Express.Multer.File[] };
+    const files: { [fieldname: string]: Express.Multer.File[] } = req.files as { [fieldname: string]: Express.Multer.File[] }
     let fileArray: Express.Multer.File[] = []
     if (files !== undefined && files !== null) {
-        fileArray = Object.values(files).flat();
+        fileArray = Object.values(files).flat()
     }
 
     let errorTotal: any[] = []
@@ -45,24 +45,24 @@ const UserUpdateValidator = (req: Request, res: Response, next: NextFunction): v
         delete req.body.picture
     }
 
-    const { error } = userSchema.validate(req.body, { abortEarly: false });
+    const { error } = userSchema.validate(req.body, { abortEarly: false })
     if (error) {
         const errors = error.details.map(detail => ({
             path: detail.context?.key,
             msg: detail.message,
-        }));
+        }))
         errorTotal = errors
     }
 
     if (typeof files != 'undefined') {
         if (fileArray.length > 0) {
             fileArray.map(file => {
-                const errorImage  = fileSchema.validate(file, { abortEarly: false }).error;
+                const errorImage  = fileSchema.validate(file, { abortEarly: false }).error
                 if (errorImage) {
                     const errorsImage = errorImage.details.map(detail => ({
                         path: file.fieldname,
                         msg: detail.message,
-                    }));
+                    }))
                     errorTotal = errorTotal.concat(errorsImage)
                 }
             })
@@ -83,18 +83,18 @@ const UserUpdateValidator = (req: Request, res: Response, next: NextFunction): v
         }
     }
 
-    next();
-};
+    next()
+}
 
 const upload = multer({
     storage: multer.memoryStorage(),
     fileFilter: (req: Request, file: Express.Multer.File, cb: FileFilterCallback) => {
         if (file.mimetype.startsWith('image/')) {
-            cb(null, true);
+            cb(null, true)
         } else {
-            cb(new Error('File harus berupa gambar'));
+            cb(new Error('File harus berupa gambar'))
         }
     }
-});
+})
 
-export { upload, UserUpdateValidator };
+export { upload, UserUpdateValidator }

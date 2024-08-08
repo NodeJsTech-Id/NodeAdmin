@@ -1,0 +1,145 @@
+<% if(getFlashMessage('error')) { %>
+    <div class="card shadow bg-danger text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('error').message %></div>
+    </div>
+<% } %>
+<% if(getFlashMessage('success')) { %>
+    <div class="card shadow bg-success text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('success').message %></div>
+    </div>
+<% } %>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Institution Management</h1>
+</div>
+<!-- Content Row -->
+<div class="row">
+    <!-- Area Chart -->
+    <div class="col-xl-12 col-lg-12">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Institution Form</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body" style="overflow-x:auto;padding:20px;">
+                <form method="POST" action="/admin/v1/institution/store">
+                    <div class="form-group row">
+                        <label for="user_id" class="col-md-3 col-form-label text-md-right">Category</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select name="user_id" id="user_id" class="select2 form-control form-control-user <% if(getError('user_id')) { %> is-invalid <% } %>" value="" autocomplete="user_id">
+                                <option disabled="disabled" selected="selected">Select an option</option>
+                                <% users.forEach(user => { %>
+                                    <option value="<%= user.id %>" <%= (user.id == getOld('user_id')) ? 'selected' : '' %>><%= user.name %> | <%= user.email %></option>
+                                <% }) %>
+                            </select>
+                            <% if(getError('user_id')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('user_id')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_name">
+                        <label for="name" class="col-md-3 col-form-label text-md-right">Name</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="name" type="text" class="form-control form-control-user <% if(getError('name')) { %> is-invalid <% } %>" name="name" value="<%= getOld('name') %>" autocomplete="name">
+                            <% if(getError('name')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('name')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_type">
+                        <label for="type" class="col-md-3 col-form-label text-md-right">Type</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select name="type" id="type" class="form-control form-control-user <% if(getError('type')) { %> is-invalid <% } %>" value="" required autocomplete="type">
+                                <option value="Education" <% (getOld('type') == 'Education') ? 'selected' : '' %>>Education</option>
+                                <option value="Company" <% (getOld('type') == 'Company') ? 'selected' : '' %>>Company</option>
+                            </select>
+                            <% if(getError('type')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('type')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_code">
+                        <label for="code" class="col-md-3 col-form-label text-md-right">Code</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="code" type="text" class="form-control form-control-user <% if(getError('code')) { %> is-invalid <% } %>" name="code" value="<%= getOld('code') %>" autocomplete="code">
+                            <% if(getError('code')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('code')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_refferal">
+                        <label for="refferal" class="col-md-3 col-form-label text-md-right">Refferal</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="refferal" type="text" class="form-control form-control-user <% if(getError('refferal')) { %> is-invalid <% } %>" name="refferal" value="<%= getOld('refferal') %>" autocomplete="refferal" readonly>
+                            <% if(getError('refferal')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('refferal')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                        <button id="generate-refferal" type="button" class="col btn btn-sm btn-info">Generate</button>
+                    </div>
+                    <div class="form-group row" id="div_address">
+                        <label for="address" class="col-md-3 col-form-label text-md-right">Address</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="address" type="text" class="form-control form-control-user <% if(getError('address')) { %> is-invalid <% } %>" name="address" value="<%= getOld('address') %>" autocomplete="address">
+                            <% if(getError('address')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('address')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_status">
+                        <label for="status" class="col-md-3 col-form-label text-md-right">Status</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select name="status" id="status" class="form-control form-control-user <% if(getError('status')) { %> is-invalid <% } %>" value="" required autocomplete="status">
+                                <option value="Active" <% (getOld('status') == 'Active') ? 'selected' : '' %>>Active</option>
+                                <option value="Inactive" <% (getOld('status') == 'Inactive') ? 'selected' : '' %>>Inactive</option>
+                            </select>
+                            <% if(getError('status')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('status')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-6 offset-md-12">
+                            <button type="submit" class="btn btn-user btn-primary btn-block">
+                                Save
+                            </button>
+                        </div>
+                        <div class="col-md-6 offset-md-12">
+                            <a href="/admin/v1/institution" type="submit" class="btn btn-user btn-danger btn-block text-white">
+                                Back
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>                
+    </div>
+</div>
+<script>
+    $(".select2").select2();
+
+    $(document).ready(function(){
+        $("#generate-refferal").click(function(){
+            // Contoh penggunaan $.get
+            $.get("/admin/v1/institution/generate_refferal", function(data){
+                // Menampilkan data yang diterima di elemen dengan id "result"
+                $("#refferal").val(data.refferal);
+            });
+        });
+    });
+</script>

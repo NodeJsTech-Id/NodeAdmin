@@ -4,7 +4,7 @@ class ResponseHandler {
             status: true,
             message,
             data,
-        });
+        })
     }
 
     static error(res: any, message: string, data: any = null, statusCode: number = 500) {
@@ -12,7 +12,7 @@ class ResponseHandler {
             status: false,
             message,
             data,
-        });
+        })
     }
 
     static notFound(res: any, message: string = 'Resource not found') {
@@ -20,7 +20,7 @@ class ResponseHandler {
             status: false,
             message,
             data: null,
-        });
+        })
     }
 
     static validationError(res: any, errors: any, statusCode: number = 422) {
@@ -28,8 +28,8 @@ class ResponseHandler {
             status: false,
             message: 'Validation Error',
             errors,
-        });
+        })
     }
 }
 
-export default ResponseHandler;
+export default ResponseHandler

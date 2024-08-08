@@ -66,7 +66,7 @@ export default class AccessController {
     public async delete_selected(req: Request, res: Response) {
         req.body.selected.forEach(async (id: string) => {
             await this.accessService.delete(id)
-        });
+        })
         return ResponseHandler.success(res, 'Success')
     }
 }
