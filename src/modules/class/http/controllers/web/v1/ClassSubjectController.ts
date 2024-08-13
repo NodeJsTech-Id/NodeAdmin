@@ -9,21 +9,21 @@ export default class ClassSubjectController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {classData,datas,paginate_data} = await this.classService.index_subject(req.params.id, filter)
-        res.render(path.resolve(Module.path, 'views/subject/index'), {
+        res.render(path.resolve(Module.path, 'views/be/subject/index'), {
             classData,
             datas,
             filter,
             paginate_data,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
     public async create(req: Request, res: Response) {
         const {classData,subjects} = await this.classService.create_subject(req.params.id)
-        res.render(path.resolve(Module.path, 'views/subject/create'), {
+        res.render(path.resolve(Module.path, 'views/be/subject/create'), {
             classData,
             subjects,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 

@@ -9,17 +9,17 @@ export default class PromotionController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data} = await this.promotionService.index(filter)
-        res.render(path.resolve(Module.path, 'views/promotion/index'), {
+        res.render(path.resolve(Module.path, 'views/be/promotion/index'), {
             filter,
             datas,
             paginate_data,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
     public async create(req: Request, res: Response) {
-        res.render(path.resolve(Module.path, 'views/promotion/create'), {
-            layout: './layouts/main'
+        res.render(path.resolve(Module.path, 'views/be/promotion/create'), {
+            layout: './layouts/be/main'
         })
     }
 
@@ -40,9 +40,9 @@ export default class PromotionController {
 
     public async edit(req: Request, res: Response) {
         const {data} = await this.promotionService.edit(req.params.id)
-        res.render(path.resolve(Module.path, 'views/promotion/edit'), {
+        res.render(path.resolve(Module.path, 'views/be/promotion/edit'), {
             data,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 

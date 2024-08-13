@@ -12,22 +12,22 @@ export default class InstitutionPartnerController {
         const filter = req.query
         filter.user_id = (req.user as User).id
         const {datas,paginate_data,types,users} = await this.institutionService.index(filter)
-        res.render(path.resolve(Module.path, 'views/partner/institution/index'), {
+        res.render(path.resolve(Module.path, 'views/be/partner/institution/index'), {
             filter,
             datas,
             paginate_data,
             types,
             users,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
     public async edit(req: Request, res: Response) {
         const {data,users} = await this.institutionService.edit(req.params.id)
-        res.render(path.resolve(Module.path, 'views/partner/institution/edit'), {
+        res.render(path.resolve(Module.path, 'views/be/partner/institution/edit'), {
             data,
             users,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
@@ -54,12 +54,12 @@ export default class InstitutionPartnerController {
     public async promotion(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data} = await this.institutionService.index_promotion(req.params.id, filter)
-        res.render(path.resolve(Module.path, 'views/partner/institution/promotion'), {
+        res.render(path.resolve(Module.path, 'views/be/partner/institution/promotion'), {
             filter,
             datas,
             paginate_data,
             id: req.params.id,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 }

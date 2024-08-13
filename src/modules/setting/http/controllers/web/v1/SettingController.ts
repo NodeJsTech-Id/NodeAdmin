@@ -8,9 +8,9 @@ export default class SettingController {
 
     public async index(req: Request, res: Response) {
         const {data} = await this.settingService.index()
-        res.render(path.resolve(Module.path, 'views/index'), {
+        res.render(path.resolve(Module.path, 'views/be/index'), {
             data,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 

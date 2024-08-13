@@ -10,19 +10,19 @@ export default class MeetingDetailController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data} = await this.meetingDetailService.index(filter,req.params.meeting_id)
-        res.render(path.resolve(Module.path, 'views/meeting_detail/index'), {
+        res.render(path.resolve(Module.path, 'views/be/meeting_detail/index'), {
             datas,
             filter,
             paginate_data,
             meeting_id: req.params.meeting_id,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
     public async create(req: Request, res: Response) {
-        res.render(path.resolve(Module.path, 'views/meeting_detail/create'), {
+        res.render(path.resolve(Module.path, 'views/be/meeting_detail/create'), {
             meeting_id: req.params.meeting_id,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
@@ -43,10 +43,10 @@ export default class MeetingDetailController {
 
     public async edit(req: Request, res: Response) {
         const { data } = await this.meetingDetailService.edit(req.params.id)
-        res.render(path.resolve(Module.path, 'views/meeting_detail/edit'), {
+        res.render(path.resolve(Module.path, 'views/be/meeting_detail/edit'), {
             data,
             meeting_id: req.params.meeting_id,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
@@ -90,13 +90,13 @@ export default class MeetingDetailController {
             req.session.flashMessage = { key: 'error', message: meeting.message }
             res.redirect('/admin/v1/meeting/'+req.params.meeting_id+'/details')
         } else {
-            res.render(path.resolve(Module.path, 'views/meeting_detail/meeting'), {
+            res.render(path.resolve(Module.path, 'views/be/meeting_detail/meeting'), {
                 meeting,
                 credential: meeting.credential,
                 user,
                 join_token,
                 sdkKey: process.env.ZOOM_MEETING_SDK_KEY,
-                layout: './layouts/plain'
+                layout: './layouts/be/plain'
             })
         }
     }
@@ -110,13 +110,13 @@ export default class MeetingDetailController {
             req.session.flashMessage = { key: 'error', message: 'Meeting Already Finish.' }
             res.redirect('/admin/v1/meeting/'+req.params.meeting_id+'/details')
         } else {
-            res.render(path.resolve(Module.path, 'views/meeting_detail/meeting'), {
+            res.render(path.resolve(Module.path, 'views/be/meeting_detail/meeting'), {
                 meeting,
                 credential: meeting?.credential,
                 user,
                 join_token,
                 sdkKey: process.env.ZOOM_MEETING_SDK_KEY,
-                layout: './layouts/plain'
+                layout: './layouts/be/plain'
             })
         }
     }
@@ -134,11 +134,11 @@ export default class MeetingDetailController {
     public async user_presences(req: Request, res: Response) {
         const { users } = await this.meetingDetailService.user_presences(req.params.meeting_detail_id)
         const datas = users
-        res.render(path.resolve(Module.path, 'views/meeting_detail/user_presences'), {
+        res.render(path.resolve(Module.path, 'views/be/meeting_detail/user_presences'), {
             datas,
             meeting_id: req.params.meeting_id,
             meeting_detail_id: req.params.meeting_detail_id,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 

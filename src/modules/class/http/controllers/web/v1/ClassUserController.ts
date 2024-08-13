@@ -9,21 +9,21 @@ export default class ClassUserController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {classData,datas,paginate_data} = await this.classService.index_user(req.params.id, filter)
-        res.render(path.resolve(Module.path, 'views/user/index'), {
+        res.render(path.resolve(Module.path, 'views/be/user/index'), {
             classData,
             datas,
             filter,
             paginate_data,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
     public async create(req: Request, res: Response) {
         const {classData,users} = await this.classService.create_user(req.params.id)
-        res.render(path.resolve(Module.path, 'views/user/create'), {
+        res.render(path.resolve(Module.path, 'views/be/user/create'), {
             classData,
             users,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 

@@ -9,17 +9,17 @@ export default class ScheduleController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data} = await this.scheduleService.index(filter)
-        res.render(path.resolve(Module.path, 'views/schedule/index'), {
+        res.render(path.resolve(Module.path, 'views/be/schedule/index'), {
             datas,
             filter,
             paginate_data,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
     public async create(req: Request, res: Response) {
-        res.render(path.resolve(Module.path, 'views/schedule/create'), {
-            layout: './layouts/main'
+        res.render(path.resolve(Module.path, 'views/be/schedule/create'), {
+            layout: './layouts/be/main'
         })
     }
 
@@ -41,9 +41,9 @@ export default class ScheduleController {
     public async edit(req: Request, res: Response) {
         const result = await this.scheduleService.edit(req.params.id)
         const data = result
-        res.render(path.resolve(Module.path, 'views/schedule/edit'), {
+        res.render(path.resolve(Module.path, 'views/be/schedule/edit'), {
             data,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 

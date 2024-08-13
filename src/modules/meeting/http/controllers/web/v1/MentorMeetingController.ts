@@ -9,7 +9,7 @@ export default class MentorMeetingController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data,rooms,classes,schedules,users} = await this.meetingService.index(filter)
-        res.render(path.resolve(Module.path, 'views/mentor/meeting/index'), {
+        res.render(path.resolve(Module.path, 'views/be/mentor/meeting/index'), {
             datas,
             filter,
             paginate_data,
@@ -17,7 +17,7 @@ export default class MentorMeetingController {
             classes,
             schedules,
             users,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 }

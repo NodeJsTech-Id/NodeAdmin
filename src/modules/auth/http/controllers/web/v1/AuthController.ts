@@ -26,16 +26,16 @@ export default class AuthController {
 		if (req.isAuthenticated()) {
             res.redirect('/admin/v1/dashboard')
         }
-        res.render(path.resolve(Module.path, 'views/login'), {
-            layout: './layouts/full-width'
+        res.render(path.resolve(Module.path, 'views/be/login'), {
+            layout: './layouts/be/full-width'
         })
     }
 
 	public async getRegister(req: Request, res: Response) {
 		const professions = await AppDataSource.getRepository(Profession).find()
-        res.render(path.resolve(Module.path, 'views/register'), {
+        res.render(path.resolve(Module.path, 'views/be/register'), {
 			professions,
-            layout: './layouts/full-width'
+            layout: './layouts/be/full-width'
         })
     }
 
@@ -62,8 +62,8 @@ export default class AuthController {
 	}
 
     public request_view(req: Request, res: Response) {
-		res.render(path.resolve(Module.path, 'views/reset_req'), {
-            layout: './layouts/full-width'
+		res.render(path.resolve(Module.path, 'views/be/reset_req'), {
+            layout: './layouts/be/full-width'
         })
 	}
 
@@ -97,8 +97,8 @@ export default class AuthController {
 	}
 
     public process_view(req: Request, res: Response) {
-		res.render(path.resolve(Module.path, 'views/reset_proc'), {
-            layout: './layouts/full-width'
+		res.render(path.resolve(Module.path, 'views/be/reset_proc'), {
+            layout: './layouts/be/full-width'
         })
 	}
 

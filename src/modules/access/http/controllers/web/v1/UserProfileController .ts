@@ -8,11 +8,11 @@ export default class UserProfileController {
 
     public async index(req: Request, res: Response) {
         const {data,user,professions} = await this.userProfileService.index(req.params.user_id)
-        res.render(path.resolve(Module.path, 'views/user_profile/edit'), {
+        res.render(path.resolve(Module.path, 'views/be/user_profile/edit'), {
             data,
             user,
             professions,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 

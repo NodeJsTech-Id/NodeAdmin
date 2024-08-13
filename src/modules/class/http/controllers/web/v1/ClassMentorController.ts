@@ -9,21 +9,21 @@ export default class ClassMentorController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {classData,datas,paginate_data} = await this.classService.index_mentor(req.params.id, filter)
-        res.render(path.resolve(Module.path, 'views/mentor/index'), {
+        res.render(path.resolve(Module.path, 'views/be/mentor/index'), {
             classData,
             datas,
             filter,
             paginate_data,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
     public async create(req: Request, res: Response) {
         const {classData,users} = await this.classService.create_mentor(req.params.id)
-        res.render(path.resolve(Module.path, 'views/mentor/create'), {
+        res.render(path.resolve(Module.path, 'views/be/mentor/create'), {
             classData,
             users,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 

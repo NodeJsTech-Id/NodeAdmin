@@ -9,17 +9,17 @@ export default class CategoryController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data} = await this.categoryService.index(filter)
-        res.render(path.resolve(Module.path, 'views/category/index'), {
+        res.render(path.resolve(Module.path, 'views/be/category/index'), {
             datas,
             filter,
             paginate_data,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
     public async create(req: Request, res: Response) {
-        res.render(path.resolve(Module.path, 'views/category/create'), {
-            layout: './layouts/main'
+        res.render(path.resolve(Module.path, 'views/be/category/create'), {
+            layout: './layouts/be/main'
         })
     }
 
@@ -41,9 +41,9 @@ export default class CategoryController {
     public async edit(req: Request, res: Response) {
         const result = await this.categoryService.edit(req.params.id)
         const data = result
-        res.render(path.resolve(Module.path, 'views/category/edit'), {
+        res.render(path.resolve(Module.path, 'views/be/category/edit'), {
             data,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 

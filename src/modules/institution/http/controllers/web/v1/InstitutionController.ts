@@ -10,21 +10,21 @@ export default class InstitutionController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data,types,users} = await this.institutionService.index(filter)
-        res.render(path.resolve(Module.path, 'views/institution/index'), {
+        res.render(path.resolve(Module.path, 'views/be/institution/index'), {
             filter,
             datas,
             paginate_data,
             types,
             users,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
     public async create(req: Request, res: Response) {
         const {users} = await this.institutionService.create()
-        res.render(path.resolve(Module.path, 'views/institution/create'), {
+        res.render(path.resolve(Module.path, 'views/be/institution/create'), {
             users,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
@@ -45,10 +45,10 @@ export default class InstitutionController {
 
     public async edit(req: Request, res: Response) {
         const {data,users} = await this.institutionService.edit(req.params.id)
-        res.render(path.resolve(Module.path, 'views/institution/edit'), {
+        res.render(path.resolve(Module.path, 'views/be/institution/edit'), {
             data,
             users,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
@@ -102,12 +102,12 @@ export default class InstitutionController {
     public async promotion(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data} = await this.institutionService.index_promotion(req.params.id, filter)
-        res.render(path.resolve(Module.path, 'views/institution/promotion'), {
+        res.render(path.resolve(Module.path, 'views/be/institution/promotion'), {
             filter,
             datas,
             paginate_data,
             id: req.params.id,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 }

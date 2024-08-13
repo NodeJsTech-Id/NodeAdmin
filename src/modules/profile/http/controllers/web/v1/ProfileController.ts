@@ -10,10 +10,10 @@ export default class ProfileController {
     public async index(req: Request, res: Response) {
         const result = await this.userService.edit(req.params.id)
         const { data, roles } = result
-        res.render(path.resolve(Module.path, 'views/profile'), {
+        res.render(path.resolve(Module.path, 'views/be/profile'), {
             data,
             roles,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 

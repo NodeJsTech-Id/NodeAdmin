@@ -9,20 +9,20 @@ export default class UserController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const { datas, roles, paginate_data } = await this.userService.index(filter)
-        res.render(path.resolve(Module.path, 'views/users/index'), {
+        res.render(path.resolve(Module.path, 'views/be/users/index'), {
             datas,
             filter,
             roles,
             paginate_data,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
     public async create(req: Request, res: Response) {
         const roles = await this.userService.create()
-        res.render(path.resolve(Module.path, 'views/users/create'), {
+        res.render(path.resolve(Module.path, 'views/be/users/create'), {
             roles,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
@@ -44,10 +44,10 @@ export default class UserController {
     public async edit(req: Request, res: Response) {
         const result = await this.userService.edit(req.params.id)
         const { data, roles } = result
-        res.render(path.resolve(Module.path, 'views/users/edit'), {
+        res.render(path.resolve(Module.path, 'views/be/users/edit'), {
             data,
             roles,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 

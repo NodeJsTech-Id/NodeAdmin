@@ -9,23 +9,23 @@ export default class PromotionInstitutionController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {promotion,datas,paginate_data,types,users} = await this.promotionService.index_institution(req.params.id, filter)
-        res.render(path.resolve(Module.path, 'views/institution/index'), {
+        res.render(path.resolve(Module.path, 'views/be/institution/index'), {
             promotion,
             datas,
             filter,
             paginate_data,
             types,
             users,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
     public async create(req: Request, res: Response) {
         const {promotion,institutions} = await this.promotionService.create_institution(req.params.id)
-        res.render(path.resolve(Module.path, 'views/institution/create'), {
+        res.render(path.resolve(Module.path, 'views/be/institution/create'), {
             promotion,
             institutions,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 

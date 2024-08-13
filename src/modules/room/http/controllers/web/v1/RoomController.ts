@@ -9,17 +9,17 @@ export default class RoomController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data} = await this.roomService.index(filter)
-        res.render(path.resolve(Module.path, 'views/room/index'), {
+        res.render(path.resolve(Module.path, 'views/be/room/index'), {
             datas,
             filter,
             paginate_data,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
     public async create(req: Request, res: Response) {
-        res.render(path.resolve(Module.path, 'views/room/create'), {
-            layout: './layouts/main'
+        res.render(path.resolve(Module.path, 'views/be/room/create'), {
+            layout: './layouts/be/main'
         })
     }
 
@@ -41,9 +41,9 @@ export default class RoomController {
     public async edit(req: Request, res: Response) {
         const result = await this.roomService.edit(req.params.id)
         const data = result
-        res.render(path.resolve(Module.path, 'views/room/edit'), {
+        res.render(path.resolve(Module.path, 'views/be/room/edit'), {
             data,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 

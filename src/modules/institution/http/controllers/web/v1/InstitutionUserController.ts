@@ -10,21 +10,21 @@ export default class InstitutionUserUserController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {institution,datas,paginate_data} = await this.institutionUserService.index(req.params.institution_id, filter)
-        res.render(path.resolve(Module.path, 'views/institution_user/index'), {
+        res.render(path.resolve(Module.path, 'views/be/institution_user/index'), {
             filter,
             datas,
             paginate_data,
             institution,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
     public async create(req: Request, res: Response) {
         const {institution,users} = await this.institutionUserService.create(req.params.institution_id)
-        res.render(path.resolve(Module.path, 'views/institution_user/create'), {
+        res.render(path.resolve(Module.path, 'views/be/institution_user/create'), {
             users,
             institution,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
@@ -45,10 +45,10 @@ export default class InstitutionUserUserController {
 
     public async edit(req: Request, res: Response) {
         const {data,institution} = await this.institutionUserService.edit(req.params.institution_id, req.params.id)
-        res.render(path.resolve(Module.path, 'views/institution_user/edit'), {
+        res.render(path.resolve(Module.path, 'views/be/institution_user/edit'), {
             data,
             institution,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 

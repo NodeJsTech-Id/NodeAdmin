@@ -9,20 +9,20 @@ export default class SubjectSubController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data,subjects} = await this.subjectSubService.index(filter)
-        res.render(path.resolve(Module.path, 'views/subject_sub/index'), {
+        res.render(path.resolve(Module.path, 'views/be/subject_sub/index'), {
             datas,
             filter,
             paginate_data,
             subjects,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
     public async create(req: Request, res: Response) {
         const {subjects} = await this.subjectSubService.create()
-        res.render(path.resolve(Module.path, 'views/subject_sub/create'), {
+        res.render(path.resolve(Module.path, 'views/be/subject_sub/create'), {
             subjects,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
@@ -43,10 +43,10 @@ export default class SubjectSubController {
 
     public async edit(req: Request, res: Response) {
         const {data,subjects} = await this.subjectSubService.edit(req.params.id)
-        res.render(path.resolve(Module.path, 'views/subject_sub/edit'), {
+        res.render(path.resolve(Module.path, 'views/be/subject_sub/edit'), {
             data,
             subjects,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 
