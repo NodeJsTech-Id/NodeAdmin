@@ -1,0 +1,32 @@
+<ul class="nav navbar-nav">	
+    <li class="active">
+        <a href="javascript:;">Home</a>
+    </li>
+    <% mainMenus.forEach((menu,i) => { %>
+    <li>
+        <a href="<%= (menu.childs?.length > 0) ? '#' : menu.url %>">
+            <%= menu.name %>
+            <% if (menu.childs?.length > 0) { %><i class="fa fa-chevron-down"></i><% } %>
+        </a>
+        <% if (menu.childs?.length > 0) { %>
+        <ul class="sub-menu tab-content">
+            <% menu.childs.forEach((child,j) => { %>
+            <li>
+                <a href="<%= (child.childs?.length > 0) ? '#' : child.url %>">
+                    <%= child.name %>
+                    <% if (child.childs?.length > 0) { %><i class="fa fa-angle-right"></i><% } %>
+                </a>
+                <% if (child.childs?.length > 0) { %>
+                <ul class="sub-menu">
+                    <% child.childs.forEach((child1,k) => { %>
+                    <li><a href="<%= child1.url %>"><%= child1.name %></a></li>
+                    <% }); %>
+                </ul>
+                <% } %>
+            </li>
+            <% }); %>
+        </ul>
+        <% } %>
+    </li>
+    <% }); %>
+</ul>

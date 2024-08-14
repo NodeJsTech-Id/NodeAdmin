@@ -1,0 +1,138 @@
+<% if(getFlashMessage('error')) { %>
+    <div class="card shadow bg-danger text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('error').message %></div>
+    </div>
+<% } %>
+<% if(getFlashMessage('success')) { %>
+    <div class="card shadow bg-success text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('success').message %></div>
+    </div>
+<% } %>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">Home Page Menu Management</h1>
+</div>
+<!-- Content Row -->
+<div class="row">
+    <!-- Area Chart -->
+    <div class="col-xl-12 col-lg-12">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">Home Page Menu Form</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body" style="overflow-x:auto;padding:20px;">
+                <form method="POST" action="/admin/v1/homepage/menu/<%= data.id %>/update?_method=PUT">
+                    <div class="form-group row">
+                        <label for="menu_id" class="col-md-3 col-form-label text-md-right">Menu Parent</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select name="menu_id" id="menu_id" class="select2 form-control form-control-user <% if(getError('menu_id')) { %> is-invalid <% } %>" value="" autocomplete="menu_id">
+                                <option disabled="disabled" selected="selected">Select an option</option>
+                                <% menus.forEach(menu => { %>
+                                    <option value="<%= menu.id %>" <%= (menu.id == data.menu_id) ? 'selected' : '' %>><%= menu.name %></option>
+                                <% }) %>
+                            </select>
+                            <% if(getError('menu_id')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('menu_id')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_position">
+                        <label for="position" class="col-md-3 col-form-label text-md-right">Position</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select name="position" id="position" class="form-control form-control-user <% if(getError('position')) { %> is-invalid <% } %>" value="" required autocomplete="position">
+                                <option value="Main" <% (data.position == 'Main') ? 'selected' : '' %>>Main</option>
+                                <option value="Footer" <% (data.position == 'Footer') ? 'selected' : '' %>>Footer</option>
+                            </select>
+                            <% if(getError('position')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('position')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_name">
+                        <label for="name" class="col-md-3 col-form-label text-md-right">Name</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="name" type="text" class="form-control form-control-user <% if(getError('name')) { %> is-invalid <% } %>" name="name" value="<%= data.name %>" autocomplete="name">
+                            <% if(getError('name')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('name')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_url">
+                        <label for="url" class="col-md-3 col-form-label text-md-right">Url</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="url" type="text" class="form-control form-control-user <% if(getError('url')) { %> is-invalid <% } %>" name="url" value="<%= data.url %>" autocomplete="url">
+                            <% if(getError('url')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('url')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_target">
+                        <label for="target" class="col-md-3 col-form-label text-md-right">Target</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select name="target" id="target" class="form-control form-control-user <% if(getError('target')) { %> is-invalid <% } %>" value="" required autocomplete="target">
+                                <option value="_parent" <% (data.target == '_parent') ? 'selected' : '' %>>Self Tab</option>
+                                <option value="_blank" <% (data.target == '_blank') ? 'selected' : '' %>>New Tab</option>
+                            </select>
+                            <% if(getError('target')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('target')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_status">
+                        <label for="status" class="col-md-3 col-form-label text-md-right">Status</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select name="status" id="status" class="form-control form-control-user <% if(getError('status')) { %> is-invalid <% } %>" value="" required autocomplete="status">
+                                <option value="Active" <% (data.status == 'Active') ? 'selected' : '' %>>Active</option>
+                                <option value="Inactive" <% (data.status == 'Inactive') ? 'selected' : '' %>>Inactive</option>
+                            </select>
+                            <% if(getError('status')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('status')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_level">
+                        <label for="level" class="col-md-3 col-form-label text-md-right">Level</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="level" type="number" class="form-control form-control-user <% if(getError('level')) { %> is-invalid <% } %>" name="level" value="<%= data.level %>" autocomplete="level">
+                            <% if(getError('level')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('level')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-6 offset-md-12">
+                            <button type="submit" class="btn btn-user btn-primary btn-block">
+                                Save
+                            </button>
+                        </div>
+                        <div class="col-md-6 offset-md-12">
+                            <a href="/admin/v1/homepage/menu" type="submit" class="btn btn-user btn-danger btn-block text-white">
+                                Back
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>                
+    </div>
+</div>
+
+<script>
+    $(".select2").select2();
+</script>
