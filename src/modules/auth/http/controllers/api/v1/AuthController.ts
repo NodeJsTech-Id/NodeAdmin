@@ -8,6 +8,7 @@ import ResponseHandler from '../../../../../../ResponseHandler'
 import path from 'path'
 import Module from '../../../../Module'
 import { sendMail } from '../../../../../../services/mailer'
+import appConfig from '../../../../../../config/app'
 
 const generateOTP = (length: number = 6): string => {
 	let otp = ''

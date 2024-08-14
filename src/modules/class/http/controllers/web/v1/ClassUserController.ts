@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import path from 'path'
 import Module from '../../../../Module'
 import ClassService from '../../../services/v1/ClassService'
+import appConfig from '../../../../../../config/app'
 
 export default class ClassUserController {
     private classService = new ClassService
@@ -9,7 +10,7 @@ export default class ClassUserController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {classData,datas,paginate_data} = await this.classService.index_user(req.params.id, filter)
-        res.render(path.resolve(Module.path, 'views/be/user/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/user/index'), {
             classData,
             datas,
             filter,
@@ -20,7 +21,7 @@ export default class ClassUserController {
 
     public async create(req: Request, res: Response) {
         const {classData,users} = await this.classService.create_user(req.params.id)
-        res.render(path.resolve(Module.path, 'views/be/user/create'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/user/create'), {
             classData,
             users,
             layout: './layouts/be/main'

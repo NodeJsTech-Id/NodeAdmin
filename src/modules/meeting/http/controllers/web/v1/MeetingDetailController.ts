@@ -3,6 +3,7 @@ import path from 'path'
 import Module from '../../../../Module'
 import MeetingDetailService from '../../../services/v1/MeetingDetailService'
 import { User } from '../../../../../access/models/user.entity'
+import appConfig from '../../../../../../config/app'
 
 export default class MeetingDetailController {
     private meetingDetailService = new MeetingDetailService
@@ -10,7 +11,7 @@ export default class MeetingDetailController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data} = await this.meetingDetailService.index(filter,req.params.meeting_id)
-        res.render(path.resolve(Module.path, 'views/be/meeting_detail/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/meeting_detail/index'), {
             datas,
             filter,
             paginate_data,
@@ -20,7 +21,7 @@ export default class MeetingDetailController {
     }
 
     public async create(req: Request, res: Response) {
-        res.render(path.resolve(Module.path, 'views/be/meeting_detail/create'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/meeting_detail/create'), {
             meeting_id: req.params.meeting_id,
             layout: './layouts/be/main'
         })
@@ -43,7 +44,7 @@ export default class MeetingDetailController {
 
     public async edit(req: Request, res: Response) {
         const { data } = await this.meetingDetailService.edit(req.params.id)
-        res.render(path.resolve(Module.path, 'views/be/meeting_detail/edit'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/meeting_detail/edit'), {
             data,
             meeting_id: req.params.meeting_id,
             layout: './layouts/be/main'
@@ -90,7 +91,7 @@ export default class MeetingDetailController {
             req.session.flashMessage = { key: 'error', message: meeting.message }
             res.redirect('/admin/v1/meeting/'+req.params.meeting_id+'/details')
         } else {
-            res.render(path.resolve(Module.path, 'views/be/meeting_detail/meeting'), {
+            res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/meeting_detail/meeting'), {
                 meeting,
                 credential: meeting.credential,
                 user,
@@ -110,7 +111,7 @@ export default class MeetingDetailController {
             req.session.flashMessage = { key: 'error', message: 'Meeting Already Finish.' }
             res.redirect('/admin/v1/meeting/'+req.params.meeting_id+'/details')
         } else {
-            res.render(path.resolve(Module.path, 'views/be/meeting_detail/meeting'), {
+            res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/meeting_detail/meeting'), {
                 meeting,
                 credential: meeting?.credential,
                 user,
@@ -134,7 +135,7 @@ export default class MeetingDetailController {
     public async user_presences(req: Request, res: Response) {
         const { users } = await this.meetingDetailService.user_presences(req.params.meeting_detail_id)
         const datas = users
-        res.render(path.resolve(Module.path, 'views/be/meeting_detail/user_presences'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/meeting_detail/user_presences'), {
             datas,
             meeting_id: req.params.meeting_id,
             meeting_detail_id: req.params.meeting_detail_id,

@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import path from 'path'
 import Module from '../../../../Module'
 import MeetingService from '../../../services/v1/MeetingService'
+import appConfig from '../../../../../../config/app'
 
 export default class MeetingController {
     private meetingService = new MeetingService
@@ -9,7 +10,7 @@ export default class MeetingController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data,rooms,classes,schedules,users} = await this.meetingService.index(filter)
-        res.render(path.resolve(Module.path, 'views/be/meeting/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/meeting/index'), {
             datas,
             filter,
             paginate_data,
@@ -23,7 +24,7 @@ export default class MeetingController {
 
     public async create(req: Request, res: Response) {
         const {rooms,classes,schedules,users} = await this.meetingService.create()
-        res.render(path.resolve(Module.path, 'views/be/meeting/create'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/meeting/create'), {
             rooms,
             classes,
             schedules,
@@ -49,7 +50,7 @@ export default class MeetingController {
 
     public async edit(req: Request, res: Response) {
         const { data, rooms, classes, schedules } = await this.meetingService.edit(req.params.id)
-        res.render(path.resolve(Module.path, 'views/be/meeting/edit'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/meeting/edit'), {
             data,
             rooms,
             classes,
@@ -93,7 +94,7 @@ export default class MeetingController {
     public async meeting_users(req: Request, res: Response) {
         const { meeting, users } = await this.meetingService.meeting_users(req.params.id)
         const data = meeting
-        res.render(path.resolve(Module.path, 'views/be/meeting/meeting_users'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/meeting/meeting_users'), {
             data,
             users,
             layout: './layouts/be/main'
@@ -117,7 +118,7 @@ export default class MeetingController {
     public async meeting_mentor(req: Request, res: Response) {
         const { meeting, users } = await this.meetingService.meeting_mentor(req.params.id)
         const data = meeting
-        res.render(path.resolve(Module.path, 'views/be/meeting/meeting_mentor'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/meeting/meeting_mentor'), {
             data,
             users,
             layout: './layouts/be/main'

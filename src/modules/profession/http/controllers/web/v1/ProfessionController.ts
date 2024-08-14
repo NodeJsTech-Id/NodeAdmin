@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import path from 'path'
 import Module from '../../../../Module'
 import ProfessionService from '../../../services/v1/ProfessionService'
+import appConfig from '../../../../../../config/app'
 
 export default class ProfessionController {
     private professionService = new ProfessionService
@@ -9,7 +10,7 @@ export default class ProfessionController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data} = await this.professionService.index(filter)
-        res.render(path.resolve(Module.path, 'views/be/profession/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/profession/index'), {
             datas,
             filter,
             paginate_data,
@@ -18,7 +19,7 @@ export default class ProfessionController {
     }
 
     public async create(req: Request, res: Response) {
-        res.render(path.resolve(Module.path, 'views/be/profession/create'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/profession/create'), {
             layout: './layouts/be/main'
         })
     }
@@ -41,7 +42,7 @@ export default class ProfessionController {
     public async edit(req: Request, res: Response) {
         const result = await this.professionService.edit(req.params.id)
         const data = result
-        res.render(path.resolve(Module.path, 'views/be/profession/edit'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/profession/edit'), {
             data,
             layout: './layouts/be/main'
         })

@@ -3,7 +3,7 @@ import InstitutionService from "../../../services/v1/InstitutionService"
 import path from "path"
 import Module from "../../../../Module"
 import { User } from "../../../../../access/models/user.entity"
-
+import appConfig from '../../../../../../config/app'
 
 export default class InstitutionPartnerController {
     private institutionService = new InstitutionService
@@ -12,7 +12,7 @@ export default class InstitutionPartnerController {
         const filter = req.query
         filter.user_id = (req.user as User).id
         const {datas,paginate_data,types,users} = await this.institutionService.index(filter)
-        res.render(path.resolve(Module.path, 'views/be/partner/institution/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/partner/institution/index'), {
             filter,
             datas,
             paginate_data,
@@ -24,7 +24,7 @@ export default class InstitutionPartnerController {
 
     public async edit(req: Request, res: Response) {
         const {data,users} = await this.institutionService.edit(req.params.id)
-        res.render(path.resolve(Module.path, 'views/be/partner/institution/edit'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/partner/institution/edit'), {
             data,
             users,
             layout: './layouts/be/main'
@@ -54,7 +54,7 @@ export default class InstitutionPartnerController {
     public async promotion(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data} = await this.institutionService.index_promotion(req.params.id, filter)
-        res.render(path.resolve(Module.path, 'views/be/partner/institution/promotion'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/partner/institution/promotion'), {
             filter,
             datas,
             paginate_data,

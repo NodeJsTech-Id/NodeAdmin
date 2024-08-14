@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import path from 'path'
 import Module from '../../../../Module'
 import CategoryService from '../../../services/v1/CategoryService'
+import appConfig from '../../../../../../config/app'
 
 export default class CategoryController {
     private categoryService = new CategoryService
@@ -9,7 +10,7 @@ export default class CategoryController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data} = await this.categoryService.index(filter)
-        res.render(path.resolve(Module.path, 'views/be/category/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/category/index'), {
             datas,
             filter,
             paginate_data,
@@ -18,7 +19,7 @@ export default class CategoryController {
     }
 
     public async create(req: Request, res: Response) {
-        res.render(path.resolve(Module.path, 'views/be/category/create'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/category/create'), {
             layout: './layouts/be/main'
         })
     }
@@ -41,7 +42,7 @@ export default class CategoryController {
     public async edit(req: Request, res: Response) {
         const result = await this.categoryService.edit(req.params.id)
         const data = result
-        res.render(path.resolve(Module.path, 'views/be/category/edit'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/category/edit'), {
             data,
             layout: './layouts/be/main'
         })

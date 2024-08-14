@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import path from 'path'
 import Module from '../../../../Module'
 import ScheduleService from '../../../services/v1/ScheduleService'
+import appConfig from '../../../../../../config/app'
 
 export default class ScheduleController {
     private scheduleService = new ScheduleService
@@ -9,7 +10,7 @@ export default class ScheduleController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data} = await this.scheduleService.index(filter)
-        res.render(path.resolve(Module.path, 'views/be/schedule/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/schedule/index'), {
             datas,
             filter,
             paginate_data,
@@ -18,7 +19,7 @@ export default class ScheduleController {
     }
 
     public async create(req: Request, res: Response) {
-        res.render(path.resolve(Module.path, 'views/be/schedule/create'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/schedule/create'), {
             layout: './layouts/be/main'
         })
     }
@@ -41,7 +42,7 @@ export default class ScheduleController {
     public async edit(req: Request, res: Response) {
         const result = await this.scheduleService.edit(req.params.id)
         const data = result
-        res.render(path.resolve(Module.path, 'views/be/schedule/edit'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/schedule/edit'), {
             data,
             layout: './layouts/be/main'
         })

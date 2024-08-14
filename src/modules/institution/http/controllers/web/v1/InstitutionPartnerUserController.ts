@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import InstitutionUserService from "../../../services/v1/InstitutionUserService"
 import path from "path"
 import Module from "../../../../Module"
-
+import appConfig from '../../../../../../config/app'
 
 export default class InstitutionPartnerUserController {
     private institutionUserService = new InstitutionUserService
@@ -10,7 +10,7 @@ export default class InstitutionPartnerUserController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {institution,datas,paginate_data} = await this.institutionUserService.index(req.params.institution_id, filter)
-        res.render(path.resolve(Module.path, 'views/be/partner/institution_user/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/partner/institution_user/index'), {
             filter,
             datas,
             paginate_data,
@@ -21,7 +21,7 @@ export default class InstitutionPartnerUserController {
 
     public async create(req: Request, res: Response) {
         const {institution,users} = await this.institutionUserService.create(req.params.institution_id)
-        res.render(path.resolve(Module.path, 'views/be/partner/institution_user/create'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/partner/institution_user/create'), {
             users,
             institution,
             layout: './layouts/be/main'
@@ -45,7 +45,7 @@ export default class InstitutionPartnerUserController {
 
     public async edit(req: Request, res: Response) {
         const {data,institution} = await this.institutionUserService.edit(req.params.institution_id, req.params.id)
-        res.render(path.resolve(Module.path, 'views/be/partner/institution_user/edit'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/partner/institution_user/edit'), {
             data,
             institution,
             layout: './layouts/be/main'

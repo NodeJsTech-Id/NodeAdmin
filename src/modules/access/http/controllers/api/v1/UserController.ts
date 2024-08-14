@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import UserService from '../../../services/v1/UserService'
 import ResponseHandler from '../../../../../../ResponseHandler'
+import appConfig from '../../../../../../config/app'
 
 export default class UserController {
     private userService = new UserService

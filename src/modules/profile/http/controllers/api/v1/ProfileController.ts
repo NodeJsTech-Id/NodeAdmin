@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import UserService from '../../../../../access/http/services/v1/UserService'
 import ResponseHandler from '../../../../../../ResponseHandler'
 import { User } from '../../../../../access/models/user.entity'
+import appConfig from '../../../../../../config/app'
 
 export default class ProfileController {
     private userService = new UserService

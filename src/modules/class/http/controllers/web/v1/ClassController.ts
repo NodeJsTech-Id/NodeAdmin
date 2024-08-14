@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import path from 'path'
 import Module from '../../../../Module'
 import ClassService from '../../../services/v1/ClassService'
+import appConfig from '../../../../../../config/app'
 
 export default class ClassController {
     private classService = new ClassService
@@ -9,7 +10,7 @@ export default class ClassController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data} = await this.classService.index(filter)
-        res.render(path.resolve(Module.path, 'views/be/class/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/class/index'), {
             datas,
             filter,
             paginate_data,
@@ -18,7 +19,7 @@ export default class ClassController {
     }
 
     public async create(req: Request, res: Response) {
-        res.render(path.resolve(Module.path, 'views/be/class/create'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/class/create'), {
             layout: './layouts/be/main'
         })
     }
@@ -41,7 +42,7 @@ export default class ClassController {
     public async edit(req: Request, res: Response) {
         const result = await this.classService.edit(req.params.id)
         const data = result
-        res.render(path.resolve(Module.path, 'views/be/class/edit'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/class/edit'), {
             data,
             layout: './layouts/be/main'
         })

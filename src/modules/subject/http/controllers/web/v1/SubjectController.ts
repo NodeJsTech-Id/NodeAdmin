@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import path from 'path'
 import Module from '../../../../Module'
 import SubjectService from '../../../services/v1/SubjectService'
+import appConfig from '../../../../../../config/app'
 
 export default class SubjectController {
     private subjectService = new SubjectService
@@ -9,7 +10,7 @@ export default class SubjectController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data,categories} = await this.subjectService.index(filter)
-        res.render(path.resolve(Module.path, 'views/be/subject/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/subject/index'), {
             datas,
             filter,
             paginate_data,
@@ -20,7 +21,7 @@ export default class SubjectController {
 
     public async create(req: Request, res: Response) {
         const categories = await this.subjectService.create()
-        res.render(path.resolve(Module.path, 'views/be/subject/create'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/subject/create'), {
             categories,
             layout: './layouts/be/main'
         })
@@ -43,7 +44,7 @@ export default class SubjectController {
 
     public async edit(req: Request, res: Response) {
         const { data, categories } = await this.subjectService.edit(req.params.id)
-        res.render(path.resolve(Module.path, 'views/be/subject/edit'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/subject/edit'), {
             data,
             categories,
             layout: './layouts/be/main'

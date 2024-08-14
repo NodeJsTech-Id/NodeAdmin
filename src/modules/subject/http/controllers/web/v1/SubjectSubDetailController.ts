@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import path from 'path'
 import Module from '../../../../Module'
 import SubjectSubDetailService from '../../../services/v1/SubjectSubDetailService'
+import appConfig from '../../../../../../config/app'
 
 export default class SubjectSubDetailController {
     private subjectSubDetailService = new SubjectSubDetailService
@@ -9,7 +10,7 @@ export default class SubjectSubDetailController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data,subjects,subject_subs} = await this.subjectSubDetailService.index(filter)
-        res.render(path.resolve(Module.path, 'views/be/subject_sub_detail/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/subject_sub_detail/index'), {
             datas,
             filter,
             paginate_data,
@@ -21,7 +22,7 @@ export default class SubjectSubDetailController {
 
     public async create(req: Request, res: Response) {
         const {subject_subs} = await this.subjectSubDetailService.create()
-        res.render(path.resolve(Module.path, 'views/be/subject_sub_detail/create'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/subject_sub_detail/create'), {
             subject_subs,
             layout: './layouts/be/main'
         })
@@ -44,7 +45,7 @@ export default class SubjectSubDetailController {
 
     public async edit(req: Request, res: Response) {
         const {data,subject_subs} = await this.subjectSubDetailService.edit(req.params.id)
-        res.render(path.resolve(Module.path, 'views/be/subject_sub_detail/edit'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/subject_sub_detail/edit'), {
             data,
             subject_subs,
             layout: './layouts/be/main'

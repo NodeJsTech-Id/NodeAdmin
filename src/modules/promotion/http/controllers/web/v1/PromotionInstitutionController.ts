@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import path from 'path'
 import Module from '../../../../Module'
 import PromotionService from '../../../services/v1/PromotionService'
+import appConfig from '../../../../../../config/app'
 
 export default class PromotionInstitutionController {
     private promotionService = new PromotionService
@@ -9,7 +10,7 @@ export default class PromotionInstitutionController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {promotion,datas,paginate_data,types,users} = await this.promotionService.index_institution(req.params.id, filter)
-        res.render(path.resolve(Module.path, 'views/be/institution/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/institution/index'), {
             promotion,
             datas,
             filter,
@@ -22,7 +23,7 @@ export default class PromotionInstitutionController {
 
     public async create(req: Request, res: Response) {
         const {promotion,institutions} = await this.promotionService.create_institution(req.params.id)
-        res.render(path.resolve(Module.path, 'views/be/institution/create'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/institution/create'), {
             promotion,
             institutions,
             layout: './layouts/be/main'

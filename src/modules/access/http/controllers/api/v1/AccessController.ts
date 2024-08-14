@@ -3,6 +3,7 @@ import AccessService from '../../../services/v1/AccessService'
 import { validationResult } from 'express-validator'
 import { app } from '../../../../../../index'
 import ResponseHandler from '../../../../../../ResponseHandler'
+import appConfig from '../../../../../../config/app'
 
 export default class AccessController {
     private accessService = new AccessService

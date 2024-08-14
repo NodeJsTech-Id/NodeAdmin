@@ -2,7 +2,7 @@ import { Request, Response } from "express"
 import InstitutionService from "../../../services/v1/InstitutionService"
 import path from "path"
 import Module from "../../../../Module"
-
+import appConfig from '../../../../../../config/app'
 
 export default class InstitutionController {
     private institutionService = new InstitutionService
@@ -10,7 +10,7 @@ export default class InstitutionController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data,types,users} = await this.institutionService.index(filter)
-        res.render(path.resolve(Module.path, 'views/be/institution/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/institution/index'), {
             filter,
             datas,
             paginate_data,
@@ -22,7 +22,7 @@ export default class InstitutionController {
 
     public async create(req: Request, res: Response) {
         const {users} = await this.institutionService.create()
-        res.render(path.resolve(Module.path, 'views/be/institution/create'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/institution/create'), {
             users,
             layout: './layouts/be/main'
         })
@@ -45,7 +45,7 @@ export default class InstitutionController {
 
     public async edit(req: Request, res: Response) {
         const {data,users} = await this.institutionService.edit(req.params.id)
-        res.render(path.resolve(Module.path, 'views/be/institution/edit'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/institution/edit'), {
             data,
             users,
             layout: './layouts/be/main'
@@ -102,7 +102,7 @@ export default class InstitutionController {
     public async promotion(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data} = await this.institutionService.index_promotion(req.params.id, filter)
-        res.render(path.resolve(Module.path, 'views/be/institution/promotion'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/institution/promotion'), {
             filter,
             datas,
             paginate_data,

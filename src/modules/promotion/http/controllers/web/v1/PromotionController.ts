@@ -2,6 +2,7 @@ import { Request, Response } from "express"
 import PromotionService from "../../../services/v1/PromotionService"
 import path from "path"
 import Module from "../../../../Module"
+import appConfig from '../../../../../../config/app'
 
 export default class PromotionController {
     private promotionService = new PromotionService
@@ -9,7 +10,7 @@ export default class PromotionController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data} = await this.promotionService.index(filter)
-        res.render(path.resolve(Module.path, 'views/be/promotion/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/promotion/index'), {
             filter,
             datas,
             paginate_data,
@@ -18,7 +19,7 @@ export default class PromotionController {
     }
 
     public async create(req: Request, res: Response) {
-        res.render(path.resolve(Module.path, 'views/be/promotion/create'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/promotion/create'), {
             layout: './layouts/be/main'
         })
     }
@@ -40,7 +41,7 @@ export default class PromotionController {
 
     public async edit(req: Request, res: Response) {
         const {data} = await this.promotionService.edit(req.params.id)
-        res.render(path.resolve(Module.path, 'views/be/promotion/edit'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/promotion/edit'), {
             data,
             layout: './layouts/be/main'
         })

@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import path from 'path'
 import Module from '../../../../Module'
 import RoomService from '../../../services/v1/RoomService'
+import appConfig from '../../../../../../config/app'
 
 export default class RoomController {
     private roomService = new RoomService
@@ -9,7 +10,7 @@ export default class RoomController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const {datas,paginate_data} = await this.roomService.index(filter)
-        res.render(path.resolve(Module.path, 'views/be/room/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/room/index'), {
             datas,
             filter,
             paginate_data,
@@ -18,7 +19,7 @@ export default class RoomController {
     }
 
     public async create(req: Request, res: Response) {
-        res.render(path.resolve(Module.path, 'views/be/room/create'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/room/create'), {
             layout: './layouts/be/main'
         })
     }
@@ -41,7 +42,7 @@ export default class RoomController {
     public async edit(req: Request, res: Response) {
         const result = await this.roomService.edit(req.params.id)
         const data = result
-        res.render(path.resolve(Module.path, 'views/be/room/edit'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/room/edit'), {
             data,
             layout: './layouts/be/main'
         })
