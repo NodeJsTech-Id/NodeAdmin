@@ -1,0 +1,196 @@
+<div class="content-area">
+    <div class="container">
+        <div class="row">
+            <!-- Left part start -->
+            <div class="col-xl-9 col-lg-8 col-md-12 m-b30">
+                <!-- blog start -->
+                <div class="blog-post blog-single sidebar">
+                    <div class="dlab-info">
+                        <div class="dlab-post-meta">
+                            <ul>
+                                <li class="post-author"> <i class="la la-user-circle"></i> By <a href="javascript:void(0);">Admin</a> </li>
+                                <li class="post-date"> <i class="la la-clock"></i> <%= formatDateLocale(data.created_at) %> </li>
+                                <li class="post-tag"> <a href="javascript:void(0);"><%= data.category.name %></a> </li>
+                            </ul>
+                        </div>
+                        <h2 class="dlab-title"><%= data.title %></h2>
+                        <div class="dlab-media">
+                            <a href="javascript:;"><img src="<%= getFile(data.image) %>" alt=""></a>
+                        </div>
+                        <div class="dlab-post-text text">
+                            <%- data.content %>
+                        </div>
+                        <div class="post-footer">
+                            <div class="dlab-meta">
+                                <span class="title">TAGS : </span>
+                                <ul class="tag-list">
+                                    <!-- tag list -->
+                                </ul>
+                            </div>
+                            <div class="share-post">
+                                <ul class="list-inline m-b0">
+                                    <li><a href="javascript:void(0);" class="site-button sharp radius-xl facebook"><i class="fa fa-facebook"></i></a></li>
+                                    <li><a href="javascript:void(0);" class="site-button sharp radius-xl instagram"><i class="fa fa-instagram"></i></a></li>
+                                    <li><a href="javascript:void(0);" class="site-button sharp radius-xl twitter"><i class="fa fa-twitter"></i></a></li>
+                                    <li><a href="javascript:void(0);" class="site-button sharp radius-xl linkedin"><i class="fa fa-linkedin"></i></a></li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="clear m-b30" id="comment-list">
+                    <div class="comments-area" id="comments">
+                        <div class="section-head">
+                            <h5 class="widget-title style-1">Comments</h5>
+                        </div>
+                        <!-- comment list END -->
+                        <ol class="comment-list">
+                            <li class="comment">
+                                <div class="comment-body">
+                                    <div class="comment-author vcard"> 
+                                        <img  class="avatar photo" src="/images/testimonials/pic2.jpg" alt=""> 
+                                        <cite class="fn">Stacy poe</cite> 
+                                        <span class="says">says:</span> 
+                                        <div class="comment-meta"> <a href="javascript:void(0);">October 6, 2015 at 7:15 am</a> </div>
+                                        <div class="reply"> <a href="javascript:void(0);" class="comment-reply-link">Reply</a> </div>
+                                    </div>
+                                    <div class="comment-content">
+                                        <p>Aliquam viverra, ligula at mattis pharetra, risus nibh dignissim le in luctus odio nulla in nunc. Fusce a purus sed mauris faucibus suscipit.</p>
+                                    </div>
+                                </div>
+                                <ol class="children">
+                                    <li class="comment odd parent">
+                                        <div class="comment-body">
+                                            <div class="comment-author vcard"> 
+                                                <img  class="avatar photo" src="/images/testimonials/pic3.jpg" alt=""> 
+                                                <cite class="fn">Muhammad Clay</cite> 
+                                                <span class="says">says:</span> 
+                                                <div class="comment-meta"> <a href="javascript:void(0);">October 6, 2015 at 7:15 am</a> </div>
+                                                <div class="reply"> <a href="javascript:void(0);" class="comment-reply-link">Reply</a> </div>
+                                            </div>
+                                            <div class="comment-content">
+                                                <p>Aliquam viverra, ligula at mattis pharetra, risus nibh dignissim le in luctus odio nulla in nunc. Fusce a purus sed mauris faucibus suscipit.</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ol>
+                                <!-- list END -->
+                            </li>
+                            <li class="comment">
+                                <div class="comment-body">
+                                    <div class="comment-author vcard"> 
+                                        <img  class="avatar photo" src="/images/testimonials/pic2.jpg" alt=""> 
+                                        <cite class="fn">Leo Tucker</cite> 
+                                        <span class="says">says:</span> 
+                                        <div class="comment-meta"> <a href="javascript:void(0);">October 6, 2015 at 7:15 am</a> </div>
+                                        <div class="reply"> <a href="javascript:void(0);" class="comment-reply-link">Reply</a> </div>
+                                    </div>
+                                    <div class="comment-content">
+                                        <p>Aliquam viverra, ligula at mattis pharetra, risus nibh dignissim le in luctus odio nulla in nunc. Fusce a purus sed mauris faucibus suscipit.</p>
+                                    </div>
+                                </div>
+                                <ol class="children">
+                                    <li class="comment odd parent">
+                                        <div class="comment-body">
+                                            <div class="comment-author vcard"> 
+                                                <img  class="avatar photo" src="/images/testimonials/pic3.jpg" alt=""> 
+                                                <cite class="fn">Shailja Reddy</cite> 
+                                                <span class="says">says:</span> 
+                                                <div class="comment-meta"> <a href="javascript:void(0);">October 6, 2015 at 7:15 am</a> </div>
+                                                <div class="reply"> <a href="javascript:void(0);" class="comment-reply-link">Reply</a> </div>
+                                            </div>
+                                            <div class="comment-content">
+                                                <p>Aliquam viverra, ligula at mattis pharetra, risus nibh dignissim le in luctus odio nulla in nunc. Fusce a purus sed mauris faucibus suscipit.</p>
+                                            </div>
+                                        </div>
+                                    </li>
+                                </ol>
+                                <!-- list END -->
+                            </li>
+                        </ol>
+                        <!-- comment list END -->
+                    </div>
+                </div>
+                <!-- Form -->
+                <div class="comments-area" id="respond">
+                    <div class="comment-respond" id="respond">
+                        <div class="section-head">
+                            <h5 class="widget-title style-1">LEAVE A REPLY</h5>
+                        </div>
+                        <h3 class="comment-reply-title" id="reply-title">
+                            <small> <a style="display:none;" href="javascript:void(0);" id="cancel-comment-reply-link" rel="nofollow">Cancel reply</a> </small>
+                        </h3>
+                        <form class="comment-form" id="commentform" method="post">
+                            <p class="comment-form-author">
+                                <label for="author">Name <span class="required">*</span></label>
+                                <input type="text" value="" placeholder="Name" id="author">
+                            </p>
+                            <p class="comment-form-email">
+                                <label for="email">Email <span class="required">*</span></label>
+                                <input type="text" value="" placeholder="Email" id="email">
+                            </p>
+                            <p class="comment-form-comment">
+                                <label for="comment">Comment</label>
+                                <textarea rows="8" placeholder="Add a Comment" id="comment"></textarea>
+                            </p>
+                            <p class="form-submit">
+                                <input type="submit" value="Post Comment" class="site-button" id="submit">
+                            </p>
+                        </form>
+                    </div>
+                </div>
+                <!-- blog END -->
+            </div>
+            <!-- Left part END -->
+            <!-- Side bar start -->
+            <div class="col-xl-3 col-lg-4 col-md-12">
+                <aside class="side-bar sticky-top">
+                    <div class="widget">
+                        <h5 class="widget-title style-1">Search</h5>
+                        <div class="search-bx style-1">
+                            <form role="search" method="post">
+                                <div class="input-group">
+                                    <input name="text" class="form-control" placeholder="Enter your keywords..." type="text">
+                                    <span class="input-group-btn">
+                                        <button type="submit" class="fa fa-search site-button sharp radius-no"></button>
+                                    </span> 
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="widget recent-posts-entry">
+                        <h5 class="widget-title style-1">Recent Posts</h5>
+                        <div class="widget-post-bx">
+                            <% news.forEach((dataNews,i) => { %>
+                            <div class="widget-post clearfix">
+                                <div class="dlab-post-media"> 
+                                    <img src="<%= getFile(dataNews.image) %>" width="200" height="143" alt=""> 
+                                </div>
+                                <div class="dlab-post-info">
+                                    <div class="dlab-post-meta">
+                                        <ul>
+                                            <li class="post-date"> <i class="la la-clock"></i> <%= formatDateLocale(dataNews.created_at) %> </li>
+                                        </ul>
+                                    </div>
+                                    <div class="dlab-post-header">
+                                        <h6 class="post-title"><a href="/news/<%= dataNews.slug %>"><%= dataNews.title %></a></h6>
+                                    </div>
+                                </div>
+                            </div>
+                            <% }) %>
+                        </div>
+                    </div>
+                    <div class="widget widget_archive">
+                        <h5 class="widget-title style-1">Categories List</h5>
+                        <ul>
+                            <% categories.forEach((category,i) => { %>
+                            <li><a href="javascript:void(0);"><%= category.name %></a></li>
+                            <% }) %>
+                        </ul>
+                    </div>
+                </aside>
+            </div>
+            <!-- Side bar END -->
+        </div>
+    </div>
+</div>

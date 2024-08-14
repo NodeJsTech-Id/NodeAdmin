@@ -20,6 +20,8 @@ import { UserProfile } from '../modules/access/models/user_profile.entity'
 import { Institution } from '../modules/institution/models/institution.entity'
 import { InstitutionUser } from '../modules/institution/models/institution_user.entity'
 import { Promotion } from '../modules/promotion/models/v1/promotion.entity'
+import { News } from '../modules/news/models/news.entity'
+import { NewsCategory } from '../modules/news/models/news_category.entity'
 
 dotenv.config()
 
@@ -50,6 +52,8 @@ const AppDataSource = new DataSource({
         Institution,
         InstitutionUser,
         Promotion,
+        News,
+        NewsCategory,
     ],
     migrations: [
         path.resolve(__dirname, '../modules/**/migrations/*.ts')

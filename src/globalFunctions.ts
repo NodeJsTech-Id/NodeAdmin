@@ -62,6 +62,11 @@ export const globalFunctions = async (req: Request, res: Response, next: NextFun
 		}
 	}
 
+	res.locals.formatDateLocale = (date: Date) => {
+		const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' }
+    	return date.toLocaleDateString('en-US', options)
+	}
+
 	res.locals.hasAccess = (url: string, method: string) => {
 		const user = req.user as User
 		const found = user?.roles.some((role: { accesses: { url: string, method: string }[] }) =>

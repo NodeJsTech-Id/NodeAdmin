@@ -1,0 +1,196 @@
+<% if(getFlashMessage('error')) { %>
+    <div class="card shadow bg-danger text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('error').message %></div>
+    </div>
+<% } %>
+<% if(getFlashMessage('success')) { %>
+    <div class="card shadow bg-success text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('success').message %></div>
+    </div>
+<% } %>
+<!-- Page Heading -->
+<div class="d-sm-flex align-items-center justify-content-between mb-4">
+    <h1 class="h3 mb-0 text-gray-800">News Management</h1>
+</div>
+<!-- Content Row -->
+<div class="row">
+    <!-- Area Chart -->
+    <div class="col-xl-12 col-lg-12">
+        <div class="card shadow mb-4">
+            <!-- Card Header - Dropdown -->
+            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                <h6 class="m-0 font-weight-bold text-primary">News Form</h6>
+            </div>
+            <!-- Card Body -->
+            <div class="card-body" style="overflow-x:auto;padding:20px;">
+                <form method="POST" action="/admin/v1/news/store" enctype="multipart/form-data">
+                    <div class="form-group row">
+                        <label for="category_id" class="col-md-3 col-form-label text-md-right">Category</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select name="category_id" id="category_id" class="select2 form-control form-control-user <% if(getError('category_id')) { %> is-invalid <% } %>" value="" autocomplete="category_id">
+                                <option disabled="disabled" selected="selected">Select an option</option>
+                                <% categories.forEach(category => { %>
+                                    <option value="<%= category.id %>" <%= (category.id == getOld('category_id')) ? 'selected' : '' %>><%= category.name %></option>
+                                <% }) %>
+                            </select>
+                            <% if(getError('category_id')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('category_id')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_title">
+                        <label for="title" class="col-md-3 col-form-label text-md-right">Title</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="title" type="text" class="form-control form-control-user <% if(getError('title')) { %> is-invalid <% } %>" name="title" value="<%= getOld('title') %>" autocomplete="title">
+                            <% if(getError('title')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('title')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_slug">
+                        <label for="slug" class="col-md-3 col-form-label text-md-right">Slug</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="slug" type="text" class="form-control form-control-user <% if(getError('slug')) { %> is-invalid <% } %>" name="slug" value="<%= getOld('slug') %>" autocomplete="slug" readonly>
+                            <% if(getError('slug')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('slug')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_desc">
+                        <label for="desc" class="col-md-3 col-form-label text-md-right">Description</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="desc" type="text" class="form-control form-control-user <% if(getError('desc')) { %> is-invalid <% } %>" name="desc" value="<%= getOld('desc') %>" autocomplete="desc">
+                            <% if(getError('desc')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('desc')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_summary">
+                        <label for="summary" class="col-md-3 col-form-label text-md-right">Summary</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="summary" type="text" class="form-control form-control-user <% if(getError('summary')) { %> is-invalid <% } %>" name="summary" value="<%= getOld('summary') %>" autocomplete="summary">
+                            <% if(getError('summary')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('summary')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_content">
+                        <label for="content" class="col-md-3 col-form-label text-md-right">Content</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <textarea id="content" class="trumbowyg form-control form-control-user <% if(getError('content')) { %> is-invalid <% } %>" name="content" autocomplete="content"><%= getOld('content') %></textarea>
+                            <% if(getError('content')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('content')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_status">
+                        <label for="status" class="col-md-3 col-form-label text-md-right">Status</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select name="status" id="status" class="form-control form-control-user <% if(getError('status')) { %> is-invalid <% } %>" value="" required autocomplete="status">
+                                <option value="Publish" <% (getOld('status') == 'Publish') ? 'selected' : '' %>>Publish</option>
+                                <option value="Draft" <% (getOld('status') == 'Draft') ? 'selected' : '' %>>Draft</option>
+                            </select>
+                            <% if(getError('status')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('status')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_featured">
+                        <label for="featured" class="col-md-3 col-form-label text-md-right">Featured</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select name="featured" id="featured" class="form-control form-control-user <% if(getError('featured')) { %> is-invalid <% } %>" value="" required autocomplete="featured">
+                                <option value="1" <% (getOld('featured') == true) ? 'selected' : '' %>>Yes</option>
+                                <option value="0" <% (getOld('featured') == false) ? 'selected' : '' %>>No</option>
+                            </select>
+                            <% if(getError('featured')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('featured')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="image" class="col-md-3 col-form-label text-md-right">Picture</label>
+                        <div class="col-md-8 mb-3 mb-sm-0" style="text-align:center;padding:10px;">
+                            <div class="preview mb-3" id="preview">
+                                <p>No image selected</p>
+                            </div>
+                            <input id="image" type="file" class="form-control form-control-user <% if(getError('image')) { %> is-invalid <% } %>" name="image" value="<%= getOld('image') %>" autocomplete="image" onchange="previewImage(event)">
+                            <% if(getError('image')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('image')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <div class="col-md-6 offset-md-12">
+                            <button type="submit" class="btn btn-user btn-primary btn-block">
+                                Save
+                            </button>
+                        </div>
+                        <div class="col-md-6 offset-md-12">
+                            <a href="/admin/v1/news" type="submit" class="btn btn-user btn-danger btn-block text-white">
+                                Back
+                            </a>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>                
+    </div>
+</div>
+<script>
+    function previewImage(event) {
+        const preview = document.getElementById('preview');
+        preview.innerHTML = ''; // Clear previous content
+
+        const file = event.target.files[0];
+        console.log(file);
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = document.createElement('img');
+                img.src = e.target.result;
+                preview.appendChild(img);
+            };
+            reader.readAsDataURL(file);
+        } else {
+            preview.innerHTML = '<p>No image selected</p>';
+        }
+    }
+    $(".select2").select2();
+
+    function createSlug(text) {
+        return text
+            .toString()                    // Konversi input ke string
+            .toLowerCase()                 // Ubah semua huruf menjadi huruf kecil
+            .trim()                        // Hapus spasi di awal dan akhir string
+            .replace(/\s+/g, '-')          // Ganti spasi dengan tanda hubung
+            .replace(/[^\w\-]+/g, '')      // Hapus semua karakter non-word
+            .replace(/\-\-+/g, '-')        // Ganti tanda hubung ganda dengan satu tanda hubung
+            .replace(/^-+/, '')            // Hapus tanda hubung di awal string
+            .replace(/-+$/, '');           // Hapus tanda hubung di akhir string
+    }
+
+    const titleInput = document.getElementById('title');
+    const slugInput = document.getElementById('slug');
+
+    titleInput.addEventListener('input', function() {
+        slugInput.value = createSlug(titleInput.value);
+    });
+</script>

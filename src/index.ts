@@ -140,13 +140,13 @@ passport.deserializeUser(async (id: string, done) => {
 })
 
 // Redirect root to /admin/users if authenticated, otherwise to /auth/login
-app.get('/', (req, res) => {
-    if (req.isAuthenticated()) {
-        res.redirect('/admin/v1/dashboard')
-    } else {
-        res.redirect('/auth/login')
-    }
-})
+// app.get('/', (req, res) => {
+//     if (req.isAuthenticated()) {
+//         res.redirect('/admin/v1/dashboard')
+//     } else {
+//         res.redirect('/auth/login')
+//     }
+// })
 
 // Set EJS as the view engine && set layout
 app.use(expressLayouts)
