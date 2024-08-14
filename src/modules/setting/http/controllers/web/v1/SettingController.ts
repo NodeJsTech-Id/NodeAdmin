@@ -2,15 +2,16 @@ import { Request, Response } from 'express'
 import path from 'path'
 import Module from '../../../../Module'
 import SettingService from '../../../services/v1/SettingService'
+import appConfig from '../../../../../../config/app'
 
 export default class SettingController {
     private settingService = new SettingService
 
     public async index(req: Request, res: Response) {
         const {data} = await this.settingService.index()
-        res.render(path.resolve(Module.path, 'views/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/index'), {
             data,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 

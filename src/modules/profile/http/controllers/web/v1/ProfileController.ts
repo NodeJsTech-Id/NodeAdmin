@@ -3,6 +3,7 @@ import path from 'path'
 import Module from '../../../../Module'
 import UserService from '../../../../../access/http/services/v1/UserService'
 import { User } from '../../../../../access/models/user.entity'
+import appConfig from '../../../../../../config/app'
 
 export default class ProfileController {
     private userService = new UserService
@@ -10,10 +11,10 @@ export default class ProfileController {
     public async index(req: Request, res: Response) {
         const result = await this.userService.edit(req.params.id)
         const { data, roles } = result
-        res.render(path.resolve(Module.path, 'views/profile'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/profile'), {
             data,
             roles,
-            layout: './layouts/main'
+            layout: './layouts/be/main'
         })
     }
 

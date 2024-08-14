@@ -8,6 +8,7 @@ import { User } from '../../../../../access/models/user.entity'
 import { app } from '../../../../../..'
 import { sendMail } from '../../../../../../services/mailer'
 import bcrypt from 'bcryptjs'
+import appConfig from '../../../../../../config/app'
 
 const generateOTP = (length: number = 6): string => {
 	let otp = ''
@@ -26,14 +27,14 @@ export default class AuthController {
 		if (req.isAuthenticated()) {
             res.redirect('/admin/v1/dashboard')
         }
-        res.render(path.resolve(Module.path, 'views/login'), {
-            layout: './layouts/full-width'
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/login'), {
+            layout: './layouts/be/full-width'
         })
     }
 
 	public async getRegister(req: Request, res: Response) {
-        res.render(path.resolve(Module.path, 'views/register'), {
-            layout: './layouts/full-width'
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/register'), {
+            layout: './layouts/be/full-width'
         })
     }
 
@@ -63,8 +64,8 @@ export default class AuthController {
 	}
 
     public request_view(req: Request, res: Response) {
-		res.render(path.resolve(Module.path, 'views/reset_req'), {
-            layout: './layouts/full-width'
+		res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/reset_req'), {
+            layout: './layouts/be/full-width'
         })
 	}
 
@@ -80,7 +81,7 @@ export default class AuthController {
 			await this.userRepository.save(data)
 
 			const html = await new Promise<string>((resolve, reject) => {
-				app.render(path.resolve(Module.path, 'views/mail/otp'), {
+				app.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/mail/otp'), {
 					otp,
 					layout: './mails/main'
 				}, (err, html) => {
@@ -98,8 +99,8 @@ export default class AuthController {
 	}
 
     public process_view(req: Request, res: Response) {
-		res.render(path.resolve(Module.path, 'views/reset_proc'), {
-            layout: './layouts/full-width'
+		res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/reset_proc'), {
+            layout: './layouts/be/full-width'
         })
 	}
 
