@@ -2,6 +2,7 @@ import { Request, Response } from 'express'
 import path from 'path'
 import Module from '../../../../Module'
 import UserService from '../../../services/v1/UserService'
+import appConfig from '../../../../../../config/app'
 
 export default class UserController {
     private userService = new UserService
@@ -9,7 +10,7 @@ export default class UserController {
     public async index(req: Request, res: Response) {
         const filter = req.query
         const { datas, roles, paginate_data } = await this.userService.index(filter)
-        res.render(path.resolve(Module.path, 'views/be/users/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/users/index'), {
             datas,
             filter,
             roles,
@@ -20,7 +21,7 @@ export default class UserController {
 
     public async create(req: Request, res: Response) {
         const roles = await this.userService.create()
-        res.render(path.resolve(Module.path, 'views/be/users/create'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/users/create'), {
             roles,
             layout: './layouts/be/main'
         })
@@ -44,7 +45,7 @@ export default class UserController {
     public async edit(req: Request, res: Response) {
         const result = await this.userService.edit(req.params.id)
         const { data, roles } = result
-        res.render(path.resolve(Module.path, 'views/be/users/edit'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/users/edit'), {
             data,
             roles,
             layout: './layouts/be/main'

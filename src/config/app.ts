@@ -12,7 +12,10 @@ const app = {
     // size file
     max_photo_size: 2 * 1024 * 1024, // 2mb
 
-    days: daysOfWeek
+    be_view: "/be/sb",
+    fe_view: "/fe/eduzone",
+
+    days: daysOfWeek,
 }
 
 export default app

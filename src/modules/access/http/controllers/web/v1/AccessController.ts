@@ -4,6 +4,7 @@ import Module from '../../../../Module'
 import AccessService from '../../../services/v1/AccessService'
 import { validationResult } from 'express-validator'
 import { app } from '../../../../../../index'
+import appConfig from '../../../../../../config/app'
 
 export default class AccessController {
     private accessService = new AccessService
@@ -12,7 +13,7 @@ export default class AccessController {
 		this.accessService.getAllRegisteredRoute(app)
         const filter = req.query
         const {datas,paginate_data} = await this.accessService.index(filter)
-        res.render(path.resolve(Module.path, 'views/be/accesses/index'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/accesses/index'), {
             datas,
             filter,
             paginate_data,
@@ -21,7 +22,7 @@ export default class AccessController {
     }
 
     public async create(req: Request, res: Response) {
-        res.render(path.resolve(Module.path, 'views/be/accesses/create'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/accesses/create'), {
             layout: './layouts/be/main'
         })
     }
@@ -53,7 +54,7 @@ export default class AccessController {
     public async edit(req: Request, res: Response) {
         const result = await this.accessService.edit(req.params.id)
         const data = result
-        res.render(path.resolve(Module.path, 'views/be/accesses/edit'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/accesses/edit'), {
             data,
             layout: './layouts/be/main'
         })
