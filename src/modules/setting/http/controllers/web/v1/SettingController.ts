@@ -11,7 +11,7 @@ export default class SettingController {
         const {data} = await this.settingService.index()
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/index'), {
             data,
-            layout: './layouts/be/main'
+            layout: './layouts'+appConfig.be_layout+'/main'
         })
     }
 

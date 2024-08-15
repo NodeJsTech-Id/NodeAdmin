@@ -15,7 +15,7 @@ export default class UserController {
             filter,
             roles,
             paginate_data,
-            layout: './layouts/be/main'
+            layout: './layouts'+appConfig.be_layout+'/main'
         })
     }
 
@@ -23,7 +23,7 @@ export default class UserController {
         const roles = await this.userService.create()
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/users/create'), {
             roles,
-            layout: './layouts/be/main'
+            layout: './layouts'+appConfig.be_layout+'/main'
         })
     }
 
@@ -48,7 +48,7 @@ export default class UserController {
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/users/edit'), {
             data,
             roles,
-            layout: './layouts/be/main'
+            layout: './layouts'+appConfig.be_layout+'/main'
         })
     }
 

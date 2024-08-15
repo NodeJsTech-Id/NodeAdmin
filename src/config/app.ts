@@ -4,6 +4,9 @@ const app = {
 
     be_view: "/be/sb",
     fe_view: "/fe/eduzone",
+
+    be_layout: "/be/sb",
+    fe_layout: "/fe/eduzone",
 }
 
 export default app;

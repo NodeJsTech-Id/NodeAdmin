@@ -17,13 +17,13 @@ export default class AccessController {
             datas,
             filter,
             paginate_data,
-            layout: './layouts/be/main'
+            layout: './layouts'+appConfig.be_layout+'/main'
         })
     }
 
     public async create(req: Request, res: Response) {
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/accesses/create'), {
-            layout: './layouts/be/main'
+            layout: './layouts'+appConfig.be_layout+'/main'
         })
     }
 
@@ -56,7 +56,7 @@ export default class AccessController {
         const data = result
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/accesses/edit'), {
             data,
-            layout: './layouts/be/main'
+            layout: './layouts'+appConfig.be_layout+'/main'
         })
     }
 

@@ -28,13 +28,13 @@ export default class AuthController {
             res.redirect('/admin/v1/dashboard')
         }
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/login'), {
-            layout: './layouts/be/full-width'
+            layout: './layouts'+appConfig.be_layout+'/full-width'
         })
     }
 
 	public async getRegister(req: Request, res: Response) {
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/register'), {
-            layout: './layouts/be/full-width'
+            layout: './layouts'+appConfig.be_layout+'/full-width'
         })
     }
 
@@ -65,7 +65,7 @@ export default class AuthController {
 
     public request_view(req: Request, res: Response) {
 		res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/reset_req'), {
-            layout: './layouts/be/full-width'
+            layout: './layouts'+appConfig.be_layout+'/full-width'
         })
 	}
 
@@ -100,7 +100,7 @@ export default class AuthController {
 
     public process_view(req: Request, res: Response) {
 		res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/reset_proc'), {
-            layout: './layouts/be/full-width'
+            layout: './layouts'+appConfig.be_layout+'/full-width'
         })
 	}
 

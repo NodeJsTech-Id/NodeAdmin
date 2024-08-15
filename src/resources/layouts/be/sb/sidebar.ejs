@@ -22,6 +22,12 @@
             </a>
         </li>
 
+        <% if (
+            hasAccess('/admin/v1/access/access','GET') ||
+            hasAccess('/admin/v1/access/role','GET') ||
+            hasAccess('/admin/v1/access/user','GET') ||
+            hasAccess('/admin/v1/setting','GET')
+        ) { %>
         <p class="fw-bold text-dark">Maintenance</p>
         <li class="nav-item">
             <a class="nav-link collapsed" href="#" data-toggle="collapse" data-target="#system"
@@ -51,7 +57,8 @@
                 </div>
             </div>
         </li>
-        
+        <% } %>
+
         <!-- Sidebar Toggler (Sidebar) -->
         <div class="text-center d-none d-md-inline mt-5">
             <button class="rounded-circle border-0 text-danger" id="sidebarToggle"></button>

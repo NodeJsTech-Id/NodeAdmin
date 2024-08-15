@@ -14,7 +14,7 @@ export default class ProfileController {
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/profile'), {
             data,
             roles,
-            layout: './layouts/be/main'
+            layout: './layouts'+appConfig.be_layout+'/main'
         })
     }
 

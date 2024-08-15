@@ -15,13 +15,13 @@ export default class RoleController {
             datas,
             filter,
             paginate_data,
-            layout: './layouts/be/main'
+            layout: './layouts'+appConfig.be_layout+'/main'
         })
     }
 
     public async create(req: Request, res: Response) {
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/roles/create'), {
-            layout: './layouts/be/main'
+            layout: './layouts'+appConfig.be_layout+'/main'
         })
     }
 
@@ -54,7 +54,7 @@ export default class RoleController {
         const data = result
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/roles/edit'), {
             data,
-            layout: './layouts/be/main'
+            layout: './layouts'+appConfig.be_layout+'/main'
         })
     }
 
@@ -103,7 +103,7 @@ export default class RoleController {
             datas,
             filter,
             paginate_data,
-            layout: './layouts/be/main'
+            layout: './layouts'+appConfig.be_layout+'/main'
         })
     }
 
