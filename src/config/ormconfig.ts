@@ -33,7 +33,7 @@ const AppDataSource = new DataSource({
     // username: process.env.DB_USERNAME,
     // password: process.env.DB_PASSWORD,
     // database: process.env.DB_DATABASE,
-    url: process.env.DB_URL,
+    url: process.env.DATABASE_URL_KELASCENDIKIA,
     entities: [
         Access,
         Role,
