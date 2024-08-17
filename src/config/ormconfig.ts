@@ -28,11 +28,12 @@ dotenv.config()
 
 const AppDataSource = new DataSource({
     type: process.env.DB_TYPE as 'mysql' || 'mysql',
-    host: process.env.DB_HOST,
-    port: parseInt(process.env.DB_PORT as string, 10),
-    username: process.env.DB_USERNAME,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_DATABASE,
+    // host: process.env.DB_HOST,
+    // port: parseInt(process.env.DB_PORT as string, 10),
+    // username: process.env.DB_USERNAME,
+    // password: process.env.DB_PASSWORD,
+    // database: process.env.DB_DATABASE,
+    url: process.env.DB_URL,
     entities: [
         Access,
         Role,
