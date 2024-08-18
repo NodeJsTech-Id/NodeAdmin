@@ -85,11 +85,39 @@ jobs:
 
     - name: Create App Secret
       env:
-        DATABASE_URL: ${{ secrets.DATABASE_URL }}
+        KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
+        KELASCENDIKIA_REDIS_URL: ${{ secrets.KELASCENDIKIA_REDIS_URL }}
+        KELASCENDIKIA_OSS_ACCESS_ID: ${{ secrets.KELASCENDIKIA_OSS_ACCESS_ID }}
+        KELASCENDIKIA_OSS_ACCESS_KEY: ${{ secrets.KELASCENDIKIA_OSS_ACCESS_KEY }}
+        KELASCENDIKIA_OSS_REGION: ${{ secrets.KELASCENDIKIA_OSS_REGION }}
+        KELASCENDIKIA_OSS_BUCKET: ${{ secrets.KELASCENDIKIA_OSS_BUCKET }}
+        KELASCENDIKIA_SESSION_SECRET: ${{ secrets.KELASCENDIKIA_SESSION_SECRET }}
+        KELASCENDIKIA_JWT_SECRET: ${{ secrets.KELASCENDIKIA_JWT_SECRET }}
+        KELASCENDIKIA_ZOOM_MEETING_SDK_KEY: ${{ secrets.KELASCENDIKIA_ZOOM_MEETING_SDK_KEY }}
+        KELASCENDIKIA_ZOOM_MEETING_SDK_SECRET: ${{ secrets.KELASCENDIKIA_ZOOM_MEETING_SDK_SECRET }}
+        KELASCENDIKIA_ZOOM_API_BASE_URL: ${{ secrets.KELASCENDIKIA_ZOOM_API_BASE_URL }}
+        KELASCENDIKIA_ZOOM_OAUTH_ENDPOINT: ${{ secrets.KELASCENDIKIA_ZOOM_OAUTH_ENDPOINT }}
+        KELASCENDIKIA_ZOOM_ACCOUNT_ID: ${{ secrets.KELASCENDIKIA_ZOOM_ACCOUNT_ID }}
+        KELASCENDIKIA_ZOOM_CLIENT_ID: ${{ secrets.KELASCENDIKIA_ZOOM_CLIENT_ID }}
+        KELASCENDIKIA_ZOOM_CLIENT_SECRET: ${{ secrets.KELASCENDIKIA_ZOOM_CLIENT_SECRET }}
       run: |
         kubectl create namespace KelasCendikia || true
         kubectl create secret generic app-secrets \
-          --from-literal=database_url=${DATABASE_URL} \
+          --from-literal=kelascendikia_database_url=${KELASCENDIKIA_DATABASE_URL} \
+          --from-literal=kelascendikia_redis_url=${KELASCENDIKIA_REDIS_URL} \
+          --from-literal=kelascendikia_oss_access_id=${KELASCENDIKIA_OSS_ACCESS_ID} \
+          --from-literal=kelascendikia_oss_access_key=${KELASCENDIKIA_OSS_ACCESS_KEY} \
+          --from-literal=kelascendikia_oss_region=${KELASCENDIKIA_OSS_REGION} \
+          --from-literal=kelascendikia_oss_bucket=${KELASCENDIKIA_OSS_BUCKET} \
+          --from-literal=kelascendikia_session_secret=${KELASCENDIKIA_SESSION_SECRET} \
+          --from-literal=kelascendikia_jwt_secret=${KELASCENDIKIA_JWT_SECRET} \
+          --from-literal=kelascendikia_zoom_meeting_sdk_key=${KELASCENDIKIA_ZOOM_MEETING_SDK_KEY} \
+          --from-literal=kelascendikia_zoom_meeting_sdk_secret=${KELASCENDIKIA_ZOOM_MEETING_SDK_SECRET} \          
+          --from-literal=kelascendikia_zoom_api_base_url=${KELASCENDIKIA_ZOOM_API_BASE_URL} \
+          --from-literal=kelascendikia_zoom_oauth_endpoint=${KELASCENDIKIA_ZOOM_OAUTH_ENDPOINT} \
+          --from-literal=kelascendikia_zoom_account_id=${KELASCENDIKIA_ZOOM_ACCOUNT_ID} \          
+          --from-literal=kelascendikia_zoom_client_id=${KELASCENDIKIA_ZOOM_CLIENT_ID} \
+          --from-literal=kelascendikia_zoom_client_secret=${KELASCENDIKIA_ZOOM_CLIENT_SECRET} \
           -n KelasCendikia --dry-run=client -o yaml | kubectl apply -f -
 
     - name: Deploy to Kubernetes

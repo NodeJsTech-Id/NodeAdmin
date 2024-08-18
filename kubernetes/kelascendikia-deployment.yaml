@@ -19,10 +19,80 @@ spec:
         ports:
         - containerPort: 5000
         env:
-        - name: DATABASE_URL
+        - name: KELASCENDIKIA_DATABASE_URL
           valueFrom:
             secretKeyRef:
               name: app-secrets
-              key: database_url
+              key: kelascendikia_database_url
+        - name: KELASCENDIKIA_REDIS_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: kelascendikia_redis_url
+        - name: KELASCENDIKIA_OSS_ACCESS_ID
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: kelascendikia_oss_access_id
+        - name: KELASCENDIKIA_OSS_ACCESS_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: kelascendikia_oss_access_key
+        - name: KELASCENDIKIA_OSS_REGION
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: kelascendikia_oss_region
+        - name: KELASCENDIKIA_OSS_BUCKET
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: kelascendikia_oss_bucket
+        - name: KELASCENDIKIA_SESSION_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: kelascendikia_session_secret
+        - name: KELASCENDIKIA_JWT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: kelascendikia_jwt_secret
+        - name: KELASCENDIKIA_ZOOM_MEETING_SDK_KEY
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: kelascendikia_zoom_meeting_sdk_key
+        - name: KELASCENDIKIA_ZOOM_MEETING_SDK_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: kelascendikia_zoom_meeting_sdk_secret
+        - name: KELASCENDIKIA_ZOOM_API_BASE_URL
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: kelascendikia_zoom_api_base_url
+        - name: KELASCENDIKIA_ZOOM_OAUTH_ENDPOINT
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: kelascendikia_zoom_oauth_endpoint
+        - name: KELASCENDIKIA_ZOOM_ACCOUNT_ID
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: kelascendikia_zoom_account_id
+        - name: KELASCENDIKIA_ZOOM_CLIENT_ID
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: kelascendikia_zoom_client_id
+        - name: KELASCENDIKIA_ZOOM_CLIENT_SECRET
+          valueFrom:
+            secretKeyRef:
+              name: app-secrets
+              key: kelascendikia_zoom_client_secret
       imagePullSecrets:
       - name: authdockerhub
