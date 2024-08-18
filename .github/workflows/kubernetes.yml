@@ -21,10 +21,13 @@ jobs:
       run: npm install
 
     - name: Migrating Database
-      working-directory: ${{ github.workspace }}
+      # working-directory: ${{ github.workspace }}
       env:
         KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
-      run: npm run migration:run
+      run: |
+        ts-node /home/runner/work/NodeAdmin/NodeAdmin/node_modules/typeorm/cli.js migration:run -d /home/runner/work/NodeAdmin/NodeAdmin/src/config/ormconfig.ts
+
+      # run: npm run migration:run
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
