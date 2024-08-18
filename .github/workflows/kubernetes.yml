@@ -38,7 +38,7 @@ jobs:
         echo "Database URL starts with: ${KELASCENDIKIA_DATABASE_URL:0:30}..."
 
     - name: Set up environment variables
-      run: echo "PERCOBAAN=${{ secrets.PERCOBAAN }}" >> $GITHUB_ENV
+      run: echo "PERCOBAAN=PercobaanKedua" >> $GITHUB_ENV
       # Gantilah DATABASE_URL dengan variabel yang sesuai
 
     - name: Run Application
