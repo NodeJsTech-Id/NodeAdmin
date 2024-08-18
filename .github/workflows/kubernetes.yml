@@ -66,9 +66,9 @@ jobs:
         mkdir -p $HOME/.kube
         echo "${{ secrets.KUBE_CONFIG }}" > $HOME/.kube/config
 
-    - name: Create Namespace Kubenode
+    - name: Create Namespace
       run: |
-        kubectl create namespace kelascendikia || true
+        kubectl get namespace kelascendikia || kubectl create namespace kelascendikia || true
 
     - name: Create Registry Secret
       env:
@@ -101,7 +101,6 @@ jobs:
         KELASCENDIKIA_ZOOM_CLIENT_ID: ${{ secrets.KELASCENDIKIA_ZOOM_CLIENT_ID }}
         KELASCENDIKIA_ZOOM_CLIENT_SECRET: ${{ secrets.KELASCENDIKIA_ZOOM_CLIENT_SECRET }}
       run: |
-        kubectl create namespace kelascendikia || true
         kubectl create secret generic app-secrets \
           --from-literal=kelascendikia_database_url=${KELASCENDIKIA_DATABASE_URL} \
           --from-literal=kelascendikia_redis_url=${KELASCENDIKIA_REDIS_URL} \
