@@ -68,7 +68,7 @@ jobs:
 
     - name: Create Namespace Kubenode
       run: |
-        kubectl create namespace KelasCendikia || true
+        kubectl create namespace kelascendikia || true
 
     - name: Create Registry Secret
       env:
@@ -81,7 +81,7 @@ jobs:
           --docker-username=${DOCKER_USERNAME} \
           --docker-password=${DOCKER_PASSWORD} \
           --docker-email=${DOCKER_EMAIL} \
-          -n KelasCendikia --dry-run=client -o yaml | kubectl apply -f -
+          -n kelascendikia --dry-run=client -o yaml | kubectl apply -f -
 
     - name: Create App Secret
       env:
@@ -101,7 +101,7 @@ jobs:
         KELASCENDIKIA_ZOOM_CLIENT_ID: ${{ secrets.KELASCENDIKIA_ZOOM_CLIENT_ID }}
         KELASCENDIKIA_ZOOM_CLIENT_SECRET: ${{ secrets.KELASCENDIKIA_ZOOM_CLIENT_SECRET }}
       run: |
-        kubectl create namespace KelasCendikia || true
+        kubectl create namespace kelascendikia || true
         kubectl create secret generic app-secrets \
           --from-literal=kelascendikia_database_url=${KELASCENDIKIA_DATABASE_URL} \
           --from-literal=kelascendikia_redis_url=${KELASCENDIKIA_REDIS_URL} \
@@ -118,7 +118,7 @@ jobs:
           --from-literal=kelascendikia_zoom_account_id=${KELASCENDIKIA_ZOOM_ACCOUNT_ID} \          
           --from-literal=kelascendikia_zoom_client_id=${KELASCENDIKIA_ZOOM_CLIENT_ID} \
           --from-literal=kelascendikia_zoom_client_secret=${KELASCENDIKIA_ZOOM_CLIENT_SECRET} \
-          -n KelasCendikia --dry-run=client -o yaml | kubectl apply -f -
+          -n kelascendikia --dry-run=client -o yaml | kubectl apply -f -
 
     - name: Migrating Database
       run: npm run migration:run
