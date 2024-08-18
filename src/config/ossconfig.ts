@@ -1,8 +1,8 @@
 
-import * as dotenv from 'dotenv'
+// import * as dotenv from 'dotenv'
 import OSS from 'ali-oss'
 
-dotenv.config()
+// dotenv.config()
 
 const oss = new OSS({
     // Obtain access credentials from environment variables. Before you run the sample code, make sure that the KELASCENDIKIA_OSS_ACCESS_KEY_ID and KELASCENDIKIA_OSS_ACCESS_KEY_SECRET environment variables are configured. 
