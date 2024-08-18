@@ -25,7 +25,7 @@ jobs:
       env:
         KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
       run: |
-        ts-node /home/runner/work/NodeAdmin/NodeAdmin/node_modules/typeorm/cli.js migration:run -d /home/runner/work/NodeAdmin/NodeAdmin/src/config/ormconfig.ts
+        npx ts-node /home/runner/work/NodeAdmin/NodeAdmin/node_modules/typeorm/cli.js migration:run -d /home/runner/work/NodeAdmin/NodeAdmin/src/config/ormconfig.ts
 
       # run: npm run migration:run
 
