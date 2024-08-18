@@ -119,6 +119,12 @@ jobs:
           --from-literal=kelascendikia_zoom_client_secret=${KELASCENDIKIA_ZOOM_CLIENT_SECRET} \
           -n kelascendikia --dry-run=client -o yaml | kubectl apply -f -
 
+    - name: Debug Environment Variables
+      env:
+        KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
+      run: |
+        echo "Database URL: ${KELASCENDIKIA_DATABASE_URL}"
+        
     - name: Migrating Database
       run: npm run migration:run
 
