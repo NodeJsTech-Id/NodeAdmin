@@ -26,6 +26,8 @@ import { HomepageMenu } from '../modules/homepage/models/homepage_menu.entity'
 
 // dotenv.config()
 
+console.log(process.env.KELASCENDIKIA_DATABASE_URL);
+
 const AppDataSource = new DataSource({
     // type: process.env.DB_TYPE as 'mysql' || 'mysql',
     type: 'mysql',
