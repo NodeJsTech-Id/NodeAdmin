@@ -25,8 +25,9 @@ import { NewsCategory } from '../modules/news/models/news_category.entity'
 import { HomepageMenu } from '../modules/homepage/models/homepage_menu.entity'
 
 // dotenv.config()
-
+console.log("Buka");
 console.log(process.env.PERCOBAAN);
+console.log("Tutup");
 
 const AppDataSource = new DataSource({
     // type: process.env.DB_TYPE as 'mysql' || 'mysql',

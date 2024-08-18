@@ -32,10 +32,14 @@ jobs:
     #     echo $(node -e "console.log(require('path').resolve('./src/config/ormconfig.ts'))")
             
     - name: Debug Environment Variables
-      env:
-        KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
+      # env:
+        # KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
       run: |
         echo "Database URL starts with: ${KELASCENDIKIA_DATABASE_URL:0:30}..."
+
+    - name: Set up environment variables
+      run: echo "PERCOBAAN=${{ secrets.PERCOBAAN }}" >> $GITHUB_ENV
+      # Gantilah DATABASE_URL dengan variabel yang sesuai
 
     - name: Run Application
       # env:
