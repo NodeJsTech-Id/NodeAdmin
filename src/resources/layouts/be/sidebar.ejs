@@ -16,6 +16,12 @@
         @include(config('app.be_layout').'.sidebar.tenant_sidebar')
         @include(config('app.be_layout').'.sidebar.user_sidebar') -->
         <li class="nav-item">
+            <a class="nav-link" href="/">
+                <i class="fa fa-home fw-bold"></i>
+                <span class="">Homepage</span>
+            </a>
+        </li>
+        <li class="nav-item">
             <a class="nav-link" href="/admin/v1/dashboard">
                 <i class="fa fa-tachometer-alt fw-bold"></i>
                 <span class="">Dashboard</span>

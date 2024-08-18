@@ -80,7 +80,7 @@ export default class AuthController {
 			await this.userRepository.save(data)
 
 			const html = await new Promise<string>((resolve, reject) => {
-				app.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/mail/otp'), {
+				app.render(path.resolve(Module.path, 'views/mail/otp'), {
 					otp,
 					layout: './mails/main'
 				}, (err, html) => {

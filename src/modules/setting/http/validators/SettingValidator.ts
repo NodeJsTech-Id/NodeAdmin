@@ -28,6 +28,13 @@ const SettingServiceSchema: ObjectSchema = Joi.object({
     latitude: Joi.string().allow('').optional(),
     longitude: Joi.string().allow('').optional(),
     api_key: Joi.string().allow('').optional(),
+    mail_from_address: Joi.string().allow('').optional(),
+    mail_from_name: Joi.string().allow('').optional(),
+    mail_mailer: Joi.string().allow('').optional(),
+    mail_host: Joi.string().allow('').optional(),
+    mail_port: Joi.string().allow('').optional(),
+    mail_username: Joi.string().allow('').optional(),
+    mail_password: Joi.string().allow('').optional(),
 })
 
 const SettingValidator = (req: Request, res: Response, next: NextFunction): void => {
