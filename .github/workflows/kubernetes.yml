@@ -36,9 +36,9 @@ jobs:
 
     - name: Run Application
       env:
-        KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
+        PERCOBAAN: "Ini Adalah Percobaan"
       run: |
-        node -e 'console.log(process.env.KELASCENDIKIA_DATABASE_URL);'
+        node -e 'console.log(process.env.PERCOBAAN);'
 
     - name: Migrating Database
       working-directory: ${{ github.workspace }}
