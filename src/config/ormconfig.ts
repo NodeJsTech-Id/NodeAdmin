@@ -24,7 +24,7 @@ import { News } from '../modules/news/models/news.entity'
 import { NewsCategory } from '../modules/news/models/news_category.entity'
 import { HomepageMenu } from '../modules/homepage/models/homepage_menu.entity'
 
-// dotenv.config()
+dotenv.config()
 
 console.log(process.env.KELASCENDIKIA_DATABASE_URL);
 
