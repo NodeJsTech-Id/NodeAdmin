@@ -28,6 +28,12 @@ jobs:
     #     echo $(ls ./node_modules/typeorm)
     #     echo $(node -e "console.log(require('path').resolve('./src/config/ormconfig.ts'))")
             
+    - name: Debug Environment Variables
+      env:
+        KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
+      run: |
+        echo "Database URL starts with: ${KELASCENDIKIA_DATABASE_URL:0:30}..."
+
     - name: Migrating Database
       working-directory: ${{ github.workspace }}
       env:
