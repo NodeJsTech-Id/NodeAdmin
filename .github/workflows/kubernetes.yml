@@ -34,11 +34,11 @@ jobs:
       run: |
         echo "Database URL starts with: ${KELASCENDIKIA_DATABASE_URL:0:30}..."
 
-    - name: Migrating Database
-      working-directory: ${{ github.workspace }}
-      env:
-        KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
-      run: sudo npx ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
+    # - name: Migrating Database
+    #   working-directory: ${{ github.workspace }}
+    #   env:
+    #     KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
+    #   run: sudo npx ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
 
       # run: npm run migration:run
 
@@ -150,7 +150,13 @@ jobs:
     #     KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
     #   run: |
     #     echo "Database URL starts with: ${KELASCENDIKIA_DATABASE_URL:0:20}..."
-                        
+
+    - name: Migrating Database
+      working-directory: ${{ github.workspace }}
+      env:
+        KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
+      run: sudo npx ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
+
     - name: Deploy to Kubernetes
       run: |
         kubectl apply -f kubernetes/kelascendikia-deployment.yaml
