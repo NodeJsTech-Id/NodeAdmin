@@ -111,10 +111,10 @@ jobs:
           --from-literal=kelascendikia_session_secret=${KELASCENDIKIA_SESSION_SECRET} \
           --from-literal=kelascendikia_jwt_secret=${KELASCENDIKIA_JWT_SECRET} \
           --from-literal=kelascendikia_zoom_meeting_sdk_key=${KELASCENDIKIA_ZOOM_MEETING_SDK_KEY} \
-          --from-literal=kelascendikia_zoom_meeting_sdk_secret=${KELASCENDIKIA_ZOOM_MEETING_SDK_SECRET} \          
+          --from-literal=kelascendikia_zoom_meeting_sdk_secret=${KELASCENDIKIA_ZOOM_MEETING_SDK_SECRET} \
           --from-literal=kelascendikia_zoom_api_base_url=${KELASCENDIKIA_ZOOM_API_BASE_URL} \
           --from-literal=kelascendikia_zoom_oauth_endpoint=${KELASCENDIKIA_ZOOM_OAUTH_ENDPOINT} \
-          --from-literal=kelascendikia_zoom_account_id=${KELASCENDIKIA_ZOOM_ACCOUNT_ID} \          
+          --from-literal=kelascendikia_zoom_account_id=${KELASCENDIKIA_ZOOM_ACCOUNT_ID} \
           --from-literal=kelascendikia_zoom_client_id=${KELASCENDIKIA_ZOOM_CLIENT_ID} \
           --from-literal=kelascendikia_zoom_client_secret=${KELASCENDIKIA_ZOOM_CLIENT_SECRET} \
           -n kelascendikia --dry-run=client -o yaml | kubectl apply -f -
