@@ -20,28 +20,28 @@ jobs:
     - name: Install dependencies
       run: npm install
 
-    - name: Debug path resolution
-      run: |
-        echo "Resolving paths:"
-        echo $(pwd)
-        echo $(ls ./src/config)
-        echo $(ls ./node_modules/typeorm)
-        echo $(node -e "console.log(require('path').resolve('./src/config/ormconfig.ts'))")
+    # - name: Debug path resolution
+    #   run: |
+    #     echo "Resolving paths:"
+    #     echo $(pwd)
+    #     echo $(ls ./src/config)
+    #     echo $(ls ./node_modules/typeorm)
+    #     echo $(node -e "console.log(require('path').resolve('./src/config/ormconfig.ts'))")
             
-    # - name: Migrating Database
-    #   working-directory: ${{ github.workspace }}
-    #   env:
-    #     KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
-    #   run: npx ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
+    - name: Migrating Database
+      working-directory: ${{ github.workspace }}
+      env:
+        KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
+      run: sudo npx ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
 
       # run: npm run migration:run
 
-    - name: Run TypeORM migrations
-      env:
-        KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
-      run: |
-        ABSOLUTE_PATH=$(node -e "console.log(require('path').resolve('./src/config/ormconfig.ts'))")
-        npx ts-node ./node_modules/typeorm/cli.js migration:run -d $ABSOLUTE_PATH
+    # - name: Run TypeORM migrations
+    #   env:
+    #     KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
+    #   run: |
+    #     ABSOLUTE_PATH=$(node -e "console.log(require('path').resolve('./src/config/ormconfig.ts'))")
+    #     npx ts-node ./node_modules/typeorm/cli.js migration:run -d $ABSOLUTE_PATH
 
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
