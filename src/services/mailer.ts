@@ -1,22 +1,25 @@
 import nodemailer from 'nodemailer'
 import SMTPTransport from 'nodemailer/lib/smtp-transport'
 import 'dotenv/config'
-
-// Konfigurasi transporter
-const transporter = nodemailer.createTransport({
-    host: process.env.MAIL_HOST, // Ganti dengan host SMTP Anda
-    port: process.env.MAIL_PORT, // Port SMTP (587 untuk TLS, 465 untuk SSL, 25 untuk tanpa enkripsi)
-    secure: process.env.MAIL_ENCRYPTION, // true untuk 465, false untuk lainnya
-    auth: {
-        user: process.env.MAIL_USERNAME, // Ganti dengan email Anda
-        pass: process.env.MAIL_PASSWORD // Ganti dengan password email Anda
-    }
-} as SMTPTransport.Options)
+import AppDataSource from '../config/ormconfig'
+import { Setting } from '../modules/setting/models/setting.entity'
 
 // Fungsi untuk mengirim email
 export const sendMail = async (to: string, subject: string, text: string, html?: string) => {
+    const settingQuery = await AppDataSource.getRepository(Setting).find()
+    const setting = settingQuery[0]
+    // Konfigurasi transporter
+    const transporter = nodemailer.createTransport({
+        host: setting.mail_host, // Ganti dengan host SMTP Anda
+        port: setting.mail_port, // Port SMTP (587 untuk TLS, 465 untuk SSL, 25 untuk tanpa enkripsi)
+        secure: false, // true untuk 465, false untuk lainnya
+        auth: {
+            user: setting.mail_username, // Ganti dengan email Anda
+            pass: setting.mail_password // Ganti dengan password email Anda
+        }
+    } as SMTPTransport.Options)
     const mailOptions = {
-        from: `"${process.env.MAIL_FROM_NAME}" <${process.env.MAIL_FROM_ADDRESS}>`, // Ganti dengan nama dan email Anda
+        from: `"${setting.mail_from_name}" <${setting.mail_from_address}>`, // Ganti dengan nama dan email Anda
         to: to,
         subject: subject,
         text: text,

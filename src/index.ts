@@ -24,11 +24,12 @@ import { createClient } from 'redis'
 import ResponseHandler from './ResponseHandler'
 
 const app = express()
-const PORT = process.env.APP_PORT
+// const PORT = process.env.APP_PORT
+const PORT = 3000
 
 // config CORS
 const corsOptions = {
-    origin: process.env.APP_HOST+`:${PORT}/`,
+    origin: `http://localhost:${PORT}/`,
     optionsSuccessStatus: 200,
     methods: 'GET,POST,PUT,DELETE',
     credentials: true
@@ -38,7 +39,8 @@ app.use(cors(corsOptions))
 
 // redis
 const clientRedis = createClient({
-    url: process.env.REDIS_URL
+    url: process.env.KELASCENDIKIA_REDIS_URL,
+    database: 0
 })
 
 clientRedis.on('error', (err) => {
@@ -75,7 +77,7 @@ app.use(cookieParser())
 app.use(express.static('public'))
 
 // Configure session and passport
-app.use(session({ secret: process.env.SESSION_SECRET || 'secret', resave: false, saveUninitialized: false }))
+app.use(session({ secret: process.env.KELASCENDIKIA_SESSION_SECRET || 'secret', resave: false, saveUninitialized: false }))
 app.use(passport.initialize())
 app.use(passport.session())
 
@@ -114,7 +116,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, async (email, passwor
 
 passport.use(new JwtStrategy({
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.JWT_SECRET || 'secret'
+    secretOrKey: process.env.KELASCENDIKIA_JWT_SECRET || 'secret'
 }, async (jwtPayload, done) => {
     console.log(jwtPayload)
     console.log(jwtPayload.id)
@@ -175,7 +177,7 @@ const initializeApp = async () => {
         await AppDataSource.initialize()
         console.log('Data Source has been initialized!')
         app.listen(PORT, () => {
-            console.log(`Server is running on ${process.env.APP_HOST}:${PORT}`)
+            console.log(`Server is running on http://localhost:${PORT}`)
         })
     } catch (error) {
         console.error('Error during Data Source initialization:', error)

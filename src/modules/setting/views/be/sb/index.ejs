@@ -230,6 +230,83 @@
                         </div>
                     </div>
                     <div class="form-group row">
+                        <label for="mail_from_address" class="col-md-3 col-form-label text-md-right">Mail From Address [mail_from_address]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="mail_from_address" type="text" class="form-control form-control-user <% if(getError('mail_from_address')) { %> is-invalid <% } %>" name="mail_from_address" value="<%= data.mail_from_address %>" autocomplete="mail_from_address">
+                            <% if(getError('mail_from_address')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('mail_from_address')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="mail_from_name" class="col-md-3 col-form-label text-md-right">Mail From Name [mail_from_name]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="mail_from_name" type="text" class="form-control form-control-user <% if(getError('mail_from_name')) { %> is-invalid <% } %>" name="mail_from_name" value="<%= data.mail_from_name %>" autocomplete="mail_from_name">
+                            <% if(getError('mail_from_name')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('mail_from_name')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="mail_mailer" class="col-md-3 col-form-label text-md-right">Mail Mailer [mail_mailer]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="mail_mailer" type="text" class="form-control form-control-user <% if(getError('mail_mailer')) { %> is-invalid <% } %>" name="mail_mailer" value="<%= data.mail_mailer %>" autocomplete="mail_mailer">
+                            <% if(getError('mail_mailer')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('mail_mailer')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="mail_host" class="col-md-3 col-form-label text-md-right">Mail Host [mail_host]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="mail_host" type="text" class="form-control form-control-user <% if(getError('mail_host')) { %> is-invalid <% } %>" name="mail_host" value="<%= data.mail_host %>" autocomplete="mail_host">
+                            <% if(getError('mail_host')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('mail_host')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="mail_port" class="col-md-3 col-form-label text-md-right">Mail Port [mail_port]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="mail_port" type="text" class="form-control form-control-user <% if(getError('mail_port')) { %> is-invalid <% } %>" name="mail_port" value="<%= data.mail_port %>" autocomplete="mail_port">
+                            <% if(getError('mail_port')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('mail_port')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="mail_username" class="col-md-3 col-form-label text-md-right">Mail Username [mail_username]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="mail_username" type="text" class="form-control form-control-user <% if(getError('mail_username')) { %> is-invalid <% } %>" name="mail_username" value="<%= data.mail_username %>" autocomplete="mail_username">
+                            <% if(getError('mail_username')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('mail_username')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
+                        <label for="mail_password" class="col-md-3 col-form-label text-md-right">Mail Password [mail_password]</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="mail_password" type="password" class="form-control form-control-user <% if(getError('mail_password')) { %> is-invalid <% } %>" name="mail_password" value="<%= data.mail_password %>" autocomplete="mail_password">
+                            <% if(getError('mail_password')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('mail_password')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row">
                         <div class="col-md-12 offset-md-12">
                             <button type="submit" class="btn btn-user btn-primary btn-block">
                                 Save

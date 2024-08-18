@@ -27,13 +27,14 @@ import { HomepageMenu } from '../modules/homepage/models/homepage_menu.entity'
 dotenv.config()
 
 const AppDataSource = new DataSource({
-    type: process.env.DB_TYPE as 'mysql' || 'mysql',
+    // type: process.env.DB_TYPE as 'mysql' || 'mysql',
+    type: 'mysql',
     // host: process.env.DB_HOST,
     // port: parseInt(process.env.DB_PORT as string, 10),
     // username: process.env.DB_USERNAME,
     // password: process.env.DB_PASSWORD,
     // database: process.env.DB_DATABASE,
-    url: process.env.DATABASE_URL_KELASCENDIKIA,
+    url: process.env.KELASCENDIKIA_DATABASE_URL,
     entities: [
         Access,
         Role,
@@ -62,7 +63,8 @@ const AppDataSource = new DataSource({
         path.resolve(__dirname, '../modules/**/migrations/*.ts')
     ],
     synchronize: false,
-    logging: process.env.DB_LOGGING as unknown as boolean,
+    // logging: process.env.DB_LOGGING as unknown as boolean,
+    logging: false,
 })
 
 export default AppDataSource

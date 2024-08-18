@@ -17,7 +17,7 @@ export const ensureAuthenticatedApi = async (req: Request, res: Response, next: 
     }
     const checkToken = await clientRedis.get(token)
     if (checkToken == 'blacklisted') return ResponseHandler.error(res, "Unauthenticated", null, 401)
-    jwt.verify(token, process.env.JWT_SECRET || 'secret', (err, decoded) => {
+    jwt.verify(token, process.env.KELASCENDIKIA_JWT_SECRET || 'secret', (err, decoded) => {
         if (err) {
             return ResponseHandler.error(res, "Unauthenticated", null, 401)
         }

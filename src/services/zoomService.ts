@@ -10,9 +10,9 @@ export default class ZoomService {
             return JSON.parse(token)
         }
 
-        const secret_buff = Buffer.from(`${process.env.ZOOM_CLIENT_ID}:${process.env.ZOOM_CLIENT_SECRET}`)
+        const secret_buff = Buffer.from(`${process.env.KELASCENDIKIA_ZOOM_CLIENT_ID}:${process.env.KELASCENDIKIA_ZOOM_CLIENT_SECRET}`)
         const secret_encode = secret_buff.toString('base64')
-        const post_url = `${process.env.ZOOM_OAUTH_ENDPOINT}?grant_type=account_credentials&account_id=${process.env.ZOOM_ACCOUNT_ID}`
+        const post_url = `${process.env.KELASCENDIKIA_ZOOM_OAUTH_ENDPOINT}?grant_type=account_credentials&account_id=${process.env.KELASCENDIKIA_ZOOM_ACCOUNT_ID}`
         const response = await axios.post(
             post_url,
             {},
@@ -58,7 +58,7 @@ export default class ZoomService {
             },
         }
         const req = await axios.post(
-            `${process.env.ZOOM_API_BASE_URL}/users/${user}/meetings`,
+            `${process.env.KELASCENDIKIA_ZOOM_API_BASE_URL}/users/${user}/meetings`,
             dataMeeting,
             {
                 headers: {
@@ -81,12 +81,12 @@ export default class ZoomService {
         const oHeader = { alg: 'HS256', typ: 'JWT' }
     
         const oPayload = {
-            sdkKey: process.env.ZOOM_MEETING_SDK_KEY,
+            sdkKey: process.env.KELASCENDIKIA_ZOOM_MEETING_SDK_KEY,
             mn: param.meeting_number,
             role: param.role,
             iat: iat,
             exp: exp,
-            appKey: process.env.ZOOM_MEETING_SDK_KEY,
+            appKey: process.env.KELASCENDIKIA_ZOOM_MEETING_SDK_KEY,
             tokenExp: iat + 60 * 60 * 2,
         }
     
@@ -96,7 +96,7 @@ export default class ZoomService {
             'HS256',
             sHeader,
             sPayload,
-            process.env.ZOOM_MEETING_SDK_SECRET,
+            process.env.KELASCENDIKIA_ZOOM_MEETING_SDK_SECRET,
         )
         return signature
     }

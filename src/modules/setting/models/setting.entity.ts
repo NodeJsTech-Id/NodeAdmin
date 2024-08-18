@@ -74,6 +74,27 @@ export class Setting {
     @Column({ type: 'text', nullable: true, collation: 'utf8mb4_unicode_ci' })
     api_key?: string
 
+    @Column({ nullable: true })
+    mail_from_address?: string
+
+    @Column({ nullable: true })
+    mail_from_name?: string
+
+    @Column({ nullable: true })
+    mail_mailer?: string
+
+    @Column({ nullable: true })
+    mail_host?: string
+
+    @Column({ nullable: true })
+    mail_port?: string
+
+    @Column({ nullable: true })
+    mail_username?: string
+
+    @Column({ nullable: true })
+    mail_password?: string
+
     @Column({ type: 'char', length: 36, nullable: true, collation: 'utf8mb4_unicode_ci' })
     created_by?: string
 
