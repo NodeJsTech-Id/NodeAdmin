@@ -125,10 +125,16 @@ jobs:
       run: |
         echo "Database URL starts with: ${KELASCENDIKIA_DATABASE_URL:0:20}..."
         
+    - name: List Files
+      run: |
+        ls -la /home/runner/work/NodeAdmin/NodeAdmin/src/config
+                
     - name: Migrating Database
+      working-directory: ${{ github.workspace }}
       env:
         KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
-      run: npm run migration:run
+      run: ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts        
+      # run: npm run migration:run
 
     - name: Deploy to Kubernetes
       run: |
