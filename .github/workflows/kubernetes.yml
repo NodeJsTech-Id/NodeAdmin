@@ -21,11 +21,10 @@ jobs:
       run: npm install
 
     - name: Migrating Database
-      # working-directory: ${{ github.workspace }}
+      working-directory: ${{ github.workspace }}
       env:
         KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
-      run: |
-        npx ts-node /home/runner/work/NodeAdmin/NodeAdmin/node_modules/typeorm/cli.js migration:run -d /home/runner/work/NodeAdmin/NodeAdmin/src/config/ormconfig.ts
+      run: npx ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
 
       # run: npm run migration:run
 
