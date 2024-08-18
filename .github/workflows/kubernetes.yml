@@ -25,6 +25,7 @@ jobs:
         echo "Resolving paths:"
         echo $(pwd)
         echo $(ls ./src/config)
+        echo $(ls ./node_modules/typeorm)
         echo $(node -e "console.log(require('path').resolve('./src/config/ormconfig.ts'))")
             
     - name: Migrating Database
