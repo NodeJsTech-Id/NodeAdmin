@@ -136,7 +136,7 @@
                                 <td><%= (i+1)+(paginate_data.page_size*(paginate_data.current_page-1)) %></td>
                                 <td class="text-nowrap"><%= data.class.name %></td>
                                 <td class="text-nowrap"><%= data.room.name %></td>
-                                <td class="text-nowrap"><%= data.mentor.name %> | <%= data.mentor.email %></td>
+                                <td class="text-nowrap"><%= data.mentor?.name %> | <%= data.mentor?.email %></td>
                                 <td>
                                     <% data.schedules.forEach(schedule => { %>
                                         <span class="badge text-bg-primary"><%= schedule.name %> (<%= schedule.day %> / <%= schedule.start %> S.D <%= schedule.end %>)</span>
