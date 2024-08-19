@@ -48,11 +48,11 @@ jobs:
     - name: Set up environment variables
       run: echo "KELASCENDIKIA_DATABASE_URL=${{ secrets.KELASCENDIKIA_DATABASE_URL }}" >> $GITHUB_ENV
 
-    - name: Install ts-node
-      run: npm install -g ts-node
+    # - name: Install ts-node
+    #   run: npm install -g ts-node
 
     - name: Migrating Database
-      run: sudo npx ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
+      run: ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
 
         
       # run: npm run migration:run
