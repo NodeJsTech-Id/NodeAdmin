@@ -39,9 +39,9 @@ jobs:
     #     echo "Database URL starts with: ${KELASCENDIKIA_DATABASE_URL:0:30}..."
 
 
-    - name: Echo
-      run: |
-        echo "echo"
+    # - name: Echo
+    #   run: |
+    #     echo "echo"
 
     - name: Set Up Environment Variables for Migrating
       run: echo "KELASCENDIKIA_DATABASE_URL=${{ secrets.KELASCENDIKIA_DATABASE_URL }}" >> $GITHUB_ENV

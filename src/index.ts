@@ -179,7 +179,7 @@ function loadRoutes(modulePath: any) {
 const modulesPath = path.join(__dirname, 'modules');
 if (fs.existsSync(modulesPath)) {
     fs.readdirSync(modulesPath).forEach(module => {
-        console.log(`Before run loadRoutes, module path: ${modulesPath}`);
+        console.log(`Before run loadRoutes, module path: ${path.join(modulesPath, module)}`);
         loadRoutes(path.join(modulesPath, module));
     });
 } else {
