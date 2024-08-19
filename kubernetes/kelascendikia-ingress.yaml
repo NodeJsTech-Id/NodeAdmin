@@ -6,6 +6,13 @@ metadata:
   annotations:
     nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
+  tls:
+    - hosts:
+      - kelascendikia.id
+      secretName: kelascendikia-id-tls
+    - hosts:
+      - kelascendikia.com
+      secretName: kelascendikia-com-tls
   rules:
   - host: kelascendikia.id
     http:
