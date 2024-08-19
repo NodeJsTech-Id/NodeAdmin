@@ -53,7 +53,7 @@ jobs:
 
     - name: Migrating Database
       # working-directory: ${{ github.workspace }}
-      run: npx ts-node ./node_modules/typeorm/cli.js migration:run -d /home/runner/work/NodeAdmin/NodeAdmin/src/config/ormconfig.ts
+      run: npx ts-node /home/runner/work/NodeAdmin/NodeAdmin/node_modules/typeorm/cli.js migration:run -d /home/runner/work/NodeAdmin/NodeAdmin/src/config/ormconfig.ts
 
       # run: npm run migration:run
       # run: sudo ./migrate.sh
