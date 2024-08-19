@@ -45,6 +45,9 @@ jobs:
     #   run: |
     #     node -e 'console.log(process.env.PERCOBAAN);'
 
+    - name: Print environment variables
+      run: printenv
+
     - name: Migrating Database
       working-directory: ${{ github.workspace }}
       env:
