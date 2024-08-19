@@ -157,19 +157,33 @@ app.set('views', path.resolve(__dirname,'resources'))
 app.set('layout',path.resolve(__dirname,'resources/layouts/main'))
 
 // Auto load all route file in modules
-function loadRoutes(modulePath: string) {
+function loadRoutes(modulePath: any) {
     fs.readdirSync(modulePath, { withFileTypes: true }).forEach(file => {
-        if (file.isDirectory() && file.name == 'routes') {
-            loadRoutes(path.join(modulePath,file.name))
-        } else if ( file.isFile() && (file.name.match('web') || file.name.match('api')) ) {
-            const route = require(path.join(modulePath,file.name)).default
-            app.use('/', route)
+        const filePath = path.join(modulePath, file.name);
+        if (file.isDirectory() && file.name === 'routes') {
+            // console.log(`Loading routes from directory: ${filePath}`);
+            loadRoutes(filePath);
+        } else if (file.isFile() && (file.name.includes('web') || file.name.includes('api'))) {
+            try {
+                console.log(`Loading route file: ${filePath}`);
+                const route = require(filePath).default;
+                app.use('/', route);
+            } catch (error) {
+                console.error(`Error loading route file ${filePath}:`, error);
+            }
         }
-    })
+    });
 }
-fs.readdirSync(path.join(__dirname,'modules')).forEach(module => {
-    loadRoutes(path.join(__dirname,'modules',module))
-})
+
+// Start loading routes from the 'modules' directory
+const modulesPath = path.join(__dirname, 'modules');
+if (fs.existsSync(modulesPath)) {
+    fs.readdirSync(modulesPath).forEach(module => {
+        loadRoutes(path.join(modulesPath, module));
+    });
+} else {
+    console.error(`Modules directory not found: ${modulesPath}`);
+}
 
 // Ekspor aplikasi dan inisialisasi AppDataSource
 const initializeApp = async () => {
