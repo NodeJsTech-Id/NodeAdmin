@@ -46,10 +46,10 @@ jobs:
     #     node -e 'console.log(process.env.PERCOBAAN);'
 
     - name: Migrating Database
-  working-directory: ${{ github.workspace }}
-  env:
-    KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
-  run: sudo npx ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
+      working-directory: ${{ github.workspace }}
+      env:
+        KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
+      run: sudo npx ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
 
         
       # run: npm run migration:run
