@@ -53,9 +53,7 @@ jobs:
 
     - name: Migrating Database
       working-directory: ${{ github.workspace }}
-      env:
-        KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
-      run: ts-node ./node_modules/typeorm/cli.js migration:run -d $(pwd)/src/config/ormconfig.ts
+      run: ts-node ./node_modules/typeorm/cli.js migration:run -d $(node -e "console.log(require('path').resolve('./src/config/ormconfig.ts'))")
       # run: npm run migration:run
 
     # - name: Run TypeORM migrations
