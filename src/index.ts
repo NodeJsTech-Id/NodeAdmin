@@ -187,6 +187,10 @@ if (fs.existsSync(modulesPath)) {
 }
 console.log(`Loading route file end`);
 
+app.use('/test', (req, res) => {
+    res.send('About Us');
+})
+
 // Ekspor aplikasi dan inisialisasi AppDataSource
 const initializeApp = async () => {
     try {
