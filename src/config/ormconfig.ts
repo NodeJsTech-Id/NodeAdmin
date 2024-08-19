@@ -26,7 +26,14 @@ import { HomepageMenu } from '../modules/homepage/models/homepage_menu.entity'
 
 dotenv.config()
 // console.log("Buka");
-console.log('KELASCENDIKIA_DATABASE_URL:', process.env.KELASCENDIKIA_DATABASE_URL);
+const databaseUrl = process.env.KELASCENDIKIA_DATABASE_URL;
+
+// Redact part of the URL for security
+const redactedUrl = databaseUrl 
+  ? `${databaseUrl.slice(0, 10)}****${databaseUrl.slice(-5)}` 
+  : 'Not defined';
+
+console.log(`KELASCENDIKIA_DATABASE_URL: ${redactedUrl}`);
 // console.log("Tutup");
 
 const AppDataSource = new DataSource({
