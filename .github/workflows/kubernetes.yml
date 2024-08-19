@@ -171,3 +171,4 @@ jobs:
       run: |
         kubectl apply -f kubernetes/kelascendikia-deployment.yaml
         kubectl apply -f kubernetes/kelascendikia-service.yaml
+        kubectl apply -f kubernetes/kelascendikia-ingress.yaml

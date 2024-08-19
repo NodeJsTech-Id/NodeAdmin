@@ -4,11 +4,10 @@ metadata:
   name: kelascendikia-service
   namespace: kelascendikia
 spec:
-  type: NodePort
+  type: LoadBalancer
   selector:
     app: kelascendikia
   ports:
     - protocol: TCP
       port: 3000
       targetPort: 3000
-      nodePort: 32100
