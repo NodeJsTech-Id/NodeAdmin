@@ -11,7 +11,6 @@ const userSchema: ObjectSchema = Joi.object({
     schedules: Joi.array().min(1).required(),
     class_id: Joi.string().required(),
     room_id: Joi.string().required(),
-    mentor_id: Joi.string().required(),
 })
 
 const MeetingUpdateValidator = (req: Request, res: Response, next: NextFunction): void => {
