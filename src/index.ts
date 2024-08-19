@@ -159,7 +159,7 @@ app.set('layout',path.resolve(__dirname,'resources/layouts/main'))
 // Auto load all route file in modules
 console.log(`Loading route file start`);
 
-function loadRoutes(modulePath: any) {
+const loadRoutes = (modulePath: any) => {
     console.log(`Loading routes from module path: ${modulePath}`);
     fs.readdirSync(modulePath, { withFileTypes: true }).forEach(file => {
         const filePath = path.join(modulePath, file.name);
