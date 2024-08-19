@@ -51,11 +51,6 @@ jobs:
     - name: Install ts-node
       run: npm install -g ts-node
 
-    - name: Check File Permissions
-      run: |
-        ls -l ./src/config
-        cat ./src/config/ormconfig.ts
-
     - name: Migrating Database
       working-directory: ${{ github.workspace }}
       run: ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
