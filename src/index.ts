@@ -27,7 +27,7 @@ import ResponseHandler from './ResponseHandler'
 const https = require('https')
 const app = express()
 // const PORT = process.env.APP_PORT
-const PORT = 443
+const PORT = 3000
 
 // https config
 // Load certificates and private keys for each domain
