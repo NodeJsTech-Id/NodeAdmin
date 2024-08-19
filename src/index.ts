@@ -38,7 +38,7 @@ const corsOptions = {
 app.use(cors(corsOptions))
 
 // redis
-console.log(process.env.KELASCENDIKIA_REDIS_URL)
+console.log(process.env.KELASCENDIKIA_REDIS_URL?.slice(0, 64))
 const clientRedis = createClient({
     url: process.env.KELASCENDIKIA_REDIS_URL,
     database: 0
