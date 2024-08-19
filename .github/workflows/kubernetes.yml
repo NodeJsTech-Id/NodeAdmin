@@ -191,4 +191,4 @@ jobs:
     
     - name: Clean up SSL files
       run: |
-        rm kelascendikia_ssl_id_cert.crt kelascendikia_ssl_id_cert.key kelascendikia_ssl_com_cert.crt kelascendikia_ssl_com_cert.key
+        rm kelascendikia_ssl_id_cert.crt kelascendikia_ssl_id_key.key kelascendikia_ssl_com_cert.crt kelascendikia_ssl_com_key.key
