@@ -22,10 +22,37 @@ import cors from 'cors'
 import AppDataSource from './config/ormconfig'
 import { createClient } from 'redis'
 import ResponseHandler from './ResponseHandler'
+// import https from 'https'
 
+const https = require('https')
 const app = express()
 // const PORT = process.env.APP_PORT
-const PORT = 3000
+const PORT = 443
+
+// https config
+// Load certificates and private keys for each domain
+const certificates = {
+    'kelascendikia.id': {
+        key: process.env.KELASCENDIKIA_SSL_ID_KEY,
+        cert: process.env.KELASCENDIKIA_SSL_ID_CERT
+    },
+    'kelascendikia.com': {
+        key: process.env.KELASCENDIKIA_SSL_COM_KEY,
+        cert: process.env.KELASCENDIKIA_SSL_COM_CERT
+    }
+}
+const server = https.createServer({
+    SNICallback: (hostname: string | number, callback: (arg0: null, arg1: any) => void) => {
+        if (certificates[hostname as keyof typeof certificates]) {
+            callback(null, https.createSecureContext(certificates[hostname as keyof typeof certificates]));
+        } else {
+            callback(null, https.createSecureContext({
+                key: fs.readFileSync('path/to/default-private.key'),
+                cert: fs.readFileSync('path/to/default-certificate.crt')
+            }));
+        }
+    }
+}, app)
 
 // config CORS
 const corsOptions = {
@@ -176,7 +203,7 @@ const initializeApp = async () => {
     try {
         await AppDataSource.initialize()
         console.log('Data Source has been initialized!')
-        app.listen(PORT, () => {
+        server.listen(PORT, () => {
             console.log(`Server is running on http://localhost:${PORT}`)
         })
     } catch (error) {
