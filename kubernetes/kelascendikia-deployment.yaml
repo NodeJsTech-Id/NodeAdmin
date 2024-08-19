@@ -1,20 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: KelasCendikia
+  name: kelascendikia
   namespace: kelascendikia
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: KelasCendikia
+      app: kelascendikia
   template:
     metadata:
       labels:
-        app: KelasCendikia
+        app: kelascendikia
     spec:
       containers:
-      - name: KelasCendikia
+      - name: kelascendikia
         image: docker.io/flazhost/kelascendikia:latest
         ports:
         - containerPort: 5000
