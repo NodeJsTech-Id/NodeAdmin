@@ -5,7 +5,6 @@ on:
     branches: [kelascendikia-kubernetes]
 
 jobs:
-  secrets: inherit
   deploy:
     runs-on: ubuntu-latest
     env:
@@ -49,6 +48,7 @@ jobs:
         node -e 'console.log(process.env.PERCOBAAN);'
 
     - name: Migrating Database
+      secrets: inherit
       working-directory: ${{ github.workspace }}
       run: sudo npx ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
 
