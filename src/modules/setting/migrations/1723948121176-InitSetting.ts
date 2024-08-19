@@ -13,6 +13,13 @@ export class InitSetting1723948121176 implements MigrationInterface {
             icon: "modules/setting/laravel.png",
             logo: "modules/setting/laravel.png",
             login_image: "modules/setting/laravel.png",
+            mail_from_address: "",
+            mail_from_name: "",
+            mail_mailer: "",
+            mail_host: "",
+            mail_port: "",
+            mail_username: "",
+            mail_password: "",
         })
     }
 
