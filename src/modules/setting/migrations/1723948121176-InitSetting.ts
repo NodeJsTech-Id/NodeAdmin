@@ -2,7 +2,7 @@ import { MigrationInterface, QueryRunner } from "typeorm"
 import { v6 as uuidv6 } from 'uuid'
 import { Setting } from "../models/setting.entity"
 
-export class InitSetting1721122336080 implements MigrationInterface {
+export class InitSetting1723948121176 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.manager.insert(Setting, {
