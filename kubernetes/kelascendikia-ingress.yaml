@@ -16,7 +16,7 @@ spec:
           service:
             name: kelascendikia-service
             port:
-              number: 32100
+              number: 80
   - host: kelascendikia.com
     http:
       paths:
@@ -26,4 +26,4 @@ spec:
           service:
             name: kelascendikia-service
             port:
-              number: 32100
+              number: 80
