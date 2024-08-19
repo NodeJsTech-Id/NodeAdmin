@@ -45,7 +45,7 @@ jobs:
     #   run: |
     #     node -e 'console.log(process.env.PERCOBAAN);'
 
-    - name: Set up environment variables
+    - name: Set Up Environment Variables for Migrating
       run: echo "KELASCENDIKIA_DATABASE_URL=${{ secrets.KELASCENDIKIA_DATABASE_URL }}" >> $GITHUB_ENV
 
     - name: Install ts-node
