@@ -158,11 +158,17 @@ app.set('layout',path.resolve(__dirname,'resources/layouts/main'))
 
 // Auto load all route file in modules
 console.log(`Loading route file start`);
+
 function loadRoutes(modulePath: any) {
+    console.log(`Loading routes from module path: ${modulePath}`);
     fs.readdirSync(modulePath, { withFileTypes: true }).forEach(file => {
         const filePath = path.join(modulePath, file.name);
-        if (file.isDirectory() && file.name === 'routes') {
-            loadRoutes(filePath);
+        console.log(`Processing file: ${filePath}`);
+        if (file.isDirectory()) {
+            console.log(`Directory found: ${filePath}`);
+            if (file.name === 'routes') {
+                loadRoutes(filePath);
+            }
         } else if (file.isFile() && (file.name.includes('web') || file.name.includes('api'))) {
             try {
                 console.log(`Loading route file: ${filePath}`);
@@ -179,7 +185,7 @@ function loadRoutes(modulePath: any) {
 const modulesPath = path.join(__dirname, 'modules');
 if (fs.existsSync(modulesPath)) {
     fs.readdirSync(modulesPath).forEach(module => {
-        console.log(`Before run loadRoutes, module path: ${path.join(modulesPath, module)}`);
+        console.log(`Before run loadRoutes`);
         loadRoutes(path.join(modulesPath, module));
     });
 } else {
