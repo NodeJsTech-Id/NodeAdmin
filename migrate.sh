@@ -1,2 +1,0 @@
-export KELASCENDIKIA_DATABASE_URL=${KELASCENDIKIA_DATABASE_URL}
-npm run migration:run
