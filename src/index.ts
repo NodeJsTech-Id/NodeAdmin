@@ -27,7 +27,7 @@ const app = express()
 // const PORT = process.env.APP_PORT
 const PORT = 3000
 
-// config CORS
+// config CORS :
 const corsOptions = {
     origin: `http://localhost:${PORT}/`,
     optionsSuccessStatus: 200,
