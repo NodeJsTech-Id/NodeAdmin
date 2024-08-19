@@ -5,7 +5,7 @@ Node Admin is a starter pack for developing NodeJs application. This application
 
 ## Features
 
-1. User Management
+1. Users Management
 2. Profile Management
 3. Access Management Based on Route
 4. User Role Management with Multiple Role
