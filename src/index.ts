@@ -27,7 +27,7 @@ const app = express()
 // const PORT = process.env.APP_PORT
 const PORT = 3000
 
-// config CORS
+// config CORS :
 const corsOptions = {
     origin: `http://localhost:${PORT}/`,
     optionsSuccessStatus: 200,
@@ -157,19 +157,41 @@ app.set('views', path.resolve(__dirname,'resources'))
 app.set('layout',path.resolve(__dirname,'resources/layouts/main'))
 
 // Auto load all route file in modules
-function loadRoutes(modulePath: string) {
+console.log(`Loading route file start`);
+
+const loadRoutes = (modulePath: any) => {
+    console.log(`Loading routes from module path: ${modulePath}`);
     fs.readdirSync(modulePath, { withFileTypes: true }).forEach(file => {
-        if (file.isDirectory() && file.name == 'routes') {
-            loadRoutes(path.join(modulePath,file.name))
-        } else if ( file.isFile() && (file.name.match('web') || file.name.match('api')) ) {
-            const route = require(path.join(modulePath,file.name)).default
-            app.use('/', route)
+        const filePath = path.join(modulePath, file.name);
+        console.log(`Processing file: ${filePath}`);
+        if (file.isDirectory()) {
+            console.log(`Directory found: ${filePath}`);
+            if (file.name === 'routes') {
+                loadRoutes(filePath);
+            }
+        } else if (file.isFile() && (file.name.includes('web') || file.name.includes('api'))) {
+            try {
+                console.log(`Loading route file: ${filePath}`);
+                const route = require(filePath).default;
+                app.use('/', route);
+            } catch (error) {
+                console.error(`Error loading route file ${filePath}:`, error);
+            }
         }
-    })
+    });
 }
-fs.readdirSync(path.join(__dirname,'modules')).forEach(module => {
-    loadRoutes(path.join(__dirname,'modules',module))
-})
+
+// Start loading routes from the 'modules' directory
+const modulesPath = path.join(__dirname, 'modules');
+if (fs.existsSync(modulesPath)) {
+    fs.readdirSync(modulesPath).forEach(module => {
+        console.log(`Before run loadRoutes`);
+        loadRoutes(path.join(modulesPath, module));
+    });
+} else {
+    console.error(`Modules directory not found: ${modulesPath}`);
+}
+console.log(`Loading route file end`);
 
 // Ekspor aplikasi dan inisialisasi AppDataSource
 const initializeApp = async () => {
