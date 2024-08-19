@@ -9,7 +9,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
-      PERCOBAAN: "Ini Adalah Percobaan"
+      # PERCOBAAN: "Ini Adalah Percobaan"
 
     steps:
     - name: Checkout repository
