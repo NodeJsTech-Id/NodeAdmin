@@ -52,7 +52,7 @@ jobs:
       run: npm install -g ts-node
 
     - name: Migrating Database
-      run: ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
+      run: sudo npx ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
 
         
       # run: npm run migration:run
