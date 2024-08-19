@@ -6,11 +6,12 @@ on:
 
 jobs:
   deploy:
-    secrets: inherit
     runs-on: ubuntu-latest
     env:
       KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
       # PERCOBAAN: "Ini Adalah Percobaan"
+
+    secrets: inherit
 
     steps:
     - name: Checkout repository
