@@ -157,11 +157,11 @@ app.set('views', path.resolve(__dirname,'resources'))
 app.set('layout',path.resolve(__dirname,'resources/layouts/main'))
 
 // Auto load all route file in modules
+console.log(`Loading route file start`);
 function loadRoutes(modulePath: any) {
     fs.readdirSync(modulePath, { withFileTypes: true }).forEach(file => {
         const filePath = path.join(modulePath, file.name);
         if (file.isDirectory() && file.name === 'routes') {
-            // console.log(`Loading routes from directory: ${filePath}`);
             loadRoutes(filePath);
         } else if (file.isFile() && (file.name.includes('web') || file.name.includes('api'))) {
             try {
@@ -179,11 +179,13 @@ function loadRoutes(modulePath: any) {
 const modulesPath = path.join(__dirname, 'modules');
 if (fs.existsSync(modulesPath)) {
     fs.readdirSync(modulesPath).forEach(module => {
+        console.log(`Before run loadRoutes`);
         loadRoutes(path.join(modulesPath, module));
     });
 } else {
     console.error(`Modules directory not found: ${modulesPath}`);
 }
+console.log(`Loading route file end`);
 
 // Ekspor aplikasi dan inisialisasi AppDataSource
 const initializeApp = async () => {
