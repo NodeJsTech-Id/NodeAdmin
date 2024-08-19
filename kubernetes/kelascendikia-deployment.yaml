@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: KelasCendikia
-  namespace: KelasCendikia
+  namespace: kelascendikia
 spec:
   replicas: 1
   selector:
