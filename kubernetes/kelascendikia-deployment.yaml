@@ -17,7 +17,7 @@ spec:
       - name: kelascendikia
         image: docker.io/flazhost/kelascendikia:latest
         ports:
-        - containerPort: 5000
+        - containerPort: 3000
         env:
         - name: KELASCENDIKIA_DATABASE_URL
           valueFrom:
