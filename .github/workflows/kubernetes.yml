@@ -159,6 +159,24 @@ jobs:
           --from-literal=kelascendikia_zoom_client_secret=${KELASCENDIKIA_ZOOM_CLIENT_SECRET} \
           -n kelascendikia --dry-run=client -o yaml | kubectl apply -f -
 
+    - name: Create Kubernetes Secret for .ID SSL
+      run: |
+        echo "${{ secrets.KELASCENDIKIA_SSL_ID_CERT }}" > kelascendikia_ssl_id_cert.crt
+        echo "${{ secrets.KELASCENDIKIA_SSL_ID_KEY }}" > kelascendikia_ssl_id_key.key
+        kubectl create secret tls kelascendikia-id-tls \
+          --cert=kelascendikia_ssl_id_cert.crt \
+          --key=kelascendikia_ssl_id_key.key \
+          -n kelascendikia --dry-run=client -o yaml | kubectl apply -f -
+
+    - name: Create Kubernetes Secret for .COM SSL
+      run: |
+        echo "${{ secrets.KELASCENDIKIA_SSL_COM_CERT }}" > kelascendikia_ssl_com_cert.crt
+        echo "${{ secrets.KELASCENDIKIA_SSL_COM_KEY }}" > kelascendikia_ssl_com_key.key
+        kubectl create secret tls kelascendikia-com-tls \
+          --cert=kelascendikia_ssl_com_cert.crt \
+          --key=kelascendikia_ssl_com_key.key \
+          -n kelascendikia --dry-run=client -o yaml | kubectl apply -f -
+
     # - name: Debug Environment Variables
     #   env:
     #     KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
@@ -170,3 +188,7 @@ jobs:
         kubectl apply -f kubernetes/kelascendikia-deployment.yaml
         kubectl apply -f kubernetes/kelascendikia-service.yaml
         kubectl apply -f kubernetes/kelascendikia-ingress.yaml
+    
+    - name: Clean up SSL files
+      run: |
+        rm kelascendikia_ssl_id_cert.crt kelascendikia_ssl_id_cert.key kelascendikia_ssl_com_cert.crt kelascendikia_ssl_com_cert.key
