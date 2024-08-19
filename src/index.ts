@@ -179,17 +179,13 @@ function loadRoutes(modulePath: any) {
 const modulesPath = path.join(__dirname, 'modules');
 if (fs.existsSync(modulesPath)) {
     fs.readdirSync(modulesPath).forEach(module => {
-        console.log(`Before run loadRoutes`);
+        console.log(`Before run loadRoutes, module path: ${modulesPath}`);
         loadRoutes(path.join(modulesPath, module));
     });
 } else {
     console.error(`Modules directory not found: ${modulesPath}`);
 }
 console.log(`Loading route file end`);
-
-app.use('/test', (req, res) => {
-    res.send('About Us');
-})
 
 // Ekspor aplikasi dan inisialisasi AppDataSource
 const initializeApp = async () => {
