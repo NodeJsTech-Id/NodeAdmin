@@ -4,13 +4,13 @@ on:
   push:
     branches: [kelascendikia-kubernetes]
 
+env:
+  KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
+  PERCOBAAN: "Ini Adalah Percobaan"
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
-    secrets: inherit
-    env:
-      KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
-      # PERCOBAAN: "Ini Adalah Percobaan"
 
     steps:
     - name: Checkout repository
@@ -38,9 +38,6 @@ jobs:
       run: |
         echo "Database URL starts with: ${KELASCENDIKIA_DATABASE_URL:0:30}..."
 
-    - name: Set up environment variables
-      run: echo "PERCOBAAN=PercobaanKedua" >> $GITHUB_ENV
-      # Gantilah DATABASE_URL dengan variabel yang sesuai
 
     - name: Run Application
       # env:
