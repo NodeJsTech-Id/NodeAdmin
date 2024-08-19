@@ -46,7 +46,7 @@ jobs:
     #     node -e 'console.log(process.env.PERCOBAAN);'
 
     - name: Set Up Environment Variables for Migrating
-      run: echo "KELASCENDIKIA_DATABASE_URL=${{ secrets.KELASCENDIKIA_DATABASE_URL }}" >> $GITHUB_ENV
+      run: sudo echo "KELASCENDIKIA_DATABASE_URL=${{ secrets.KELASCENDIKIA_DATABASE_URL }}" >> $GITHUB_ENV
 
     - name: Install ts-node
       run: sudo npm install -g ts-node
