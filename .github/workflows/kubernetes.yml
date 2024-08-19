@@ -46,10 +46,10 @@ jobs:
     #     node -e 'console.log(process.env.PERCOBAAN);'
 
     - name: Set Up Environment Variables for Migrating
-      run: sudo echo "KELASCENDIKIA_DATABASE_URL=${{ secrets.KELASCENDIKIA_DATABASE_URL }}" >> $GITHUB_ENV
+      run: echo "KELASCENDIKIA_DATABASE_URL=${{ secrets.KELASCENDIKIA_DATABASE_URL }}" >> $GITHUB_ENV
 
     - name: Install ts-node
-      run: sudo npm install -g ts-node
+      run: npm install -g ts-node
 
     - name: Check File Permissions
       run: |
@@ -58,7 +58,7 @@ jobs:
 
     - name: Migrating Database
       working-directory: ${{ github.workspace }}
-      run: sudo ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
+      run: ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
 
         
       # run: npm run migration:run
