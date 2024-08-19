@@ -34,7 +34,6 @@ const redactedUrl = databaseUrl
   : 'Not defined';
 
 console.log(`KELASCENDIKIA_DATABASE_URL: ${redactedUrl}`);
-console.log("Configuration loaded from", path.resolve(__dirname, './ormconfig.ts'));
 // console.log("Tutup");
 
 const AppDataSource = new DataSource({
