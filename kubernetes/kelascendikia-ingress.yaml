@@ -3,14 +3,14 @@ kind: Ingress
 metadata:
   name: kelascendikia-ingress
   namespace: kelascendikia
-  # annotations:
-  #   nginx.ingress.kubernetes.io/rewrite-target: /
+  annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: /
 spec:
   rules:
   - host: kelascendikia.id
     http:
       paths:
-      - path: /*
+      - path: /
         pathType: Prefix
         backend:
           service:
@@ -20,7 +20,7 @@ spec:
   - host: kelascendikia.com
     http:
       paths:
-      - path: /*
+      - path: /
         pathType: Prefix
         backend:
           service:
