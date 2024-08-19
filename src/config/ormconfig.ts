@@ -1,5 +1,5 @@
 import { DataSource } from 'typeorm'
-// import * as dotenv from 'dotenv'
+import * as dotenv from 'dotenv'
 import path from 'path'
 import { Access } from '../modules/access/models/access.entity'
 import { Role } from '../modules/access/models/role.entity'
@@ -24,10 +24,10 @@ import { News } from '../modules/news/models/news.entity'
 import { NewsCategory } from '../modules/news/models/news_category.entity'
 import { HomepageMenu } from '../modules/homepage/models/homepage_menu.entity'
 
-// dotenv.config()
-console.log("Buka");
-console.log(process.env.PERCOBAAN);
-console.log("Tutup");
+dotenv.config()
+// console.log("Buka");
+console.log(process.env.KELASCENDIKIA_DATABASE_URL);
+// console.log("Tutup");
 
 const AppDataSource = new DataSource({
     // type: process.env.DB_TYPE as 'mysql' || 'mysql',

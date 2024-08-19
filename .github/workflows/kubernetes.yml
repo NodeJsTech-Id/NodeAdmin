@@ -4,9 +4,9 @@ on:
   push:
     branches: [kelascendikia-kubernetes]
 
-env:
-  KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
-  PERCOBAAN: "Ini Adalah Percobaan"
+# env:
+#   KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
+#   PERCOBAAN: "Ini Adalah Percobaan"
 
 jobs:
   deploy:
@@ -32,20 +32,22 @@ jobs:
     #     echo $(ls ./node_modules/typeorm)
     #     echo $(node -e "console.log(require('path').resolve('./src/config/ormconfig.ts'))")
             
-    - name: Debug Environment Variables
-      # env:
-        # KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
-      run: |
-        echo "Database URL starts with: ${KELASCENDIKIA_DATABASE_URL:0:30}..."
+    # - name: Debug Environment Variables
+    #   # env:
+    #     # KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
+    #   run: |
+    #     echo "Database URL starts with: ${KELASCENDIKIA_DATABASE_URL:0:30}..."
 
 
-    - name: Run Application
-      # env:
-      #   PERCOBAAN: "Ini Adalah Percobaan"
-      run: |
-        node -e 'console.log(process.env.PERCOBAAN);'
+    # - name: Run Application
+    #   # env:
+    #   #   PERCOBAAN: "Ini Adalah Percobaan"
+    #   run: |
+    #     node -e 'console.log(process.env.PERCOBAAN);'
 
     - name: Migrating Database
+      env:
+        KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
       working-directory: ${{ github.workspace }}
       run: sudo npx ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
 
