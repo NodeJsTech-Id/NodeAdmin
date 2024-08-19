@@ -25,7 +25,7 @@ export default class AuthController {
 
 	public async getLogin(req: Request, res: Response) {
 		if (req.isAuthenticated()) {
-            res.redirect('/admin/v1/dashboard')
+            return res.redirect('/admin/v1/dashboard')
         }
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/login'), {
             layout: './layouts/be/full-width'
