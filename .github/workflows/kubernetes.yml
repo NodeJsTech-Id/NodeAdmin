@@ -7,6 +7,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    secrets: inherit
     env:
       KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
       # PERCOBAAN: "Ini Adalah Percobaan"
@@ -48,7 +49,6 @@ jobs:
         node -e 'console.log(process.env.PERCOBAAN);'
 
     - name: Migrating Database
-      secrets: inherit
       working-directory: ${{ github.workspace }}
       run: sudo npx ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts
 
