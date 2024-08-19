@@ -8,6 +8,11 @@
         <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('success').message %></div>
     </div>
 <% } %>
+<% if(getError('mentor_id')) { %>
+    <div class="card shadow bg-success text-white" style="margin-bottom:20px;">
+        <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getError('mentor_id')['msg'] %></div>
+    </div>
+<% } %>
 <!-- Page Heading -->
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
     <h1 class="h3 mb-0 text-gray-800">Meeting Management</h1>
