@@ -10,6 +10,7 @@ export class AddEmailSettingToSettingsTable1723948121171 implements MigrationInt
                 type: "varchar",
                 length: "100",
                 isNullable: true,
+                default: null,
             }),
         )
         await queryRunner.addColumn(
@@ -19,6 +20,7 @@ export class AddEmailSettingToSettingsTable1723948121171 implements MigrationInt
                 type: "varchar",
                 length: "100",
                 isNullable: true,
+                default: null,
             }),
         )
         await queryRunner.addColumn(
@@ -28,6 +30,7 @@ export class AddEmailSettingToSettingsTable1723948121171 implements MigrationInt
                 type: "varchar",
                 length: "100",
                 isNullable: true,
+                default: null,
             }),
         )
         await queryRunner.addColumn(
@@ -37,6 +40,7 @@ export class AddEmailSettingToSettingsTable1723948121171 implements MigrationInt
                 type: "varchar",
                 length: "100",
                 isNullable: true,
+                default: null,
             }),
         )
         await queryRunner.addColumn(
@@ -46,6 +50,7 @@ export class AddEmailSettingToSettingsTable1723948121171 implements MigrationInt
                 type: "varchar",
                 length: "100",
                 isNullable: true,
+                default: null,
             }),
         )
         await queryRunner.addColumn(
@@ -55,6 +60,7 @@ export class AddEmailSettingToSettingsTable1723948121171 implements MigrationInt
                 type: "varchar",
                 length: "100",
                 isNullable: true,
+                default: null,
             }),
         )
         await queryRunner.addColumn(
@@ -64,6 +70,7 @@ export class AddEmailSettingToSettingsTable1723948121171 implements MigrationInt
                 type: "varchar",
                 length: "100",
                 isNullable: true,
+                default: null,
             }),
         )
     }
