@@ -64,10 +64,6 @@ export class CreateSubjectSubDetailContentsTable1724146312238 implements Migrati
                         name: "subject_sub_detail_contents__name",
                         columnNames: ["name"]
                     },
-                    {
-                        name: "subject_sub_detail_contents__content",
-                        columnNames: ["content"]
-                    },
                 ]
             }),
             true
