@@ -65,12 +65,12 @@ export default class UserService {
     try {
       request.id = uuidv6()
       let roles
-      let institutions = null
+      let user_institutions = null
       if (forRegister) {
         roles = await this.roleRepository.findBy({ name: request.roles })
         delete request.roles
         if (request.refferal) {
-          institutions = await this.institutionRepository.find({ where: { refferal: request.refferal } })
+          user_institutions = await this.institutionRepository.findOne({ where: { refferal: request.refferal } })
         }
       } else {
         roles = await this.roleRepository.findBy({ id: In(request.roles) })
@@ -91,8 +91,8 @@ export default class UserService {
       request = functions.removeEmptyFields(request)
 			request.password = await bcrypt.hash(request.password, 10)
       let user
-      if (institutions != null) {
-        user = this.userRepository.create({ ...request, roles, institutions })
+      if (user_institutions != null) {
+        user = this.userRepository.create({ ...request, roles, user_institutions })
       } else {
         user = this.userRepository.create({ ...request, roles })
       }
