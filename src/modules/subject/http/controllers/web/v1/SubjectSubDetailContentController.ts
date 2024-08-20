@@ -31,7 +31,6 @@ export default class SubjectSubDetailContentController {
 
     public async store(req: Request, res: Response) {
         try {
-            console.log(req.body);
             const result = await this.subjectSubDetailContentService.store(req.body)
             if (result instanceof Error) {
                 throw new Error(result.message)
@@ -77,6 +76,26 @@ export default class SubjectSubDetailContentController {
             req.session.flashMessage = { key: 'error', message: err.message }
             return res.redirect('/admin/v1/subject_sub_detail_content/'+req.params.id+'/edit?subject_sub_detail_id='+req.query.subject_sub_detail_id)
         }
+    }
+
+    public async order_up(req: Request, res: Response) {
+        const result = await this.subjectSubDetailContentService.order_update(req.params.id, -1)
+        if (!result) {
+            req.session.flashMessage = { key: 'error', message: 'Order Up Fail.' }
+            return res.redirect('/admin/v1/subject_sub_detail_content?subject_sub_detail_id='+req.query.subject_sub_detail_id)
+        }
+        req.session.flashMessage = { key: 'success', message: 'Order Up Success.' }
+        res.redirect('/admin/v1/subject_sub_detail_content?subject_sub_detail_id='+req.query.subject_sub_detail_id)
+    }
+
+    public async order_down(req: Request, res: Response) {
+        const result = await this.subjectSubDetailContentService.order_update(req.params.id, 1)
+        if (!result) {
+            req.session.flashMessage = { key: 'error', message: 'Order Down Fail.' }
+            return res.redirect('/admin/v1/subject_sub_detail_content?subject_sub_detail_id='+req.query.subject_sub_detail_id)
+        }
+        req.session.flashMessage = { key: 'success', message: 'Order Down Success.' }
+        res.redirect('/admin/v1/subject_sub_detail_content?subject_sub_detail_id='+req.query.subject_sub_detail_id)
     }
 
     public async delete(req: Request, res: Response) {

@@ -54,6 +54,26 @@ export default class SubjectSubController {
         })
     }
 
+    public async order_up(req: Request, res: Response) {
+        const result = await this.subjectSubService.order_update(req.params.id, -1)
+        if (!result) {
+            req.session.flashMessage = { key: 'error', message: 'Order Up Fail.' }
+            return res.redirect('/admin/v1/subject_sub?subject_id='+req.query.subject_id)
+        }
+        req.session.flashMessage = { key: 'success', message: 'Order Up Success.' }
+        res.redirect('/admin/v1/subject_sub?subject_id='+req.query.subject_id)
+    }
+
+    public async order_down(req: Request, res: Response) {
+        const result = await this.subjectSubService.order_update(req.params.id, 1)
+        if (!result) {
+            req.session.flashMessage = { key: 'error', message: 'Order Down Fail.' }
+            return res.redirect('/admin/v1/subject_sub?subject_id='+req.query.subject_id)
+        }
+        req.session.flashMessage = { key: 'success', message: 'Order Down Success.' }
+        res.redirect('/admin/v1/subject_sub?subject_id='+req.query.subject_id)
+    }
+
     public async update(req: Request, res: Response) {
         try {
             const result = await this.subjectSubService.update(req.params.id, req.body)

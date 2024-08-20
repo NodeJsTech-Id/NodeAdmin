@@ -20,6 +20,9 @@ export class SubjectSubDetail {
     @Index('subject_sub_details__desc')
     desc!: string
 
+    @Column()
+    order_number!: number
+
     @Column({ nullable: true })
     created_by!: string
 

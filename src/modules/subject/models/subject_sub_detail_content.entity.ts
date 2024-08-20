@@ -19,6 +19,9 @@ export class SubjectSubDetailContent {
     @Index('subject_sub_detail_contents__content')
     content!: string
 
+    @Column()
+    order_number!: number
+
     @Column({ nullable: true })
     created_by!: string
 
