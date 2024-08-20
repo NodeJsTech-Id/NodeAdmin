@@ -16,5 +16,5 @@ spec:
       targetPort: 3000
     # - name: https
     #   protocol: TCP
-    #   port: 443 #Port diakses dari ingress
-    #   targetPort: 3000 #Port yang dijalankan di aplikasi
+    #   port: 443
+    #   targetPort: 3000

@@ -177,11 +177,9 @@ jobs:
           --key=kelascendikia_ssl_com_key.key \
           -n kelascendikia --dry-run=client -o yaml | kubectl apply -f -
 
-    # - name: Debug Environment Variables
-    #   env:
-    #     KELASCENDIKIA_DATABASE_URL: ${{ secrets.KELASCENDIKIA_DATABASE_URL }}
-    #   run: |
-    #     echo "Database URL starts with: ${KELASCENDIKIA_DATABASE_URL:0:20}..."
+    - name: Clean up SSL files
+      run: |
+        rm kelascendikia_ssl_id_cert.crt kelascendikia_ssl_id_key.key kelascendikia_ssl_com_cert.crt kelascendikia_ssl_com_key.key
 
     - name: Deploy to Kubernetes
       run: |
@@ -189,6 +187,7 @@ jobs:
         kubectl apply -f kubernetes/kelascendikia-service.yaml
         kubectl apply -f kubernetes/kelascendikia-ingress.yaml
     
-    - name: Clean up SSL files
+    - name: Restart Deployment
       run: |
-        rm kelascendikia_ssl_id_cert.crt kelascendikia_ssl_id_key.key kelascendikia_ssl_com_cert.crt kelascendikia_ssl_com_key.key
+        kubectl rollout restart -n kelascendikia deployment kelascendikia
+
