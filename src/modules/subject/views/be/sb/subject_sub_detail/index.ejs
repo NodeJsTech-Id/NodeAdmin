@@ -19,20 +19,36 @@
     <div class="col-xl-12 col-lg-12">
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Subject Sub Detail List</h6>
-                <div class="btn-group btn-sm nospiner" >
-                    <a  href="/admin/v1/subject_sub_detail/create"  class="btn btn-success btn-sm" >
-                        <i class="fas fa-fw fa-plus"></i> Add Data
-                    </a>
-                    <button type="submit" form="selection" formmethod="post" formaction="/admin/v1/subject_sub_detail/delete_selected" onclick="return confirm('Confirm Delete')" class="btn btn-danger btn-sm">
-                        <i class="fas fa-fw fa-times"></i> Delete Selected
-                    </button>
+            <div class="card-header py-3 align-items-center justify-content-between">
+                <div class="text-start p-0 mb-4 font-weight-bold text-primary">
+                    <div class="row m-0">
+                        <div class="col-auto my-auto p-0">
+                            Subject : <span style="font-weight: bolder;"><%= subject_sub.subject.name %></span> <br>
+                            Subject Sub : <span style="font-weight: bolder;"><%= subject_sub.name %></span>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row m-0 justify-content-between">
+                    <h6 class="col text-start p-0 font-weight-bold text-primary">Subject Sub Detail List</h6>
+                    <div class="col text-end p-0">
+                        <div class="btn-group btn-sm nospiner" >
+                            <a  href="/admin/v1/subject_sub_detail/create?subject_sub_id=<%= subject_sub_id %>"  class="btn btn-success btn-sm" >
+                                <i class="fas fa-fw fa-plus"></i> Add Data
+                            </a>
+                            <button type="submit" form="selection" formmethod="post" formaction="/admin/v1/subject_sub_detail/delete_selected?subject_sub_id=<%= subject_sub_id %>" onclick="return confirm('Confirm Delete')" class="btn btn-danger btn-sm">
+                                <i class="fas fa-fw fa-times"></i> Delete Selected
+                            </button>
+                            <a  href="/admin/v1/subject_sub?subject_id=<%= subject_sub.subject.id %>"  class="btn btn-warning btn-sm" >
+                                <i class="fas fa-fw fa-arrow-left"></i> Back
+                            </a>
+                        </div>                                      
+                    </div>
                 </div>                                      
             </div>
             <!-- Card Body -->
             <div class="card-body" style="overflow-x:auto;padding:20px;">          
-            <table class="table table-bordered table-hover">
+                <table class="table table-bordered table-hover">
                     <thead>
                         <form id="searchform">
                             <tr>
@@ -48,22 +64,6 @@
                                 <th width="20%">
                                     <input id="q_name" type="text" class="form-control form-control-user" name="q_name" value="<%= filter.q_name %>" autocomplete="q_name">
                                 </th>
-                                <th>
-									<select name="q_subject_id" id="q_subject_id" class="form-control form-control-user <% if(getError('q_subject_id')) { %> is-invalid <% } %>" autocomplete="q_subject_id">
-                                        <option disabled="disabled" selected="selected">Select an option</option>
-                                        <% subjects.forEach(subject => { %>
-                                            <option value="<%= subject.id %>" <%= (subject.id == filter.q_subject_id) ? 'selected' : '' %>><%= subject.name %></option>
-                                        <% }) %>
-                                    </select>
-								</th>
-                                <th>
-									<select name="q_subject_sub_id" id="q_subject_sub_id" class="form-control form-control-user <% if(getError('q_subject_sub_id')) { %> is-invalid <% } %>" autocomplete="q_subject_sub_id">
-                                        <option disabled="disabled" selected="selected">Select an option</option>
-                                        <% subject_subs.forEach(subject_sub => { %>
-                                            <option value="<%= subject_sub.id %>" <%= (subject_sub.id == filter.q_subject_sub_id) ? 'selected' : '' %>><%= subject_sub.name %></option>
-                                        <% }) %>
-                                    </select>
-								</th>
                                 <th width="15%">
                                     <input id="q_desc" type="text" class="form-control form-control-user" name="q_desc" value="<%= filter.q_desc %>" autocomplete="q_desc">
                                 </th>
@@ -72,7 +72,7 @@
                                         <button type="submit" form="searchform" class="btn btn-sm btn-success">
                                             <i class="fas fa-fw fa-search"></i>
                                         </button>
-                                        <a  href="/admin/v1/subject_sub_detail"  class="btn btn-sm btn-danger">
+                                        <a  href="/admin/v1/subject_sub_detail?subject_sub_id=<%= subject_sub_id %>"  class="btn btn-sm btn-danger">
                                             <i class="fas fa-fw fa-times"></i>                                            
                                         </a>
                                     </div>                                      
@@ -82,8 +82,6 @@
                                 <th width="5%"><input type="checkbox" id="checkall"/></th>
                                 <th width="5%">No</th>
                                 <th width="20%">Name</th>
-                                <th width="20%">Subject</th>
-                                <th width="20%">Subject Sub</th>
                                 <th width="10%">Description</th>
                                 <th width="5%">Action</th>
                             </tr>
@@ -96,8 +94,6 @@
                                 <td><input name="selected[]" value="<%= data.id %>" type="checkbox" /></td>
                                 <td><%= (i+1)+(paginate_data.page_size*(paginate_data.current_page-1)) %></td>
                                 <td><%= data.name %></td>
-                                <td><%= data.subject_sub.subject.name %></td>
-                                <td><%= data.subject_sub.name %></td>
                                 <td><%= data.desc %></td>
                                 <td align="center">
                                     <div class="btn-group">
@@ -105,8 +101,9 @@
                                             Action
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a href="/admin/v1/subject_sub_detail/<%= data.id %>/edit" class="dropdown-item">Edit</a>
-                                            <a href="/admin/v1/subject_sub_detail/<%= data.id %>/delete" onclick="return confirm('Confirm Delete')" class="dropdown-item">Delete</a>                                              
+                                            <a href="/admin/v1/subject_sub_detail_content?subject_sub_detail_id=<%= data.id %>" class="dropdown-item">Content</a>
+                                            <a href="/admin/v1/subject_sub_detail/<%= data.id %>/edit?subject_sub_id=<%= subject_sub_id %>" class="dropdown-item">Edit</a>
+                                            <a href="/admin/v1/subject_sub_detail/<%= data.id %>/delete?subject_sub_id=<%= subject_sub_id %>" onclick="return confirm('Confirm Delete')" class="dropdown-item">Delete</a>                                              
                                         </div>
                                     </div>
                                 </td>

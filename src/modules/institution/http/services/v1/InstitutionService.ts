@@ -13,6 +13,25 @@ export default class InstitutionService {
 		const cleanConditions = removePrefix(filter, 'q_')
 		let query = this.institutionRepository.createQueryBuilder('institutions')
             .leftJoinAndSelect('institutions.user','user')
+            .leftJoinAndSelect('institutions.users','users')
+            .loadRelationCountAndMap(
+                'institutions.usersCountAcc',
+                'institutions.users',
+                'users', 
+                (qb) => qb.where('users.status = :status', { status: "Accepted" })
+            )
+            .loadRelationCountAndMap(
+                'institutions.usersCountWait',
+                'institutions.users',
+                'users', 
+                (qb) => qb.where('users.status = :status', { status: "Waiting" })
+            )
+            .loadRelationCountAndMap(
+                'institutions.usersCountDcl',
+                'institutions.users',
+                'users', 
+                (qb) => qb.where('users.status = :status', { status: "Decline" })
+            )
 
 		// filter
         if (cleanConditions.user_id) {

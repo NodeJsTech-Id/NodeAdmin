@@ -28,6 +28,7 @@ classRoute.get('/admin/v1/class/:id/delete', AccessMiddleware, ensureAuthenticat
 classRoute.post('/admin/v1/class/delete_selected', AccessMiddleware, ensureAuthenticated, classController.delete_selected.bind(classController))
 
 classRoute.get('/admin/v1/class/:id/subject', AccessMiddleware, ensureAuthenticated, classSubjectController.index.bind(classSubjectController))
+classRoute.get('/admin/v1/class/:id/content/:content_id/show', AccessMiddleware, ensureAuthenticated, classSubjectController.show_content.bind(classSubjectController))
 classRoute.get('/admin/v1/class/:id/subject/create', AccessMiddleware, ensureAuthenticated, classSubjectController.create.bind(classSubjectController))
 classRoute.post('/admin/v1/class/:id/subject/store', AccessMiddleware, ensureAuthenticated, classSubjectController.store.bind(classSubjectController))
 classRoute.get('/admin/v1/class/:id/subject/:subject_id/delete', AccessMiddleware, ensureAuthenticated, classSubjectController.delete.bind(classSubjectController))
@@ -49,6 +50,7 @@ classRoute.post('/admin/v1/class/:id/mentor/delete_selected', AccessMiddleware, 
 const mentorClassController = new MentorClassController()
 classRoute.get('/admin/v1/class/mentor', AccessMiddleware, ensureAuthenticated, mentorClassController.index.bind(mentorClassController))
 classRoute.get('/admin/v1/class/mentor/:id/subject', AccessMiddleware, ensureAuthenticated, mentorClassController.index_subject.bind(mentorClassController))
+classRoute.get('/admin/v1/class/mentor/:id/content/:content_id/show', AccessMiddleware, ensureAuthenticated, mentorClassController.show_content.bind(mentorClassController))
 classRoute.get('/admin/v1/class/mentor/:id/user', AccessMiddleware, ensureAuthenticated, mentorClassController.index_user.bind(mentorClassController))
 classRoute.get('/admin/v1/class/mentor/:id/mentor', AccessMiddleware, ensureAuthenticated, mentorClassController.index_mentor.bind(mentorClassController))
 // end for mentor
@@ -57,6 +59,7 @@ classRoute.get('/admin/v1/class/mentor/:id/mentor', AccessMiddleware, ensureAuth
 const menteeClassController = new MenteeClassController()
 classRoute.get('/admin/v1/class/mentee', AccessMiddleware, ensureAuthenticated, menteeClassController.index.bind(menteeClassController))
 classRoute.get('/admin/v1/class/mentee/:id/subject', AccessMiddleware, ensureAuthenticated, menteeClassController.index_subject.bind(menteeClassController))
+classRoute.get('/admin/v1/class/mentee/:id/content/:content_id/show', AccessMiddleware, ensureAuthenticated, menteeClassController.show_content.bind(menteeClassController))
 classRoute.get('/admin/v1/class/mentee/:id/user', AccessMiddleware, ensureAuthenticated, menteeClassController.index_user.bind(menteeClassController))
 classRoute.get('/admin/v1/class/mentee/:id/mentor', AccessMiddleware, ensureAuthenticated, menteeClassController.index_mentor.bind(menteeClassController))
 // end for mentee

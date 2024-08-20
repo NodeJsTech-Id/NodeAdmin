@@ -11,10 +11,12 @@ export default class SubjectSubService {
 	private subjectSubDetailRepository = AppDataSource.getRepository(SubjectSubDetail)
 
 	public async index(filter: any) {
+		const subject_id = filter.subject_id
 		const cleanConditions = removePrefix(filter, 'q_')
 		let query = this.subjectSubRepository.createQueryBuilder('subject_subs')
 
 		query = query.leftJoinAndSelect('subject_subs.subject','subjects')
+		query = query.andWhere(`subject_subs.subject_id = :subject_id`, { subject_id })
 
 		// filter
 		if (cleanConditions.name) {
@@ -23,15 +25,12 @@ export default class SubjectSubService {
 		if (cleanConditions.desc) {
 			query = query.andWhere(`subject_subs.desc LIKE :desc`, { desc: `%${cleanConditions.desc}%` })
 		}
-		if (cleanConditions.subject_id) {
-			query = query.andWhere(`subject_subs.subject_id = :subject_id`, { subject_id: cleanConditions.subject_id })
-		}
 
 		query = query.skip(!cleanConditions.page?0:(parseInt(cleanConditions.page)-1)*parseInt(cleanConditions.page_size??10))
 			.take(cleanConditions.page_size??10)
 
 		// get data
-		const subjects = await this.subjectRepository.find()
+		const subject = await this.subjectRepository.findOne({ where: { id: subject_id } })
 		const datas = await query.getManyAndCount()
 		const paginate_data = {
 			total_data: datas[1],
@@ -39,12 +38,12 @@ export default class SubjectSubService {
 			current_page: parseInt(cleanConditions.page??1),
 			total_page: Math.ceil(datas[1] / parseInt(cleanConditions.page_size??10)),
 		}
-		return { datas:datas[0], paginate_data, subjects }
+		return { datas:datas[0], paginate_data, subject }
 	}
 
-	public async create() {
-		const subjects = await this.subjectRepository.find()
-		return { subjects }
+	public async create(subject_id: any) {
+		const subject = await this.subjectRepository.findOne({ where: { id: subject_id } })
+		return { subject }
 	}
 
 	public async store(request: any) {
@@ -65,10 +64,10 @@ export default class SubjectSubService {
 		}
 	}
 
-	public async edit(id: string) {
-		const subjects = await this.subjectRepository.find()
+	public async edit(id: string, subject_id: any) {
+		const subject = await this.subjectRepository.findOne({ where: { id: subject_id } })
 		const data = await this.subjectSubRepository.findOne({ where: { id } })
-		return {data,subjects}
+		return {data,subject}
 	}
 
 	public async update(id: string, request: any) {

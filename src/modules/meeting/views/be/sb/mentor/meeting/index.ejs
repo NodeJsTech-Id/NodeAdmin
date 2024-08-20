@@ -55,7 +55,7 @@
                                     </select>
                                 </th>
                                 <th width="12%">
-                                    <select name="q_mentor_id" id="q_mentor_id"  class="form-control form-control-user" value="" autocomplete="q_mentor_id">
+                                    <select name="q_mentor_id" id="q_mentor_id"  class="form-control form-control-user" value="" autocomplete="q_mentor_id" disabled>
                                         <option disabled="disabled" selected="selected">Select</option>
                                         <% users.forEach(mentor => { %>
                                             <option value="<%= mentor.id %>" <%= ((!filter.q_mentor_id) ? '' : (filter.q_mentor_id == mentor.id)) ? 'selected' : '' %>><%= mentor.name %> | <%= mentor.email %></option>

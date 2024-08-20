@@ -49,7 +49,7 @@
                     <div class="form-group row">
                         <label for="description" class="col-md-3 col-form-label text-md-right">Description [description]</label>
                         <div class="col-md-8 mb-3 mb-sm-0">
-                            <textarea id="description" class="form-control form-control-user <% if(getError('description')) { %> is-invalid <% } %>" name="description" autocomplete="description"><%= data.description %></textarea>
+                            <textarea id="description" class="trumbowyg form-control form-control-user <% if(getError('description')) { %> is-invalid <% } %>" name="description" autocomplete="description"><%= data.description %></textarea>
                             <% if(getError('description')) { %>
                                 <span class="invalid-feedback" status="alert">
                                     <strong><%= getError('description')['msg'] %></strong>
