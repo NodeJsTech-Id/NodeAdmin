@@ -73,7 +73,8 @@ export default class UserService {
         delete request.roles
         if (request.refferal) {
           const institution = await this.institutionRepository.findOne({ where: { refferal: request.refferal } })
-          user_institutions = this.userInstitutionRepository.create({ status: "Waiting", user_id: request.id, institution_id: institution?.id })
+          const user_institutions_data = this.userInstitutionRepository.create({ id: uuidv6(), status: "Waiting", user_id: request.id, institution_id: institution?.id })
+          user_institutions = await this.userInstitutionRepository.save(user_institutions_data)
         }
       } else {
         roles = await this.roleRepository.findBy({ id: In(request.roles) })
