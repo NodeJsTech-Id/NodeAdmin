@@ -7,10 +7,12 @@ import functions, { removePrefix } from '../../../../../helpers/functions'
 import fileService from '../../../../../services/fileService'
 import { v6 as uuidv6 } from 'uuid'
 import Module from '../../../Module'
+import { Institution } from '../../../../institution/models/institution.entity'
 
 export default class UserService {
   private userRepository = AppDataSource.getRepository(User)
   private roleRepository = AppDataSource.getRepository(Role)
+  private institutionRepository = AppDataSource.getRepository(Institution)
 
   public async index(filter: any) {
     const cleanConditions = removePrefix(filter, 'q_')
@@ -63,9 +65,13 @@ export default class UserService {
     try {
       request.id = uuidv6()
       let roles
+      let institutions = null
       if (forRegister) {
         roles = await this.roleRepository.findBy({ name: request.roles })
         delete request.roles
+        if (request.refferal) {
+          institutions = await this.institutionRepository.find({ where: { refferal: request.refferal } })
+        }
       } else {
         roles = await this.roleRepository.findBy({ id: In(request.roles) })
         if (!roles.length) {
@@ -84,7 +90,12 @@ export default class UserService {
       }
       request = functions.removeEmptyFields(request)
 			request.password = await bcrypt.hash(request.password, 10)
-      const user = this.userRepository.create({ ...request, roles })
+      let user
+      if (institutions != null) {
+        user = this.userRepository.create({ ...request, roles, institutions })
+      } else {
+        user = this.userRepository.create({ ...request, roles })
+      }
       const result = await this.userRepository.save(user)
       if (!result) {
         throw new Error("Store User Fail")
