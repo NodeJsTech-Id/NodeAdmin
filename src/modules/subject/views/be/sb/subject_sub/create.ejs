@@ -18,12 +18,23 @@
     <div class="col-xl-12 col-lg-12">
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Subject Sub Form</h6>
+            <div class="card-header py-3 align-items-center justify-content-between">
+                <div class="text-start p-0 mb-4 font-weight-bold text-primary">
+                    <div class="row m-0">
+                        <div class="col-auto my-auto p-0">
+                            Subject : <span style="font-weight: bolder;"><%= subject.name %></span> <br>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row m-0 justify-content-between">
+                    <h6 class="col text-start p-0 font-weight-bold text-primary">Subject Sub Form</h6>
+                </div>  
             </div>
             <!-- Card Body -->
             <div class="card-body" style="overflow-x:auto;padding:20px;">
-                <form method="POST" action="/admin/v1/subject_sub/store">
+                <form method="POST" action="/admin/v1/subject_sub/store?subject_id=<%= subject_id %>">
+                    <input type="hidden" name="subject_id" value="<%= subject_id %>">
                     <div class="form-group row" id="div_name">
                         <label for="name" class="col-md-3 col-form-label text-md-right">Name</label>
                         <div class="col-md-8 mb-3 mb-sm-0">
@@ -31,22 +42,6 @@
                             <% if(getError('name')) { %>
                                 <span class="invalid-feedback" status="alert">
                                     <strong><%= getError('name')['msg'] %></strong>
-                                </span>
-                            <% } %>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="subject_id" class="col-md-3 col-form-label text-md-right">Subject</label>
-                        <div class="col-md-8 mb-3 mb-sm-0">
-                            <select name="subject_id" id="subject_id" class="select2 form-control form-control-user <% if(getError('subject_id')) { %> is-invalid <% } %>" value="" autocomplete="subject_id">
-                                <option disabled="disabled" selected="selected">Select an option</option>
-                                <% subjects.forEach(subject => { %>
-                                    <option value="<%= subject.id %>" <%= (subject.id == getOld('subject_id')) ? 'selected' : '' %>><%= subject.name %></option>
-                                <% }) %>
-                            </select>
-                            <% if(getError('subject_id')) { %>
-                                <span class="invalid-feedback" status="alert">
-                                    <strong><%= getError('subject_id')['msg'] %></strong>
                                 </span>
                             <% } %>
                         </div>
@@ -69,7 +64,7 @@
                             </button>
                         </div>
                         <div class="col-md-6 offset-md-12">
-                            <a href="/admin/v1/subject_sub" type="submit" class="btn btn-user btn-danger btn-block text-white">
+                            <a href="/admin/v1/subject_sub?subject_id=<%= subject_id %>" type="submit" class="btn btn-user btn-danger btn-block text-white">
                                 Back
                             </a>
                         </div>

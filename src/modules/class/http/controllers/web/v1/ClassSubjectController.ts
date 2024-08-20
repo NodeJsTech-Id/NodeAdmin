@@ -3,9 +3,11 @@ import path from 'path'
 import Module from '../../../../Module'
 import ClassService from '../../../services/v1/ClassService'
 import appConfig from '../../../../../../config/app'
+import SubjectSubDetailContentService from '../../../../../subject/http/services/v1/SubjectSubDetailContentService'
 
 export default class ClassSubjectController {
     private classService = new ClassService
+    private subjectSubDetailContentService = new SubjectSubDetailContentService
 
     public async index(req: Request, res: Response) {
         const filter = req.query
@@ -15,6 +17,15 @@ export default class ClassSubjectController {
             datas,
             filter,
             paginate_data,
+            layout: './layouts/be/main'
+        })
+    }
+
+    public async show_content(req: Request, res: Response) {
+        const {data} = await this.subjectSubDetailContentService.edit(req.params.content_id, req.query.subject_sub_detail_id)
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/subject/show'), {
+            data,
+            class_id: req.params.id,
             layout: './layouts/be/main'
         })
     }

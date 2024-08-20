@@ -9,7 +9,7 @@
     </div>
 <% } %>
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Institution Management</h1>
+    <h1 class="h3 mb-0 text-gray-800">Subject Sub Detail Content Management</h1>
     <div class="d-none d-sm-inline-block">
     </div>
 </div>
@@ -19,15 +19,32 @@
     <div class="col-xl-12 col-lg-12">
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Institution List</h6>
-                <div class="btn-group btn-sm nospiner" >
-                    <a  href="/admin/v1/institution/create"  class="btn btn-success btn-sm" >
-                        <i class="fas fa-fw fa-plus"></i> Add Data
-                    </a>
-                    <button type="submit" form="selection" formmethod="post" formaction="/admin/v1/institution/delete_selected" onclick="return confirm('Confirm Delete')" class="btn btn-danger btn-sm">
-                        <i class="fas fa-fw fa-times"></i> Delete Selected
-                    </button>
+            <div class="card-header py-3 align-items-center justify-content-between">
+                <div class="text-start p-0 mb-4 font-weight-bold text-primary">
+                    <div class="row m-0">
+                        <div class="col-auto my-auto p-0">
+                            Subject : <span style="font-weight: bolder;"><%= subject_sub_detail.subject_sub.subject.name %></span> <br>
+                            Subject Sub : <span style="font-weight: bolder;"><%= subject_sub_detail.subject_sub.name %></span> <br>
+                            Subject Sub Detail : <span style="font-weight: bolder;"><%= subject_sub_detail.name %></span>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row m-0 justify-content-between">
+                    <h6 class="col text-start p-0 font-weight-bold text-primary">Subject Sub Detail Content List</h6>
+                    <div class="col text-end p-0">
+                        <div class="btn-group btn-sm nospiner" >
+                            <a  href="/admin/v1/subject_sub_detail_content/create?subject_sub_detail_id=<%= subject_sub_detail_id %>"  class="btn btn-success btn-sm" >
+                                <i class="fas fa-fw fa-plus"></i> Add Data
+                            </a>
+                            <button type="submit" form="selection" formmethod="post" formaction="/admin/v1/subject_sub_detail_content/delete_selected?subject_sub_detail_id=<%= subject_sub_detail_id %>" onclick="return confirm('Confirm Delete')" class="btn btn-danger btn-sm">
+                                <i class="fas fa-fw fa-times"></i> Delete Selected
+                            </button>
+                            <a  href="/admin/v1/subject_sub_detail?subject_sub_id=<%= subject_sub_detail.subject_sub.id %>"  class="btn btn-warning btn-sm" >
+                                <i class="fas fa-fw fa-arrow-left"></i> Back
+                            </a>
+                        </div>                                      
+                    </div>
                 </div>                                      
             </div>
             <!-- Card Body -->
@@ -45,47 +62,15 @@
                                         <option value="100" <%= ((!filter.q_page_size) ? '' : (filter.q_page_size == 100)) ? 'selected' : '' %>>100</option>
                                     </select>
                                 </th>
-                                <th>
-									<select name="q_user_id" id="q_user_id" class="form-control form-control-user <% if(getError('q_user_id')) { %> is-invalid <% } %>" autocomplete="q_user_id">
-                                        <option disabled="disabled" selected="selected">Select an option</option>
-                                        <% users.forEach(user => { %>
-                                            <option value="<%= user.id %>" <%= (user.id == filter.q_user_id) ? 'selected' : '' %>><%= user.name %> | <%= user.email %></option>
-                                        <% }) %>
-                                    </select>
-								</th>
                                 <th width="20%">
                                     <input id="q_name" type="text" class="form-control form-control-user" name="q_name" value="<%= filter.q_name %>" autocomplete="q_name">
                                 </th>
-                                <th width="10%">
-                                    <select name="q_type" id="q_type"  class="form-control form-control-user" value="" autocomplete="q_type">
-                                        <option disabled="disabled" selected="selected">Select</option>                                        
-                                        <option value="Education" <%= ((!filter.q_type) ? '' : (filter.q_type == 'Education')) ? 'selected' : '' %>>Education</option>
-                                        <option value="Company" <%= ((!filter.q_type) ? '' : (filter.q_type == 'Company')) ? 'selected' : '' %>>Company</option>
-                                    </select>
-                                </th>
-                                <th width="15%">
-                                    <input id="q_code" type="text" class="form-control form-control-user" name="q_code" value="<%= filter.q_code %>" autocomplete="q_code">
-                                </th>
-                                <th width="15%">
-                                    <input id="q_refferal" type="text" class="form-control form-control-user" name="q_refferal" value="<%= filter.q_refferal %>" autocomplete="q_refferal">
-                                </th>
-                                <th width="15%">
-                                    <input id="q_address" type="text" class="form-control form-control-user" name="q_address" value="<%= filter.q_address %>" autocomplete="q_address">
-                                </th>
-                                <th width="10%">
-                                    <select name="q_status" id="q_status"  class="form-control form-control-user" value="" autocomplete="q_status">
-                                        <option disabled="disabled" selected="selected">Select</option>                                        
-                                        <option value="Active" <%= ((!filter.q_status) ? '' : (filter.q_status == 'Active')) ? 'selected' : '' %>>Active</option>
-                                        <option value="Inactive" <%= ((!filter.q_status) ? '' : (filter.q_status == 'Inactive')) ? 'selected' : '' %>>Inactive</option>
-                                    </select>
-                                </th>
-                                <th></th>
                                 <th width="5%" class="text-center align-middle">
                                     <div class="btn-group nospiner" >
                                         <button type="submit" form="searchform" class="btn btn-sm btn-success">
                                             <i class="fas fa-fw fa-search"></i>
                                         </button>
-                                        <a  href="/admin/v1/institution"  class="btn btn-sm btn-danger">
+                                        <a  href="/admin/v1/subject_sub_detail_content?subject_sub_detail_id=<%= subject_sub_detail_id %>"  class="btn btn-sm btn-danger">
                                             <i class="fas fa-fw fa-times"></i>                                            
                                         </a>
                                     </div>                                      
@@ -94,14 +79,7 @@
                             <tr>
                                 <th width="5%"><input type="checkbox" id="checkall"/></th>
                                 <th width="5%">No</th>
-                                <th width="20%">User</th>
                                 <th width="20%">Name</th>
-                                <th width="10%">Type</th>
-                                <th width="10%">Code</th>
-                                <th width="10%">Refferal</th>
-                                <th width="10%">Address</th>
-                                <th width="10%">Status</th>
-                                <th width="10%">User Count</th>
                                 <th width="5%">Action</th>
                             </tr>
                         </form>
@@ -112,28 +90,16 @@
                             <tr>
                                 <td><input name="selected[]" value="<%= data.id %>" type="checkbox" /></td>
                                 <td><%= (i+1)+(paginate_data.page_size*(paginate_data.current_page-1)) %></td>
-                                <td><%= data.user.name %> | <%= data.user.email %></td>
                                 <td><%= data.name %></td>
-                                <td><%= data.type %></td>
-                                <td><%= data.code %></td>
-                                <td><%= data.refferal %></td>
-                                <td><%= data.address %></td>
-                                <td><center><img src="<%= (data.status == 'Active') ? getFile('modules/access/true.png') : getFile('modules/access/false.png') %>" width="30px" height="30px"></center></td>
-                                <td>
-                                    <span class="badge text-bg-success">Accepted: <%= data.usersCountAcc %></span>
-                                    <span class="badge text-dark text-bg-warning">Waiting: <%= data.usersCountWait %></span>
-                                    <span class="badge text-bg-danger">Decline: <%= data.usersCountDcl %></span>
-                                </td>
                                 <td align="center">
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Action
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a href="/admin/v1/institution/<%= data.id %>/user" class="dropdown-item">User</a>
-                                            <a href="/admin/v1/institution/<%= data.id %>/promotion" class="dropdown-item">Promotion</a>
-                                            <a href="/admin/v1/institution/<%= data.id %>/edit" class="dropdown-item">Edit</a>
-                                            <a href="/admin/v1/institution/<%= data.id %>/delete" onclick="return confirm('Confirm Delete')" class="dropdown-item">Delete</a>                                              
+                                            <a href="/admin/v1/subject_sub_detail_content/<%= data.id %>/show?subject_sub_detail_id=<%= subject_sub_detail_id %>" class="dropdown-item">Show Content</a>
+                                            <a href="/admin/v1/subject_sub_detail_content/<%= data.id %>/edit?subject_sub_detail_id=<%= subject_sub_detail_id %>" class="dropdown-item">Edit</a>
+                                            <a href="/admin/v1/subject_sub_detail_content/<%= data.id %>/delete?subject_sub_detail_id=<%= subject_sub_detail_id %>" onclick="return confirm('Confirm Delete')" class="dropdown-item">Delete</a>                                              
                                         </div>
                                     </div>
                                 </td>
@@ -164,5 +130,5 @@
 <script>
     $("#checkall").click(function(){
         $('input:checkbox').not(this).prop('checked', this.checked);
-    });        
+    });
 </script>
