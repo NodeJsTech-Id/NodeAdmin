@@ -8,11 +8,13 @@ import fileService from '../../../../../services/fileService'
 import { v6 as uuidv6 } from 'uuid'
 import Module from '../../../Module'
 import { Institution } from '../../../../institution/models/institution.entity'
+import { InstitutionUser } from '../../../../institution/models/institution_user.entity'
 
 export default class UserService {
   private userRepository = AppDataSource.getRepository(User)
   private roleRepository = AppDataSource.getRepository(Role)
   private institutionRepository = AppDataSource.getRepository(Institution)
+  private userInstitutionRepository = AppDataSource.getRepository(InstitutionUser)
 
   public async index(filter: any) {
     const cleanConditions = removePrefix(filter, 'q_')
@@ -70,7 +72,8 @@ export default class UserService {
         roles = await this.roleRepository.findBy({ name: request.roles })
         delete request.roles
         if (request.refferal) {
-          user_institutions = await this.institutionRepository.findOne({ where: { refferal: request.refferal } })
+          const institution = await this.institutionRepository.findOne({ where: { refferal: request.refferal } })
+          user_institutions = this.userInstitutionRepository.create({ status: "Waiting", user_id: request.id, institution_id: institution?.id })
         }
       } else {
         roles = await this.roleRepository.findBy({ id: In(request.roles) })
