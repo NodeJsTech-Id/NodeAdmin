@@ -27,6 +27,7 @@ const userSchema: ObjectSchema = Joi.object({
     office_name: Joi.string().allow("").optional(),
     office_address: Joi.string().allow("").optional(),
     roles: Joi.string().optional(),
+    refferal: Joi.string().allow("").optional(),
 })
 
 const RegisterValidator = (req: Request, res: Response, next: NextFunction): void => {

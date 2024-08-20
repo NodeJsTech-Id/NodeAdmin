@@ -101,6 +101,18 @@
                         </div>
                     </div>
 
+                    <div class="form-group row mb-3" id="div_refferal">
+                        <label for="refferal" class="col-md-4 col-form-label text-md-right">Refferal</label>
+                        <div class="col-md-8 mb-sm-0">
+                            <input id="refferal" type="text" class="form-control form-control-user <% if(getError('refferal')) { %> is-invalid <% } %>" name="refferal" value="<%= getOld('refferal') %>" autocomplete="refferal">
+                            <% if(getError('refferal')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('refferal')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+
                     <div class="form-group row mb-3">
                         <label for="profession_id" class="col-md-4 col-form-label text-md-right">Profession</label>
                         <div class="col-md-8 mb-sm-0">
