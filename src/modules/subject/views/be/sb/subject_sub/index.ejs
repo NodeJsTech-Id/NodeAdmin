@@ -60,6 +60,7 @@
                                         <option value="100" <%= ((!filter.q_page_size) ? '' : (filter.q_page_size == 100)) ? 'selected' : '' %>>100</option>
                                     </select>
                                 </th>
+                                <th></th>
                                 <th width="20%">
                                     <input id="q_name" type="text" class="form-control form-control-user" name="q_name" value="<%= filter.q_name %>" autocomplete="q_name">
                                 </th>
@@ -80,6 +81,7 @@
                             <tr>
                                 <th width="5%"><input type="checkbox" id="checkall"/></th>
                                 <th width="5%">No</th>
+                                <th width="20%">Order</th>
                                 <th width="20%">Name</th>
                                 <th width="10%">Description</th>
                                 <th width="5%">Action</th>
@@ -92,6 +94,7 @@
                             <tr>
                                 <td><input name="selected[]" value="<%= data.id %>" type="checkbox" /></td>
                                 <td><%= (i+1)+(paginate_data.page_size*(paginate_data.current_page-1)) %></td>
+                                <td><%= data.order_number %></td>
                                 <td><%= data.name %></td>
                                 <td><%= data.desc %></td>
                                 <td align="center">
@@ -102,6 +105,8 @@
                                         <div class="dropdown-menu">
                                             <a href="/admin/v1/subject_sub_detail?subject_sub_id=<%= data.id %>&subject_id=<%= subject_id %>" class="dropdown-item">Detail</a>
                                             <a href="/admin/v1/subject_sub/<%= data.id %>/edit?subject_id=<%= subject_id %>" class="dropdown-item">Edit</a>
+                                            <% if (data.order_number != 1) { %><a href="/admin/v1/subject_sub/<%= data.id %>/order_up?subject_id=<%= subject_id %>" class="dropdown-item">Order Up</a><% } %>
+                                            <% if (data.order_number != paginate_data.total_data) { %><a href="/admin/v1/subject_sub/<%= data.id %>/order_down?subject_id=<%= subject_id %>" class="dropdown-item">Order Down</a><% } %>
                                             <a href="/admin/v1/subject_sub/<%= data.id %>/delete?subject_id=<%= subject_id %>" onclick="return confirm('Confirm Delete')" class="dropdown-item">Delete</a>                                              
                                         </div>
                                     </div>

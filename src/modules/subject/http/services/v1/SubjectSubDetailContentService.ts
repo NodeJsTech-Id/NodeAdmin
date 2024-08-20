@@ -21,6 +21,7 @@ export default class SubjectSubDetailContentService {
 		if (cleanConditions.name) {
 			query = query.andWhere(`subject_sub_detail_contents.name LIKE :name`, { name: `%${cleanConditions.name}%` })
 		}
+		query = query.addOrderBy("subject_sub_detail_contents.order_number","ASC")
 
 		query = query.skip(!cleanConditions.page?0:(parseInt(cleanConditions.page)-1)*parseInt(cleanConditions.page_size??10))
 			.take(cleanConditions.page_size??10)
@@ -83,6 +84,34 @@ export default class SubjectSubDetailContentService {
 				throw new Error("Update Content Fail")
 			}
 			return result
+		} catch (error: any) {
+		return error
+		}
+	}
+
+	public async order_update(id: string, order: number) {
+		try {
+			if (order > 0) {
+				const dataToMoveDown = await this.subjectSubDetailContentRepository.findOne({ where: { id } })
+				const dataToMoveUp = await this.subjectSubDetailContentRepository.findOne({ where: { order_number: dataToMoveDown!.order_number + 1 } })
+				if (!dataToMoveDown || !dataToMoveUp) {
+					throw new Error('Data not found or invalid order numbers')
+				}
+				// Swap order_number antara data kedua dan ketiga
+				await this.subjectSubDetailContentRepository.update(dataToMoveDown.id, { order_number: dataToMoveUp.order_number })
+				await this.subjectSubDetailContentRepository.update(dataToMoveUp.id, { order_number: dataToMoveDown.order_number })
+				return true
+			} else {
+				const dataToMoveUp = await this.subjectSubDetailContentRepository.findOne({ where: { id } })
+				const dataToMoveDown = await this.subjectSubDetailContentRepository.findOne({ where: { order_number: dataToMoveUp!.order_number - 1 } })
+				if (!dataToMoveDown || !dataToMoveUp) {
+					throw new Error('Data not found or invalid order numbers')
+				}
+				// Swap order_number antara data kedua dan ketiga
+				await this.subjectSubDetailContentRepository.update(dataToMoveUp.id, { order_number: dataToMoveDown.order_number })
+				await this.subjectSubDetailContentRepository.update(dataToMoveDown.id, { order_number: dataToMoveUp.order_number })
+				return true
+			}
 		} catch (error: any) {
 		return error
 		}

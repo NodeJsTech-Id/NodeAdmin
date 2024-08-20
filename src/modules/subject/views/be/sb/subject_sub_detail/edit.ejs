@@ -36,6 +36,17 @@
             <div class="card-body" style="overflow-x:auto;padding:20px;">
                 <form method="POST" action="/admin/v1/subject_sub_detail/<%= data.id %>/update?_method=PUT&subject_sub_id=<%= subject_sub_id %>">
                     <input type="hidden" name="subject_sub_id" value="<%= subject_sub_id %>">
+                    <div class="form-group row" id="div_order">
+                        <label for="order" class="col-md-3 col-form-label text-md-right">Order</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="order" type="number" class="form-control form-control-user <% if(getError('order')) { %> is-invalid <% } %>" name="order_number" value="<%= data.order %>" autocomplete="order">
+                            <% if(getError('order')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('order')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
                     <div class="form-group row" id="div_name">
                         <label for="name" class="col-md-3 col-form-label text-md-right">name</label>
                         <div class="col-md-8 mb-3 mb-sm-0">
