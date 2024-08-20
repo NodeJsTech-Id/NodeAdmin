@@ -6,7 +6,6 @@ const validator: ObjectSchema = Joi.object({
     name: Joi.string().required(),
     subject_id: Joi.string().required(),
     desc: Joi.string().allow("").optional(),
-    order_number: Joi.number().required(),
 })
 
 const SubjectSubCreateValidator = (req: Request, res: Response, next: NextFunction): void => {

@@ -45,6 +45,12 @@ export default class SubjectSubDetailContentService {
 
 	public async store(request: any) {
 		try {
+			const lastNumberData = await this.subjectSubDetailContentRepository.findOne({ where: { subject_sub_detail_id: request.subject_sub_detail_id } })
+			let lastNumber = 0
+			if (lastNumberData) {
+				lastNumber = lastNumberData.order_number+1
+			}
+			request.order_number = lastNumber
 			const find = await this.subjectSubDetailContentRepository.findOne({ where: { subject_sub_detail_id: request.subject_sub_detail_id, name: request.name } })
 			if (find) {
 				throw new Error("Content Already Exists")
