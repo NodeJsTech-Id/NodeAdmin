@@ -49,6 +49,12 @@ export default class SubjectSubService {
 
 	public async store(request: any) {
 		try {
+			const lastNumberData = await this.subjectSubRepository.findOne({ where: { subject_id: request.subject_id } })
+			let lastNumber = 0
+			if (lastNumberData) {
+				lastNumber = lastNumberData.order_number+1
+			}
+			request.order_number = lastNumber
 			const find = await this.subjectSubRepository.findOne({ where: { subject_id: request.subject_id, name: request.name } })
 			if (find) {
 				throw new Error("Subject Sub Already Exists")
