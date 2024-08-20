@@ -60,13 +60,13 @@
                                         <option value="100" <%= ((!filter.q_page_size) ? '' : (filter.q_page_size == 100)) ? 'selected' : '' %>>100</option>
                                     </select>
                                 </th>
-                                <th></th>
                                 <th width="20%">
                                     <input id="q_name" type="text" class="form-control form-control-user" name="q_name" value="<%= filter.q_name %>" autocomplete="q_name">
                                 </th>
                                 <th width="15%">
                                     <input id="q_desc" type="text" class="form-control form-control-user" name="q_desc" value="<%= filter.q_desc %>" autocomplete="q_desc">
                                 </th>
+                                <th></th>
                                 <th width="5%" class="text-center align-middle">
                                     <div class="btn-group nospiner" >
                                         <button type="submit" form="searchform" class="btn btn-sm btn-success">
