@@ -4,9 +4,9 @@ metadata:
   name: kelascendikia-ingress
   namespace: kelascendikia
   annotations:
+    nginx.ingress.kubernetes.io/rewrite-target: "/"
     nginx.ingress.kubernetes.io/ssl-redirect: "true"
     nginx.ingress.kubernetes.io/backend-protocol: "HTTP"
-    nginx.ingress.kubernetes.io/rewrite-target: /
 
 spec:
   tls:
