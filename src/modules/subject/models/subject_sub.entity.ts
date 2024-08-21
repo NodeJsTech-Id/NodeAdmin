@@ -20,6 +20,9 @@ export class SubjectSub {
     @Index('subject_subs__desc')
     desc!: string
 
+    @Column()
+    order_number!: number
+
     @Column({ nullable: true })
     created_by!: string
 

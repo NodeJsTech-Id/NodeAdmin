@@ -13,6 +13,15 @@ export default class ClassService {
 	public async index(filter: any) {
 		const cleanConditions = removePrefix(filter, 'q_')
 		let query = this.classRepository.createQueryBuilder('classes')
+					.leftJoinAndSelect('classes.users', 'users')
+					.leftJoinAndSelect('classes.mentors', 'mentors')
+
+		if (cleanConditions.user) {
+			query = query.andWhere(`users.id = :user`, { user: cleanConditions.user })
+		}
+		if (cleanConditions.mentor) {
+			query = query.andWhere(`mentors.id = :mentor`, { mentor: cleanConditions.mentor })
+		}
 
 		// filter
 		if (cleanConditions.name) {
@@ -99,6 +108,9 @@ export default class ClassService {
 		let query = this.subjectRepository.createQueryBuilder('subjects')
 
 		query = query.leftJoinAndSelect('subjects.classes','classes')
+					.leftJoinAndSelect('subjects.subject_subs', 'subject_subs')
+					.leftJoinAndSelect('subject_subs.subject_sub_details', 'subject_sub_details')
+					.leftJoinAndSelect('subject_sub_details.subject_sub_detail_contents', 'subject_sub_detail_contents')
 		query = query.andWhere(`classes.id = '${id}'`)
 
 		// filter

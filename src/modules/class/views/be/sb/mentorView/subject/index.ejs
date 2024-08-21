@@ -29,7 +29,7 @@
             </div>
             <!-- Card Body -->
             <div class="card-body" style="overflow-x:auto;padding:20px;">          
-            <table class="table table-bordered table-hover">
+                <table class="table table-bordered table-hover">
                     <thead>
                         <form id="searchform">
                             <tr>
@@ -61,25 +61,102 @@
                             <tr>
                                 <th width="5%">No</th>
                                 <th width="20%">Name</th>
-                                <th width="10%">Description</th>
-                                <th width="5%">Action</th>
+                                <th width="10%" colspan="2">Description</th>
                             </tr>
                         </form>
                     </thead>
                     <tbody>
-                        <form id="selection">
-                            <% datas.forEach((data,i) => { %>
+                        <% datas.forEach((data,i) => { %>
                             <tr>
                                 <td><%= (i+1)+(paginate_data.page_size*(paginate_data.current_page-1)) %></td>
                                 <td><%= data.name %></td>
-                                <td><%= data.desc %></td>
-                                <td></td>
+                                <td colspan="2"><%= data.desc %></td>
                             </tr>
-                            <% }); %>
-                        </form>
+                            <% if(data.subject_subs?.length > 0) { %>
+                                <tr>
+                                    <td>Sub</td>
+                                    <td colspan="5">
+                                        <table class="table table-bordered table-hover">
+                                            <thead>
+                                                <tr>
+                                                    <th width="5%">No</th>
+                                                    <th width="20%">Name</th>
+                                                    <th width="10%">Description</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <form id="selection">
+                                                    <% data.subject_subs.forEach((subject_sub,j) => { %>
+                                                        <tr>
+                                                            <td><%= (j+1) %></td>
+                                                            <td><%= subject_sub.name %></td>
+                                                            <td><%= subject_sub.desc %></td>
+                                                        </tr>
+                                                        <% if(subject_sub.subject_sub_details?.length > 0) { %>
+                                                            <tr>
+                                                                <td>Detail</td>
+                                                                <td colspan="4">
+                                                                    <table class="table table-bordered table-hover">
+                                                                        <thead>
+                                                                            <tr>
+                                                                                <th width="5%">No</th>
+                                                                                <th width="20%">Name</th>
+                                                                                <th width="10%">Description</th>
+                                                                            </tr>
+                                                                        </thead>
+                                                                        <tbody>
+                                                                            <form id="selection">
+                                                                                <% subject_sub.subject_sub_details.forEach((subject_sub_detail,k) => { %>
+                                                                                    <tr>
+                                                                                        <td><%= (k+1) %></td>
+                                                                                        <td><%= subject_sub_detail.name %></td>
+                                                                                        <td><%= subject_sub_detail.desc %></td>
+                                                                                    </tr>
+                                                                                    <% if(subject_sub_detail.subject_sub_detail_contents?.length > 0) { %>
+                                                                                        <tr>
+                                                                                            <td>Content</td>
+                                                                                            <td colspan="4">
+                                                                                                <table class="table table-bordered table-hover">
+                                                                                                    <thead>
+                                                                                                        <tr>
+                                                                                                            <th width="5%">No</th>
+                                                                                                            <th width="20%">Name</th>
+                                                                                                            <th width="10%">Action</th>
+                                                                                                        </tr>
+                                                                                                    </thead>
+                                                                                                    <tbody>
+                                                                                                        <form id="selection">
+                                                                                                            <% subject_sub_detail.subject_sub_detail_contents.forEach((subject_sub_detail_content,p) => { %>
+                                                                                                                <tr>
+                                                                                                                    <td><%= (p+1) %></td>
+                                                                                                                    <td><%= subject_sub_detail_content.name %></td>
+                                                                                                                    <td><a href="/admin/v1/class/mentor/<%= classData.id %>/content/<%= subject_sub_detail_content.id %>/show" class="btn btn-sm btn-primary">Show Content</a></td>
+                                                                                                                </tr>
+                                                                                                            <% }); %>
+                                                                                                        </form>
+                                                                                                    </tbody>
+                                                                                                </table>
+                                                                                            </td>
+                                                                                        </tr>
+                                                                                    <% } %>
+                                                                                <% }); %>
+                                                                            </form>
+                                                                        </tbody>
+                                                                    </table>
+                                                                </td>
+                                                            </tr>
+                                                        <% } %>
+                                                    <% }); %>
+                                                </form>
+                                            </tbody>
+                                        </table>
+                                    </td>
+                                </tr>
+                            <% } %>
+                        <% }); %>
                     </tbody>
                 </table>
-                <div class="d-flex justify-content-center">
+                <div class="d-flex justify-content-end">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <% if(paginate_data.current_page != 1) { %>

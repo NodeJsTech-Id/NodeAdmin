@@ -23,6 +23,7 @@ import { Promotion } from '../modules/promotion/models/v1/promotion.entity'
 import { News } from '../modules/news/models/news.entity'
 import { NewsCategory } from '../modules/news/models/news_category.entity'
 import { HomepageMenu } from '../modules/homepage/models/homepage_menu.entity'
+import { SubjectSubDetailContent } from '../modules/subject/models/subject_sub_detail_content.entity'
 
 dotenv.config()
 
@@ -58,6 +59,7 @@ const AppDataSource = new DataSource({
         News,
         NewsCategory,
         HomepageMenu,
+        SubjectSubDetailContent,
     ],
     migrations: [
         path.resolve(__dirname, '../modules/**/migrations/*.ts')

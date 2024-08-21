@@ -9,20 +9,22 @@ export default class SubjectSubController {
 
     public async index(req: Request, res: Response) {
         const filter = req.query
-        const {datas,paginate_data,subjects} = await this.subjectSubService.index(filter)
+        const {datas,paginate_data,subject} = await this.subjectSubService.index(filter)
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/subject_sub/index'), {
             datas,
             filter,
             paginate_data,
-            subjects,
+            subject,
+            subject_id: req.query.subject_id,
             layout: './layouts/be/main'
         })
     }
 
     public async create(req: Request, res: Response) {
-        const {subjects} = await this.subjectSubService.create()
+        const {subject} = await this.subjectSubService.create(req.query.subject_id)
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/subject_sub/create'), {
-            subjects,
+            subject_id: req.query.subject_id,
+            subject,
             layout: './layouts/be/main'
         })
     }
@@ -34,21 +36,42 @@ export default class SubjectSubController {
                 throw new Error(result.message)
             }
             req.session.flashMessage = { key: 'success', message: 'Store Subject Sub Success.' }
-            res.redirect('/admin/v1/subject_sub')
+            res.redirect('/admin/v1/subject_sub?subject_id='+req.query.subject_id)
         } catch (err: any) {
             req.session.flashMessage = { key: 'error', message: err.message }
             req.session.old = req.body
-            return res.redirect('/admin/v1/subject_sub/create')
+            return res.redirect('/admin/v1/subject_sub/create?subject_id='+req.query.subject_id)
         }
     }
 
     public async edit(req: Request, res: Response) {
-        const {data,subjects} = await this.subjectSubService.edit(req.params.id)
+        const {data,subject} = await this.subjectSubService.edit(req.params.id,req.query.subject_id)
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/subject_sub/edit'), {
             data,
-            subjects,
+            subject,
+            subject_id: req.query.subject_id,
             layout: './layouts/be/main'
         })
+    }
+
+    public async order_up(req: Request, res: Response) {
+        const result = await this.subjectSubService.order_update(req.params.id, -1)
+        if (!result) {
+            req.session.flashMessage = { key: 'error', message: 'Order Up Fail.' }
+            return res.redirect('/admin/v1/subject_sub?subject_id='+req.query.subject_id)
+        }
+        req.session.flashMessage = { key: 'success', message: 'Order Up Success.' }
+        res.redirect('/admin/v1/subject_sub?subject_id='+req.query.subject_id)
+    }
+
+    public async order_down(req: Request, res: Response) {
+        const result = await this.subjectSubService.order_update(req.params.id, 1)
+        if (!result) {
+            req.session.flashMessage = { key: 'error', message: 'Order Down Fail.' }
+            return res.redirect('/admin/v1/subject_sub?subject_id='+req.query.subject_id)
+        }
+        req.session.flashMessage = { key: 'success', message: 'Order Down Success.' }
+        res.redirect('/admin/v1/subject_sub?subject_id='+req.query.subject_id)
     }
 
     public async update(req: Request, res: Response) {
@@ -58,10 +81,10 @@ export default class SubjectSubController {
                 throw new Error(result.message)
             }
             req.session.flashMessage = { key: 'success', message: 'Update Subject Sub Success.' }
-            res.redirect('/admin/v1/subject_sub')
+            res.redirect('/admin/v1/subject_sub?subject_id='+req.query.subject_id)
         } catch (err: any) {
             req.session.flashMessage = { key: 'error', message: err.message }
-            return res.redirect('/admin/v1/subject_sub/'+req.params.id+'/edit')
+            return res.redirect('/admin/v1/subject_sub/'+req.params.id+'/edit?subject_id='+req.query.subject_id)
         }
     }
 
@@ -69,10 +92,10 @@ export default class SubjectSubController {
         const result = await this.subjectSubService.delete(req.params.id)
         if (!result) {
             req.session.flashMessage = { key: 'error', message: 'Delete Subject Sub Fail.' }
-            return res.redirect('/admin/v1/subject_sub')
+            return res.redirect('/admin/v1/subject_sub?subject_id='+req.query.subject_id)
         }
         req.session.flashMessage = { key: 'success', message: 'Delete Subject Sub Success.' }
-        res.redirect('/admin/v1/subject_sub')
+        res.redirect('/admin/v1/subject_sub?subject_id='+req.query.subject_id)
     }
 
     public async delete_selected(req: Request, res: Response) {
@@ -80,6 +103,6 @@ export default class SubjectSubController {
             await this.subjectSubService.delete(id)
         })
         req.session.flashMessage = { key: 'success', message: 'Delete Subject Sub Success.' }
-        res.redirect('/admin/v1/subject_sub')
+        res.redirect('/admin/v1/subject_sub?subject_id='+req.query.subject_id)
     }
 }

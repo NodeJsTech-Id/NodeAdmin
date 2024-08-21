@@ -9,7 +9,7 @@
     </div>
 <% } %>
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Class <bold><%= classData.name %></bold> Mentee Management</h1>
+    <h1 class="h3 mb-0 text-gray-800">Subject Sub Detail Content Management</h1>
     <div class="d-none d-sm-inline-block">
     </div>
 </div>
@@ -19,18 +19,32 @@
     <div class="col-xl-12 col-lg-12">
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Class Mentee List</h6>
-                <div class="btn-group btn-sm nospiner" >
-                    <a  href="/admin/v1/class/<%= classData.id %>/user/create"  class="btn btn-success btn-sm" >
-                        <i class="fas fa-fw fa-plus"></i> Add Data
-                    </a>
-                    <button type="submit" form="selection" formmethod="post" formaction="/admin/v1/class/<%= classData.id %>/user/delete_selected" onclick="return confirm('Confirm Delete')" class="btn btn-danger btn-sm">
-                        <i class="fas fa-fw fa-times"></i> Delete Selected
-                    </button>
-                    <a  href="/admin/v1/class/"  class="btn btn-warning btn-sm" >
-                        <i class="fas fa-fw fa-arrow-left"></i> Back
-                    </a>
+            <div class="card-header py-3 align-items-center justify-content-between">
+                <div class="text-start p-0 mb-4 font-weight-bold text-primary">
+                    <div class="row m-0">
+                        <div class="col-auto my-auto p-0">
+                            Subject : <span style="font-weight: bolder;"><%= subject_sub_detail.subject_sub.subject.name %></span> <br>
+                            Subject Sub : <span style="font-weight: bolder;"><%= subject_sub_detail.subject_sub.name %></span> <br>
+                            Subject Sub Detail : <span style="font-weight: bolder;"><%= subject_sub_detail.name %></span>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row m-0 justify-content-between">
+                    <h6 class="col text-start p-0 font-weight-bold text-primary">Subject Sub Detail Content List</h6>
+                    <div class="col text-end p-0">
+                        <div class="btn-group btn-sm nospiner" >
+                            <a  href="/admin/v1/subject_sub_detail_content/create?subject_sub_detail_id=<%= subject_sub_detail_id %>"  class="btn btn-success btn-sm" >
+                                <i class="fas fa-fw fa-plus"></i> Add Data
+                            </a>
+                            <button type="submit" form="selection" formmethod="post" formaction="/admin/v1/subject_sub_detail_content/delete_selected?subject_sub_detail_id=<%= subject_sub_detail_id %>" onclick="return confirm('Confirm Delete')" class="btn btn-danger btn-sm">
+                                <i class="fas fa-fw fa-times"></i> Delete Selected
+                            </button>
+                            <a  href="/admin/v1/subject_sub_detail?subject_sub_id=<%= subject_sub_detail.subject_sub.id %>"  class="btn btn-warning btn-sm" >
+                                <i class="fas fa-fw fa-arrow-left"></i> Back
+                            </a>
+                        </div>                                      
+                    </div>
                 </div>                                      
             </div>
             <!-- Card Body -->
@@ -48,24 +62,16 @@
                                         <option value="100" <%= ((!filter.q_page_size) ? '' : (filter.q_page_size == 100)) ? 'selected' : '' %>>100</option>
                                     </select>
                                 </th>
-                                <th width="15%">
-                                    <input id="q_code" type="text" class="form-control form-control-user" name="q_code" value="<%= filter.q_code %>" autocomplete="q_code">
-                                </th>
                                 <th width="20%">
                                     <input id="q_name" type="text" class="form-control form-control-user" name="q_name" value="<%= filter.q_name %>" autocomplete="q_name">
                                 </th>
-                                <th width="15%">
-                                    <input id="q_phone" type="text" class="form-control form-control-user" name="q_phone" value="<%= filter.q_phone %>" autocomplete="q_phone">
-                                </th>
-                                <th width="15%">
-                                    <input id="q_email" type="text" class="form-control form-control-user" name="q_email" value="<%= filter.q_email %>" autocomplete="q_email">
-                                </th>
+                                <th></th>
                                 <th width="5%" class="text-center align-middle">
                                     <div class="btn-group nospiner" >
                                         <button type="submit" form="searchform" class="btn btn-sm btn-success">
                                             <i class="fas fa-fw fa-search"></i>
                                         </button>
-                                        <a  href="/admin/v1/class/<%= classData.id %>/user"  class="btn btn-sm btn-danger">
+                                        <a  href="/admin/v1/subject_sub_detail_content?subject_sub_detail_id=<%= subject_sub_detail_id %>"  class="btn btn-sm btn-danger">
                                             <i class="fas fa-fw fa-times"></i>                                            
                                         </a>
                                     </div>                                      
@@ -73,12 +79,10 @@
                             </tr>                              
                             <tr>
                                 <th width="5%"><input type="checkbox" id="checkall"/></th>
-                                    <th width="5%">No</th>
-                                    <th width="15%">Code</th>
-                                    <th width="20%">Name</th>
-                                    <th width="20%">Phone</th>
-                                    <th width="15%">Email</th>
-                                    <th width="5%">Action</th>
+                                <th width="5%">No</th>
+                                <th width="20%">Name</th>
+                                <th width="20%">Order</th>
+                                <th width="5%">Action</th>
                             </tr>
                         </form>
                     </thead>
@@ -88,17 +92,19 @@
                             <tr>
                                 <td><input name="selected[]" value="<%= data.id %>" type="checkbox" /></td>
                                 <td><%= (i+1)+(paginate_data.page_size*(paginate_data.current_page-1)) %></td>
-                                <td><%= data.code %></td>
                                 <td><%= data.name %></td>
-                                <td><%= data.phone %></td>
-                                <td><%= data.email %></td>
+                                <td><%= data.order_number %></td>
                                 <td align="center">
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Action
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a href="/admin/v1/class/<%= classData.id %>/user/<%= data.id %>/delete" onclick="return confirm('Confirm Delete')" class="dropdown-item">Delete</a>                                              
+                                            <a href="/admin/v1/subject_sub_detail_content/<%= data.id %>/show?subject_sub_detail_id=<%= subject_sub_detail_id %>" class="dropdown-item">Show Content</a>
+                                            <a href="/admin/v1/subject_sub_detail_content/<%= data.id %>/edit?subject_sub_detail_id=<%= subject_sub_detail_id %>" class="dropdown-item">Edit</a>
+                                            <% if (data.order_number != 0) { %><a href="/admin/v1/subject_sub_detail_content/<%= data.id %>/order_up?subject_sub_detail_id=<%= subject_sub_detail_id %>" class="dropdown-item">Move Up</a><% } %>
+                                            <% if (data.order_number != paginate_data.total_data-1) { %><a href="/admin/v1/subject_sub_detail_content/<%= data.id %>/order_down?subject_sub_detail_id=<%= subject_sub_detail_id %>" class="dropdown-item">Move Down</a><% } %>
+                                            <a href="/admin/v1/subject_sub_detail_content/<%= data.id %>/delete?subject_sub_detail_id=<%= subject_sub_detail_id %>" onclick="return confirm('Confirm Delete')" class="dropdown-item">Delete</a>                                              
                                         </div>
                                     </div>
                                 </td>
@@ -129,5 +135,5 @@
 <script>
     $("#checkall").click(function(){
         $('input:checkbox').not(this).prop('checked', this.checked);
-    });        
+    });
 </script>

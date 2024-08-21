@@ -19,15 +19,30 @@
     <div class="col-xl-12 col-lg-12">
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
-            <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Subject Sub List</h6>
-                <div class="btn-group btn-sm nospiner" >
-                    <a  href="/admin/v1/subject_sub/create"  class="btn btn-success btn-sm" >
-                        <i class="fas fa-fw fa-plus"></i> Add Data
-                    </a>
-                    <button type="submit" form="selection" formmethod="post" formaction="/admin/v1/subject_sub/delete_selected" onclick="return confirm('Confirm Delete')" class="btn btn-danger btn-sm">
-                        <i class="fas fa-fw fa-times"></i> Delete Selected
-                    </button>
+            <div class="card-header py-3 align-items-center justify-content-between">
+                <div class="text-start p-0 mb-4 font-weight-bold text-primary">
+                    <div class="row m-0">
+                        <div class="col-auto my-auto p-0">
+                            Subject : <span style="font-weight: bolder;"><%= subject.name %></span> <br>
+                        </div>
+                    </div>
+                </div>
+                <hr>
+                <div class="row m-0 justify-content-between">
+                    <h6 class="col text-start p-0 font-weight-bold text-primary">Subject Sub List</h6>
+                    <div class="col text-end p-0">
+                        <div class="btn-group btn-sm nospiner" >
+                            <a  href="/admin/v1/subject_sub/create?subject_id=<%= subject_id %>"  class="btn btn-success btn-sm" >
+                                <i class="fas fa-fw fa-plus"></i> Add Data
+                            </a>
+                            <button type="submit" form="selection" formmethod="post" formaction="/admin/v1/subject_sub/delete_selected?subject_id=<%= subject_id %>" onclick="return confirm('Confirm Delete')" class="btn btn-danger btn-sm">
+                                <i class="fas fa-fw fa-times"></i> Delete Selected
+                            </button>
+                            <a  href="/admin/v1/subject"  class="btn btn-warning btn-sm" >
+                                <i class="fas fa-fw fa-arrow-left"></i> Back
+                            </a>
+                        </div>                                      
+                    </div>
                 </div>                                      
             </div>
             <!-- Card Body -->
@@ -48,23 +63,16 @@
                                 <th width="20%">
                                     <input id="q_name" type="text" class="form-control form-control-user" name="q_name" value="<%= filter.q_name %>" autocomplete="q_name">
                                 </th>
-                                <th>
-									<select name="q_subject_id" id="q_subject_id" class="form-control form-control-user <% if(getError('q_subject_id')) { %> is-invalid <% } %>" autocomplete="q_subject_id">
-                                        <option disabled="disabled" selected="selected">Select an option</option>
-                                        <% subjects.forEach(subject => { %>
-                                            <option value="<%= subject.id %>" <%= (subject.id == filter.q_subject_id) ? 'selected' : '' %>><%= subject.name %></option>
-                                        <% }) %>
-                                    </select>
-								</th>
                                 <th width="15%">
                                     <input id="q_desc" type="text" class="form-control form-control-user" name="q_desc" value="<%= filter.q_desc %>" autocomplete="q_desc">
                                 </th>
+                                <th></th>
                                 <th width="5%" class="text-center align-middle">
                                     <div class="btn-group nospiner" >
                                         <button type="submit" form="searchform" class="btn btn-sm btn-success">
                                             <i class="fas fa-fw fa-search"></i>
                                         </button>
-                                        <a  href="/admin/v1/subject_sub"  class="btn btn-sm btn-danger">
+                                        <a  href="/admin/v1/subject_sub?subject_id=<%= subject_id %>"  class="btn btn-sm btn-danger">
                                             <i class="fas fa-fw fa-times"></i>                                            
                                         </a>
                                     </div>                                      
@@ -74,8 +82,8 @@
                                 <th width="5%"><input type="checkbox" id="checkall"/></th>
                                 <th width="5%">No</th>
                                 <th width="20%">Name</th>
-                                <th width="20%">Subject</th>
                                 <th width="10%">Description</th>
+                                <th width="20%">Order</th>
                                 <th width="5%">Action</th>
                             </tr>
                         </form>
@@ -87,16 +95,19 @@
                                 <td><input name="selected[]" value="<%= data.id %>" type="checkbox" /></td>
                                 <td><%= (i+1)+(paginate_data.page_size*(paginate_data.current_page-1)) %></td>
                                 <td><%= data.name %></td>
-                                <td><%= data.subject.name %></td>
                                 <td><%= data.desc %></td>
+                                <td><%= data.order_number %></td>
                                 <td align="center">
                                     <div class="btn-group">
                                         <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                             Action
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a href="/admin/v1/subject_sub/<%= data.id %>/edit" class="dropdown-item">Edit</a>
-                                            <a href="/admin/v1/subject_sub/<%= data.id %>/delete" onclick="return confirm('Confirm Delete')" class="dropdown-item">Delete</a>                                              
+                                            <a href="/admin/v1/subject_sub_detail?subject_sub_id=<%= data.id %>&subject_id=<%= subject_id %>" class="dropdown-item">Detail</a>
+                                            <a href="/admin/v1/subject_sub/<%= data.id %>/edit?subject_id=<%= subject_id %>" class="dropdown-item">Edit</a>
+                                            <% if (data.order_number != 0) { %><a href="/admin/v1/subject_sub/<%= data.id %>/order_up?subject_id=<%= subject_id %>" class="dropdown-item">Move Up</a><% } %>
+                                            <% if (data.order_number != paginate_data.total_data-1) { %><a href="/admin/v1/subject_sub/<%= data.id %>/order_down?subject_id=<%= subject_id %>" class="dropdown-item">Move Down</a><% } %>
+                                            <a href="/admin/v1/subject_sub/<%= data.id %>/delete?subject_id=<%= subject_id %>" onclick="return confirm('Confirm Delete')" class="dropdown-item">Delete</a>                                              
                                         </div>
                                     </div>
                                 </td>
@@ -105,7 +116,7 @@
                         </form>
                     </tbody>
                 </table>
-                <div class="d-flex justify-content-center">
+                <div class="d-flex justify-content-end">
                     <nav aria-label="Page navigation example">
                         <ul class="pagination">
                             <% if(paginate_data.current_page != 1) { %>

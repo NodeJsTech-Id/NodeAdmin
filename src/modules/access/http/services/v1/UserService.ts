@@ -8,11 +8,13 @@ import fileService from '../../../../../services/fileService'
 import { v6 as uuidv6 } from 'uuid'
 import Module from '../../../Module'
 import { Institution } from '../../../../institution/models/institution.entity'
+import { InstitutionUser } from '../../../../institution/models/institution_user.entity'
 
 export default class UserService {
   private userRepository = AppDataSource.getRepository(User)
   private roleRepository = AppDataSource.getRepository(Role)
   private institutionRepository = AppDataSource.getRepository(Institution)
+  private userInstitutionRepository = AppDataSource.getRepository(InstitutionUser)
 
   public async index(filter: any) {
     const cleanConditions = removePrefix(filter, 'q_')
@@ -65,12 +67,14 @@ export default class UserService {
     try {
       request.id = uuidv6()
       let roles
-      let institutions = null
+      let user_institutions = null
       if (forRegister) {
         roles = await this.roleRepository.findBy({ name: request.roles })
         delete request.roles
         if (request.refferal) {
-          institutions = await this.institutionRepository.find({ where: { refferal: request.refferal } })
+          const institution = await this.institutionRepository.findOne({ where: { refferal: request.refferal } })
+          const user_institutions_data = this.userInstitutionRepository.create({ id: uuidv6(), status: "Waiting", user_id: request.id, institution_id: institution?.id })
+          user_institutions = await this.userInstitutionRepository.save(user_institutions_data)
         }
       } else {
         roles = await this.roleRepository.findBy({ id: In(request.roles) })
@@ -91,8 +95,8 @@ export default class UserService {
       request = functions.removeEmptyFields(request)
 			request.password = await bcrypt.hash(request.password, 10)
       let user
-      if (institutions != null) {
-        user = this.userRepository.create({ ...request, roles, institutions })
+      if (user_institutions != null) {
+        user = this.userRepository.create({ ...request, roles, user_institutions })
       } else {
         user = this.userRepository.create({ ...request, roles })
       }
