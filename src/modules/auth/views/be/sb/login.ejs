@@ -1,18 +1,17 @@
 <div class="row m-0 p-4 p-md-0 min-vh-100 justify-content-between">
-  <div class="col-12 col-md-8 align-items-center mx-auto">
-      <div class="row h-100 align-items-center bg-success">
-          <div class="col">
-              <img class="img-fluid my-auto text-center" src="<%= getFile(setting.login_image) %>" width="max-content">
-          </div>
-      </div>
-  </div>
-  <div class="col-12 col-md-4 mt-5 mt-md-0 bg-light text-center text-black px-md-3 align-items-center">
-      <div class="row m-0 h-100 align-items-center justify-content-center">
-          <div class="col-11 m-0">
-              <div class="col-3 mb-5">
-                  <img class="img-fluid" src="<%= getFile(setting.logo) %>" alt="Laravel">
-              </div>
-      
+    <div class="col-12 col-md-8 align-items-center mx-auto">
+        <div class="row h-100 align-items-center" style="background-color: #fff;">
+            <div class="col">
+                <img class="img-fluid my-auto text-center" src="<%= getFile(setting.login_image) %>" width="max-content">
+            </div>
+        </div>
+    </div>
+    <div class="col-12 col-md-4 mt-5 mt-md-0 bg-light text-center text-black px-md-3 align-items-center">
+        <div class="row m-0 h-100 align-items-center justify-content-center">
+            <div class="col-11 m-0">
+                <div class="col-3 mb-5">
+                    <img class="img-fluid" src="<%= getFile(setting.logo) %>" alt="Laravel">
+                </div>
                 <% if (errorMessages.length > 0) { %>
                 <div class="alert alert-danger">
                     <ul>
@@ -32,48 +31,44 @@
                         <div class="card-body" style="overflow-x:auto;padding:10px;"><%= getFlashMessage('success').message %></div>
                     </div>
                 <% } %>
-      
-              <div class="text-start mb-5">
-                  <p class="h5 fw-bold text-success">Hello, Welcome Back!</p>
-                  <p class="small text-muted">Enter your credentials to continue</p>
-              </div>
-      
-              <form method="POST" action="/auth/login">
-                  <div class="row m-0 mb-3 align-items-center">
-                      <div class="col-auto p-0">
-                          <label for="email" class="form-label m-0"><i class="bi bi-person-circle fs-2 text-secondary"></i></label>
-                      </div>
-                      <div class="col">
-                          <input type="email" class="form-control" id="email" placeholder="Email address" name="email">
-                      </div>
-                  </div>
-                  <div class="row m-0 mb-3 align-items-center">
-                      <div class="col-auto p-0">
-                          <label for="password" class="form-label m-0"><i class="bi bi-shield-lock-fill fs-2 text-secondary"></i></label>
-                      </div>
-                      <div class="col">
-                          <input type="password" class="form-control" id="password" placeholder="Password" name="password">
-                      </div>
-                  </div>
-      
-                  <button type="submit" class="btn btn-success col-12 mb-3">Login</button>
-                  
-                  <div class="row m-0 mb-3 justify-content-between small">
-                      <div class="col text-start ms-1">
-                          <input type="checkbox" class="form-check-input my-auto" id="exampleCheck1" name="remember">
-                          <label class="form-check-label" for="exampleCheck1">Keep me logged in</label>
-                      </div>
-                      <div class="col text-end">
-                          <a href="/admin/v1/auth/reset/req" class="text-success">Forgot password</a>
-                      </div>
-                  </div>
-              </form>
-              <hr class="border border-dark border-5 my-4">
-              <div class="text-center small">
-                  <span class="text-secondary">Don’t have an account? </span>
-                  <a class="text-success" href="/auth/register">create here</a>
-              </div>
-          </div>
-      </div>
-  </div>
+                <div class="text-start mb-5">
+                    <p class="h5 fw-bold text-success">Hello, Welcome Back!</p>
+                    <p class="small text-muted">Enter your credentials to continue</p>
+                </div>
+                <form method="POST" action="/auth/login">
+                    <div class="row m-0 mb-3 align-items-center">
+                        <div class="col-auto p-0">
+                            <label for="email" class="form-label m-0"><i class="bi bi-person-circle fs-2 text-secondary"></i></label>
+                        </div>
+                        <div class="col">
+                            <input type="email" class="form-control" id="email" placeholder="Email address" name="email">
+                        </div>
+                    </div>
+                    <div class="row m-0 mb-3 align-items-center">
+                        <div class="col-auto p-0">
+                            <label for="password" class="form-label m-0"><i class="bi bi-shield-lock-fill fs-2 text-secondary"></i></label>
+                        </div>
+                        <div class="col">
+                            <input type="password" class="form-control" id="password" placeholder="Password" name="password">
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-success col-12 mb-3">Login</button>
+                    <div class="row m-0 mb-3 justify-content-between small">
+                        <div class="col text-start ms-1">
+                            <input type="checkbox" class="form-check-input my-auto" id="exampleCheck1" name="remember">
+                            <label class="form-check-label" for="exampleCheck1">Keep me logged in</label>
+                        </div>
+                        <div class="col text-end">
+                            <a href="/admin/v1/auth/reset/req" class="text-success">Forgot password</a>
+                        </div>
+                    </div>
+                </form>
+                <hr class="border border-dark border-5 my-4">
+                <div class="text-center small">
+                    <span class="text-secondary">Don’t have an account? </span>
+                    <a class="text-success" href="/auth/register">create here</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
