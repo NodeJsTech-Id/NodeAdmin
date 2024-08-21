@@ -4,9 +4,9 @@ metadata:
   name: kelascendikia-service
   namespace: kelascendikia
 spec:
-  type: LoadBalancer
-  externalIPs:
-  - 103.175.220.186
+  type: ClusterIP
+  # externalIPs:
+  # - 103.175.220.186
   selector:
     app: kelascendikia
   ports:
