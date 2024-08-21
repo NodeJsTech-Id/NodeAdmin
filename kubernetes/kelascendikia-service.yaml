@@ -4,9 +4,9 @@ metadata:
   name: kelascendikia-service
   namespace: kelascendikia
 spec:
-  type: NodePort
-  # externalIPs:
-  # - 103.175.220.186
+  type: LoadBalancer
+  externalIPs:
+  - 103.175.220.186
   selector:
     app: kelascendikia
   ports:
@@ -14,7 +14,7 @@ spec:
       protocol: TCP
       port: 80
       targetPort: 3000
-      nodePort: 32100
+      # nodePort: 32100
     # - name: https
     #   protocol: TCP
     #   port: 443
