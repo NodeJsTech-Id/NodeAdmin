@@ -19,15 +19,7 @@ const SettingServiceSchema: ObjectSchema = Joi.object({
     phone: Joi.string().allow('').optional(),
     address: Joi.string().allow('').optional(),
     email: Joi.string().allow('').optional(),
-    facebook: Joi.string().allow('').optional(),
-    twitter: Joi.string().allow('').optional(),
-    google: Joi.string().allow('').optional(),
-    instagram: Joi.string().allow('').optional(),
     copyright: Joi.string().allow('').optional(),
-    maps_key: Joi.string().allow('').optional(),
-    latitude: Joi.string().allow('').optional(),
-    longitude: Joi.string().allow('').optional(),
-    api_key: Joi.string().allow('').optional(),
 });
 
 const SettingValidator = (req: Request, res: Response, next: NextFunction): void => {

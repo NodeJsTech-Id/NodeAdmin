@@ -129,102 +129,12 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="facebook" class="col-md-3 col-form-label text-md-right">Facebook Link [facebook]</label>
-                        <div class="col-md-8 mb-3 mb-sm-0">
-                            <input id="facebook" type="text" class="form-control form-control-user <% if(getError('facebook')) { %> is-invalid <% } %>" name="facebook" value="<%= data.facebook %>" autocomplete="facebook">
-                            <% if(getError('facebook')) { %>
-                                <span class="invalid-feedback" status="alert">
-                                    <strong><%= getError('facebook')['msg'] %></strong>
-                                </span>
-                            <% } %>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="twitter" class="col-md-3 col-form-label text-md-right">Twitter Link [twitter]</label>
-                        <div class="col-md-8 mb-3 mb-sm-0">
-                            <input id="twitter" type="text" class="form-control form-control-user <% if(getError('twitter')) { %> is-invalid <% } %>" name="twitter" value="<%= data.twitter %>" autocomplete="twitter">
-                            <% if(getError('twitter')) { %>
-                                <span class="invalid-feedback" status="alert">
-                                    <strong><%= getError('twitter')['msg'] %></strong>
-                                </span>
-                            <% } %>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="google" class="col-md-3 col-form-label text-md-right">Google+ Link [google]</label>
-                        <div class="col-md-8 mb-3 mb-sm-0">
-                            <input id="google" type="text" class="form-control form-control-user <% if(getError('google')) { %> is-invalid <% } %>" name="google" value="<%= data.google %>" autocomplete="google">
-                            <% if(getError('google')) { %>
-                                <span class="invalid-feedback" status="alert">
-                                    <strong><%= getError('google')['msg'] %></strong>
-                                </span>
-                            <% } %>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="instagram" class="col-md-3 col-form-label text-md-right">Instagram Link [instagram]</label>
-                        <div class="col-md-8 mb-3 mb-sm-0">
-                            <input id="instagram" type="text" class="form-control form-control-user <% if(getError('instagram')) { %> is-invalid <% } %>" name="instagram" value="<%= data.instagram %>" autocomplete="instagram">
-                            <% if(getError('instagram')) { %>
-                                <span class="invalid-feedback" status="alert">
-                                    <strong><%= getError('instagram')['msg'] %></strong>
-                                </span>
-                            <% } %>
-                        </div>
-                    </div>
-              
-                    <div class="form-group row">
                         <label for="copyright" class="col-md-3 col-form-label text-md-right">Copyright Text [copyright]</label>
                         <div class="col-md-8 mb-3 mb-sm-0" style="text-align:left;padding:10px;">
                             <input id="copyright" type="text" class="form-control form-control-user <% if(getError('copyright')) { %> is-invalid <% } %>" name="copyright" value="<%= data.copyright %>" autocomplete="copyright">
                             <% if(getError('copyright')) { %>
                                 <span class="invalid-feedback" status="alert">
                                     <strong><%= getError('copyright')['msg'] %></strong>
-                                </span>
-                            <% } %>
-                        </div>
-                    </div>                            
-
-                    <div class="form-group row">
-                        <label for="maps_key" class="col-md-3 col-form-label text-md-right">Maps Key [maps_key]</label>
-                        <div class="col-md-8 mb-3 mb-sm-0">
-                            <input id="maps_key" type="text" class="form-control form-control-user <% if(getError('maps_key')) { %> is-invalid <% } %>" name="maps_key" value="<%= data.maps_key %>" autocomplete="maps_key">
-                            <% if(getError('maps_key')) { %>
-                                <span class="invalid-feedback" status="alert">
-                                    <strong><%= getError('maps_key')['msg'] %></strong>
-                                </span>
-                            <% } %>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="latitude" class="col-md-3 col-form-label text-md-right">Latitude [latitude]</label>
-                        <div class="col-md-8 mb-3 mb-sm-0">
-                            <input id="latitude" type="text" class="form-control form-control-user <% if(getError('latitude')) { %> is-invalid <% } %>" name="latitude" value="<%= data.latitude %>" autocomplete="latitude">
-                            <% if(getError('latitude')) { %>
-                                <span class="invalid-feedback" status="alert">
-                                    <strong><%= getError('latitude')['msg'] %></strong>
-                                </span>
-                            <% } %>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="longitude" class="col-md-3 col-form-label text-md-right">Longitude [longitude]</label>
-                        <div class="col-md-8 mb-3 mb-sm-0">
-                            <input id="longitude" type="text" class="form-control form-control-user <% if(getError('longitude')) { %> is-invalid <% } %>" name="longitude" value="<%= data.longitude %>" autocomplete="longitude">
-                            <% if(getError('longitude')) { %>
-                                <span class="invalid-feedback" status="alert">
-                                    <strong><%= getError('longitude')['msg'] %></strong>
-                                </span>
-                            <% } %>
-                        </div>
-                    </div>
-                    <div class="form-group row">
-                        <label for="api_key" class="col-md-3 col-form-label text-md-right">API Key Mutasi Bank [api_key]</label>
-                        <div class="col-md-8 mb-3 mb-sm-0">
-                            <input id="api_key" type="text" class="form-control form-control-user <% if(getError('api_key')) { %> is-invalid <% } %>" name="api_key" value="<%= data.api_key %>" autocomplete="api_key">
-                            <% if(getError('api_key')) { %>
-                                <span class="invalid-feedback" status="alert">
-                                    <strong><%= getError('api_key')['msg'] %></strong>
                                 </span>
                             <% } %>
                         </div>

@@ -41,38 +41,7 @@ export class Setting {
 
     @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
     @Index()
-    facebook?: string;
-
-    @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
-    @Index()
-    twitter?: string;
-
-    @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
-    @Index()
-    google?: string;
-
-    @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
-    @Index()
-    instagram?: string;
-
-    @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
-    @Index()
     copyright?: string;
-
-    @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
-    @Index()
-    maps_key?: string;
-
-    @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
-    @Index()
-    latitude?: string;
-
-    @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
-    @Index()
-    longitude?: string;
-
-    @Column({ type: 'text', nullable: true, collation: 'utf8mb4_unicode_ci' })
-    api_key?: string;
 
     @Column({ type: 'char', length: 36, nullable: true, collation: 'utf8mb4_unicode_ci' })
     created_by?: string;
