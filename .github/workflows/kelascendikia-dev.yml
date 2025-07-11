@@ -27,6 +27,8 @@ jobs:
             echo "Commiting Changes"
             sudo git add .
             sudo git commit --allow-empty -m "Update"
+
+            rm -fr ".git/rebase-merge"
             
             echo "Deploying in Kelas Cendikia Dev Server"
             sudo git pull -f origin kelascendikia-dev --rebase
