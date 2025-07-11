@@ -29,6 +29,7 @@ jobs:
             sudo git commit --allow-empty -m "Update"
             
             echo "Deploying in Kelas Cendikia Dev Server"
+            git config pull.rebase
             sudo git pull origin kelascendikia-dev
             
             echo "Installing NPM"
