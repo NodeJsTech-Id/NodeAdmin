@@ -17,7 +17,9 @@ jobs:
           port: ${{ secrets.SERVER_FH_PORT }}
           username: ${{ secrets.SERVER_FH_USER }}
           key: ${{ secrets.SERVER_FH_KEY }}
-          script: |            
+          script: | 
+            set -e
+            
             cd /www/wwwroot/dev.jagokoding.id/
             
             echo "Deploying in Kelas Cendikia Dev Server"
