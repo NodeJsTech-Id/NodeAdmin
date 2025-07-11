@@ -24,8 +24,8 @@ import { createClient } from 'redis'
 import ResponseHandler from './ResponseHandler'
 
 const app = express()
-// const PORT = process.env.APP_PORT
-const PORT = 3000
+const PORT = process.env.APP_PORT
+// const PORT = 3000
 
 // config CORS
 const corsOptions = {
