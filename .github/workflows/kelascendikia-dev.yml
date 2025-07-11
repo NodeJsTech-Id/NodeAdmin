@@ -22,13 +22,14 @@ jobs:
             
             cd /www/wwwroot/dev.jagokoding.id/
             
-            echo "Deploying in Kelas Cendikia Dev Server"
             sudo git config --global --add safe.directory /www/wwwroot/dev.jagokoding.id
-            sudo git pull origin kelascendikia-dev
 
             echo "Commiting Changes"
             sudo git add .
             sudo git commit --allow-empty -m "Update"
+            
+            echo "Deploying in Kelas Cendikia Dev Server"
+            sudo git pull origin kelascendikia-dev
             
             echo "Installing NPM"
             sudo npm install
