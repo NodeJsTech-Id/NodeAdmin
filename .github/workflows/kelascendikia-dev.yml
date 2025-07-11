@@ -1,0 +1,45 @@
+name: Deploy on Kelas Cendikia Dev Server
+
+on:
+  push:
+    branches: [kelascendikia-dev]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@main
+      - name: Deploy to Kelas Cendikia Dev Server
+        uses: appleboy/ssh-action@master
+        with:
+          host: "8.215.11.240"
+          command_timeout: 200m
+          port: ${{ secrets.SERVER_FH_PORT }}
+          username: ${{ secrets.SERVER_FH_USER }}
+          key: ${{ secrets.SERVER_FH_KEY }}
+          script: |            
+            cd /www/wwwroot/dev.jagokoding.id/
+            
+            echo "Deploying in Kelas Cendikia Dev Server"
+            sudo git pull origin kelascendikia-dev
+
+            echo "Commiting Changes"
+            sudo git add .
+            sudo git commit --allow-empty -m "Update"
+            
+            echo "Installing NPM"
+            sudo npm install
+
+            echo "Build Package"
+            sudo npx tsc
+
+            echo "Migrating Database"
+            sudo npm run migration:run
+
+            echo "Restart PM2"
+            sudo pm2 restart dev.jagokoding.id
+            
+            echo "Restart NGINX"
+            sudo service nginx restart
+
+            echo "Deployed on Kelas Cendikia Dev Server"
