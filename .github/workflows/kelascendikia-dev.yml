@@ -21,7 +21,7 @@ jobs:
             cd /www/wwwroot/dev.jagokoding.id/
             
             echo "Deploying in Kelas Cendikia Dev Server"
-            git config --global --add safe.directory /www/wwwroot/dev.jagokoding.id
+            sudo git config --global --add safe.directory /www/wwwroot/dev.jagokoding.id
             sudo git pull origin kelascendikia-dev
 
             echo "Commiting Changes"
