@@ -8,7 +8,8 @@ export class AddEmailSettingToSettingsTable1723948121171 implements MigrationInt
             new TableColumn({
                 name: "mail_from_address",
                 type: "varchar",
-                length: "100"
+                length: "100",
+                isNullable: true,
             }),
         )
         await queryRunner.addColumn(
@@ -16,7 +17,8 @@ export class AddEmailSettingToSettingsTable1723948121171 implements MigrationInt
             new TableColumn({
                 name: "mail_from_name",
                 type: "varchar",
-                length: "100"
+                length: "100",
+                isNullable: true,
             }),
         )
         await queryRunner.addColumn(
@@ -24,7 +26,8 @@ export class AddEmailSettingToSettingsTable1723948121171 implements MigrationInt
             new TableColumn({
                 name: "mail_mailer",
                 type: "varchar",
-                length: "100"
+                length: "100",
+                isNullable: true,
             }),
         )
         await queryRunner.addColumn(
@@ -32,7 +35,8 @@ export class AddEmailSettingToSettingsTable1723948121171 implements MigrationInt
             new TableColumn({
                 name: "mail_host",
                 type: "varchar",
-                length: "100"
+                length: "100",
+                isNullable: true,
             }),
         )
         await queryRunner.addColumn(
@@ -40,7 +44,8 @@ export class AddEmailSettingToSettingsTable1723948121171 implements MigrationInt
             new TableColumn({
                 name: "mail_port",
                 type: "varchar",
-                length: "100"
+                length: "100",
+                isNullable: true,
             }),
         )
         await queryRunner.addColumn(
@@ -48,7 +53,8 @@ export class AddEmailSettingToSettingsTable1723948121171 implements MigrationInt
             new TableColumn({
                 name: "mail_username",
                 type: "varchar",
-                length: "100"
+                length: "100",
+                isNullable: true,
             }),
         )
         await queryRunner.addColumn(
@@ -56,7 +62,8 @@ export class AddEmailSettingToSettingsTable1723948121171 implements MigrationInt
             new TableColumn({
                 name: "mail_password",
                 type: "varchar",
-                length: "100"
+                length: "100",
+                isNullable: true,
             }),
         )
     }
