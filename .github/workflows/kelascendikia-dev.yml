@@ -44,6 +44,6 @@ jobs:
             pm2 restart dev.jagokoding.id
             
             echo "Restart NGINX"
-            sudo service nginx restart
+            sudo service nginx reload
 
             echo "Deployed on Kelas Cendikia Dev Server"
