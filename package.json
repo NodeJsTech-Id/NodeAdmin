@@ -9,7 +9,8 @@
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
     "migration:create": "node ./scripts/generateMigration.js",
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts",
-    "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -d ./src/config/ormconfig.ts"
+    "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -d ./src/config/ormconfig.ts",
+    "migration:fresh": "ts-node ./node_modules/typeorm/cli.js schema:drop -d ./src/config/ormconfig.ts && ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts"
   },
   "keywords": [],
   "author": "",
