@@ -22,6 +22,7 @@ import cors from 'cors'
 import AppDataSource from './config/ormconfig'
 import { createClient } from 'redis'
 import ResponseHandler from './ResponseHandler'
+import connectRedis from 'connect-redis'
 
 const app = express()
 const PORT = process.env.APP_PORT
@@ -38,16 +39,18 @@ const corsOptions = {
 app.use(cors(corsOptions))
 
 // redis
+const RedisStore = connectRedis(session)
 const clientRedis = createClient({
     url: process.env.KELASCENDIKIA_REDIS_URL,
-    database: 0
+    database: 0,
+    legacyMode: true
 })
 
 clientRedis.on('error', (err) => {
     console.error('Redis error:', err)
 })
 
-const connectRedis = async () => {
+const cntRedis = async () => {
     try {
         await clientRedis.connect()
         console.log('Connected to Redis')
@@ -77,7 +80,17 @@ app.use(cookieParser())
 app.use(express.static('public'))
 
 // Configure session and passport
-app.use(session({ secret: process.env.KELASCENDIKIA_SESSION_SECRET || 'secret', resave: false, saveUninitialized: false }))
+app.use(session({
+    store: new RedisStore({ client: clientRedis as any }),
+    secret: process.env.KELASCENDIKIA_SESSION_SECRET || 'secret',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+        secure: false,
+        httpOnly: true,
+        maxAge: 1000 * 60 * 60
+    }
+}))
 app.use(passport.initialize())
 app.use(passport.session())
 
@@ -184,7 +197,7 @@ const initializeApp = async () => {
     }
 }
 
-connectRedis().then(() => {
+cntRedis().then(() => {
     initializeApp()
 }).catch(console.error)
 
