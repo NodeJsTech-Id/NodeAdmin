@@ -25,11 +25,7 @@ class FileService {
                     }
                 })
             } else {
-                result = await oss.put(finalName, finalBuffer, {
-                    headers: {
-                        'x-oss-object-acl': 'public-read'
-                    }
-                })
+                result = await oss.put(finalName, finalBuffer)
             }
             return result
         } catch (e) {
