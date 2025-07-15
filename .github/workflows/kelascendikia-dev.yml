@@ -35,7 +35,7 @@ jobs:
             sudo npm install
 
             echo "Build Package"
-            sudo npx tsc
+            sudo run build
 
             echo "Migrating Database"
             sudo npm run migration:run
