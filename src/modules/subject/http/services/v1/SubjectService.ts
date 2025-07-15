@@ -1,4 +1,4 @@
-import { Not } from 'typeorm'
+import { In, Not } from 'typeorm'
 import { AppDataSource } from '../../../../../index'
 import functions, { removePrefix } from '../../../../../helpers/functions'
 import { Subject } from '../../../models/subject.entity'
@@ -16,7 +16,7 @@ export default class SubjectService {
 		const cleanConditions = removePrefix(filter, 'q_')
 		let query = this.subjectRepository.createQueryBuilder('subjects')
 
-		query = query.leftJoinAndSelect('subjects.category','category')
+		query = query.leftJoinAndSelect('subjects.categories','categories')
 
 		// filter
 		if (cleanConditions.name) {
@@ -24,6 +24,17 @@ export default class SubjectService {
 		}
 		if (cleanConditions.desc) {
 			query = query.andWhere(`subjects.desc LIKE :desc`, { desc: `%${cleanConditions.desc}%` })
+		}
+		if (cleanConditions.category_id) {
+			query = query.where((qb) => {
+				const subQuery = qb.subQuery()
+					.select('subject_id')
+					.from('subjects_categories', 'sc')
+					.where('sc.category_id = :category_id')
+					.getQuery();
+				return 'subjects.id IN ' + subQuery;
+			})
+			.setParameter('category_id', cleanConditions.category_id)
 		}
 
 		query = query.skip(!cleanConditions.page?0:(parseInt(cleanConditions.page)-1)*parseInt(cleanConditions.page_size??10))
@@ -52,8 +63,12 @@ export default class SubjectService {
 			if (find) {
 				throw new Error("Subject Already Exists")
 			}
+			const categories = await this.categoryRepository.findBy({ id: In(request.categories) })
+			if (!categories.length) {
+				throw new Error("Categories Not Found")
+			}
 			request = functions.removeEmptyFields(request)
-			const data = this.subjectRepository.create({ ...request })
+			const data = this.subjectRepository.create({ ...request, categories })
 			const result = await this.subjectRepository.save(data)
 			if (!result) {
 				throw new Error("Store Subject Fail")
@@ -65,7 +80,7 @@ export default class SubjectService {
 	}
 
 	public async edit(id: string) {
-		const data = await this.subjectRepository.findOne({ where: { id } })
+		const data = await this.subjectRepository.findOne({ where: { id }, relations: ['categories'] })
 		const categories = await this.categoryRepository.find()
 		return { data, categories }
 	}
@@ -80,8 +95,17 @@ export default class SubjectService {
 			if (!subject) {
 				throw new Error('Subject not found')
 			}
+			let categories
+			if (Array.isArray(request.categories) && request.categories.length) {
+				categories = await this.categoryRepository.findBy({ id: In(request.categories) })
+				if (!categories.length) {
+					throw new Error("categories Not Found")
+				}
+			} else {
+				categories = subject.categories
+			}
 			request = functions.removeEmptyFields(request)
-			const data = this.subjectRepository.merge(subject, { ...request })
+			const data = this.subjectRepository.merge(subject, { ...request, categories })
 			const result = await this.subjectRepository.save(data)
 			if (!result) {
 				throw new Error("Update Subject Fail")

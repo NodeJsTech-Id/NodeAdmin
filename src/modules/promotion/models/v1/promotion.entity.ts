@@ -1,7 +1,7 @@
-import { Column, Entity, Index, ManyToMany, PrimaryGeneratedColumn } from "typeorm";
-import { StatusEnum } from "../../../../enums/StatusEnum";
-import { TypePromotionEnum } from "../../../../enums/TypePromotionEnum";
-import { Institution } from "../../../institution/models/institution.entity";
+import { Column, Entity, Index, ManyToMany, PrimaryGeneratedColumn } from "typeorm"
+import { StatusEnum } from "../../../../enums/StatusEnum"
+import { TypePromotionEnum } from "../../../../enums/TypePromotionEnum"
+import { Institution } from "../../../institution/models/institution.entity"
 
 @Entity("promotions")
 export class Promotion {

@@ -152,7 +152,7 @@ export default class ClassService {
 			if (!subject) {
 				throw new Error("Subject Not Found")
 			}
-			classData.subjects.push(subject);
+			classData.subjects.push(subject)
 			const data = this.classRepository.merge(classData)
 			const result = await this.classRepository.save(data)
 			if (!result) {
@@ -235,7 +235,7 @@ export default class ClassService {
 			if (!user) {
 				throw new Error("User Not Found")
 			}
-			classData.users.push(user);
+			classData.users.push(user)
 			const data = this.classRepository.merge(classData)
 			const result = await this.classRepository.save(data)
 			if (!result) {
@@ -249,7 +249,7 @@ export default class ClassService {
 
 	public async delete_user(id: string, user_id: string) {
 		try {
-			console.log(user_id);
+			console.log(user_id)
 			const classData = await this.classRepository.findOne({ relations: ['users'], where: { id } })
 			if (!classData) {
 				throw new Error('Class not found')
@@ -336,7 +336,7 @@ export default class ClassService {
 
 	public async delete_mentor(id: string, user_id: string) {
 		try {
-			console.log(user_id);
+			console.log(user_id)
 			const classData = await this.classRepository.findOne({ relations: ['mentors'], where: { id } })
 			if (!classData) {
 				throw new Error('Class not found')

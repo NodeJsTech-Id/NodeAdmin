@@ -43,7 +43,7 @@ const RedisStore = connectRedis(session)
 const clientRedis = createClient({
     url: process.env.KELASCENDIKIA_REDIS_URL,
     database: 0,
-    legacyMode: true
+    legacyMode: true,
 })
 
 clientRedis.on('error', (err) => {
@@ -81,14 +81,14 @@ app.use(express.static('public'))
 
 // Configure session and passport
 app.use(session({
-    store: new RedisStore({ client: clientRedis as any }),
+    store: new RedisStore({ client: clientRedis as any, ttl: 1000 * 60 * 60 * 6 }),
     secret: process.env.KELASCENDIKIA_SESSION_SECRET || 'secret',
     resave: false,
     saveUninitialized: false,
     cookie: {
         secure: false,
         httpOnly: true,
-        maxAge: 1000 * 60 * 60
+        maxAge: 1000 * 60 * 60 * 6
     }
 }))
 app.use(passport.initialize())

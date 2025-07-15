@@ -1,8 +1,8 @@
-import { Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm";
-import { StatusEnum } from "../../../enums/StatusEnum";
-import { User } from "../../access/models/user.entity";
-import { InstitutionUser } from "./institution_user.entity";
-import { Promotion } from "../../promotion/models/v1/promotion.entity";
+import { Column, Entity, Index, JoinColumn, JoinTable, ManyToMany, ManyToOne, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { StatusEnum } from "../../../enums/StatusEnum"
+import { User } from "../../access/models/user.entity"
+import { InstitutionUser } from "./institution_user.entity"
+import { Promotion } from "../../promotion/models/v1/promotion.entity"
 
 @Entity("institutions")
 export class Institution {

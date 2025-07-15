@@ -13,6 +13,8 @@ import { SubjectSubDetailUpdateValidator } from '../http/validators/SubjectSubDe
 import SubjectSubDetailContentController from '../http/controllers/web/v1/SubjectSubDetailContentController'
 import { SubjectSubDetailContentCreateValidator } from '../http/validators/SubjectSubDetailContentCreateValidator'
 import { SubjectSubDetailContentUpdateValidator } from '../http/validators/SubjectSubDetailContentUpdateValidator'
+import SubjectFileController from '../http/controllers/web/v1/SubjectFileController'
+import { upload, SubjectFileValidator } from '../http/validators/SubjectFileValidator'
 
 const router = Router()
 
@@ -64,6 +66,12 @@ subjectSubDetailContentRoute.put('/admin/v1/subject_sub_detail_content/:id/updat
 subjectSubDetailContentRoute.get('/admin/v1/subject_sub_detail_content/:id/delete', AccessMiddleware, ensureAuthenticated, subjectSubDetailContentController.delete.bind(subjectSubDetailContentController))
 subjectSubDetailContentRoute.post('/admin/v1/subject_sub_detail_content/delete_selected', AccessMiddleware, ensureAuthenticated, subjectSubDetailContentController.delete_selected.bind(subjectSubDetailContentController))
 
-router.use(subjectRoute,subjectSubRoute,subjectSubDetailRoute, subjectSubDetailContentRoute)
+const subjectFileRoute = Router()
+const subjectFileController = new SubjectFileController()
+subjectFileRoute.get('/admin/v1/subject/:subject_id/file', AccessMiddleware, ensureAuthenticated, subjectFileController.index.bind(subjectFileController))
+subjectFileRoute.post('/admin/v1/subject/:subject_id/file/store', AccessMiddleware, ensureAuthenticated, upload.any(), SubjectFileValidator, subjectFileController.store.bind(subjectFileController))
+subjectFileRoute.delete('/admin/v1/subject/:subject_id/file/:id/delete', AccessMiddleware, ensureAuthenticated, subjectFileController.delete.bind(subjectFileController))
+
+router.use(subjectRoute,subjectSubRoute,subjectSubDetailRoute, subjectSubDetailContentRoute, subjectFileRoute)
 
 export default router

@@ -44,21 +44,21 @@ export const globalFunctions = async (req: Request, res: Response, next: NextFun
 		return parsedUrl.toString()
 	}
 
-	res.locals.getFile = (fileName: string) => {
-		return fileService.getFile(fileName)
+	res.locals.getFile = (fileName: string, is_public: boolean = false) => {
+		return fileService.getFile(fileName, is_public)
 	}
 
 	res.locals.formatDate = (date: Date, onlyDate: boolean = false) => {
-		const year = date.getFullYear();
-		const month = String(date.getMonth() + 1).padStart(2, '0'); // getMonth() returns 0-indexed month
-		const day = String(date.getDate()).padStart(2, '0');
-		const hours = String(date.getHours()).padStart(2, '0');
-		const minutes = String(date.getMinutes()).padStart(2, '0');
-		const seconds = String(date.getSeconds()).padStart(2, '0');
+		const year = date.getFullYear()
+		const month = String(date.getMonth() + 1).padStart(2, '0') // getMonth() returns 0-indexed month
+		const day = String(date.getDate()).padStart(2, '0')
+		const hours = String(date.getHours()).padStart(2, '0')
+		const minutes = String(date.getMinutes()).padStart(2, '0')
+		const seconds = String(date.getSeconds()).padStart(2, '0')
 		if (onlyDate) {
-			return `${year}-${month}-${day}`;
+			return `${year}-${month}-${day}`
 		} else {
-			return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+			return `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`
 		}
 	}
 

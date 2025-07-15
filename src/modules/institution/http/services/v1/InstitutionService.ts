@@ -143,8 +143,8 @@ export default class InstitutionService {
     }
 
     public async generate_refferal() {
-        let uniqueCode: string = '';
-        let isUnique = false;
+        let uniqueCode: string = ''
+        let isUnique = false
         while (!isUnique) {
             const length: number = 6
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'

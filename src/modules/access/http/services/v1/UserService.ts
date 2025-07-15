@@ -40,7 +40,16 @@ export default class UserService {
       query = query.andWhere(`users.status = :status`, { status: cleanConditions.status })
     }
     if (cleanConditions.role) {
-      query = query.andWhere(`roles.id = :roles_id`, { roles_id: cleanConditions.role })
+      // query = query.andWhere(`roles.id = :roles_id`, { roles_id: cleanConditions.role })
+      query = query.where((qb) => {
+				const subQuery = qb.subQuery()
+					.select('user_id')
+					.from('users_roles', 'sc')
+					.where('sc.role_id = :role')
+					.getQuery();
+				return 'users.id IN ' + subQuery;
+			})
+			.setParameter('role', cleanConditions.role)
     }
 
     query = query.skip(!cleanConditions.page?0:(parseInt(cleanConditions.page)-1)*parseInt(cleanConditions.page_size??10))
@@ -86,7 +95,13 @@ export default class UserService {
         const fileName = request.id
         const uploadResults = await Promise.all(
           files.map((file: { originalname: any, buffer: any }) => {
-            const path = Module.filePath+"user/"+fileName+"."+file.originalname.split('.').pop().toLowerCase()
+            const isConvertible = ['jpg', 'jpeg', 'png', 'tiff', 'bmp'].includes(file.originalname.split('.').pop().toLowerCase())
+            let path
+            if (isConvertible) {
+              path = Module.filePath+"user/"+fileName+".webp"
+            } else {
+              path = Module.filePath+"user/"+fileName+"."+file.originalname.split('.').pop().toLowerCase()
+            }
             fileService.uploadFile(path, file.buffer)
             request.picture = path
           })
@@ -122,9 +137,14 @@ export default class UserService {
       if (!user) {
         throw new Error('User not found')
       }
-      const roles = await this.roleRepository.findBy({ id: In(request.roles) })
-      if (!roles.length) {
-        throw new Error("Roles Not Found")
+      let roles
+      if (Array.isArray(request.roles) && request.roles.length) {
+        roles = await this.roleRepository.findBy({ id: In(request.roles) })
+        if (!roles.length) {
+          throw new Error("Roles Not Found")
+        }
+      } else {
+        roles = user.roles // pakai roles yang sudah ada
       }
       request = functions.removeEmptyFields(request)
       if (typeof request.password !== 'undefined') {
@@ -134,7 +154,13 @@ export default class UserService {
         const fileName = id
         const uploadResults = await Promise.all(
           files.map((file: { originalname: any, buffer: any }) => {
-            const path = Module.filePath+"user/"+fileName+"."+file.originalname.split('.').pop().toLowerCase()
+            const isConvertible = ['jpg', 'jpeg', 'png', 'tiff', 'bmp'].includes(file.originalname.split('.').pop().toLowerCase())
+            let path
+            if (isConvertible) {
+              path = Module.filePath+"user/"+fileName+".webp"
+            } else {
+              path = Module.filePath+"user/"+fileName+"."+file.originalname.split('.').pop().toLowerCase()
+            }
             fileService.uploadFile(path, file.buffer)
             request.picture = path
           })

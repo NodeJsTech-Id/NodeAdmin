@@ -68,7 +68,13 @@ export default class NewsService {
 				const fileName = request.id
 				const uploadResults = await Promise.all(
 					files.map((file: { originalname: any, buffer: any }) => {
-						const path = Module.filePath+fileName+"."+file.originalname.split('.').pop().toLowerCase()
+						const isConvertible = ['jpg', 'jpeg', 'png', 'tiff', 'bmp'].includes(file.originalname.split('.').pop().toLowerCase())
+						let path
+						if (isConvertible) {
+							path = Module.filePath+fileName+".webp"
+						} else {
+							path = Module.filePath+fileName+"."+file.originalname.split('.').pop().toLowerCase()
+						}
 						fileService.uploadFile(path, file.buffer)
 						request.image = path
 					})
@@ -107,7 +113,13 @@ export default class NewsService {
 				const fileName = id
 				const uploadResults = await Promise.all(
 					files.map((file: { originalname: any, buffer: any }) => {
-						const path = Module.filePath+fileName+"."+file.originalname.split('.').pop().toLowerCase()
+						const isConvertible = ['jpg', 'jpeg', 'png', 'tiff', 'bmp'].includes(file.originalname.split('.').pop().toLowerCase())
+						let path
+						if (isConvertible) {
+							path = Module.filePath+fileName+".webp"
+						} else {
+							path = Module.filePath+fileName+"."+file.originalname.split('.').pop().toLowerCase()
+						}
 						fileService.uploadFile(path, file.buffer)
 						request.image = path
 					})

@@ -1,7 +1,7 @@
 import { Router } from 'express'
 import AccessMiddleware from '../../access/http/middleware/AccessMiddleware'
 import { ensureAuthenticated } from '../../auth/http/middleware/authMiddleware'
-import { upload, UserUpdateValidator } from '../../access/http/validators/UserUpdateValidator'
+import { upload, ProfileValidator } from '../http/validators/ProfileValidator'
 import ProfileController from '../http/controllers/web/v1/ProfileController'
 const router = Router()
 
@@ -10,7 +10,7 @@ const profileRoute = Router()
 
 const profileController = new ProfileController()
 profileRoute.get('/admin/v1/profile', AccessMiddleware, ensureAuthenticated, profileController.index.bind(profileController))
-profileRoute.put('/admin/v1/profile/update', AccessMiddleware, ensureAuthenticated, upload.any(), UserUpdateValidator, profileController.update.bind(profileController))
+profileRoute.put('/admin/v1/profile/update', AccessMiddleware, ensureAuthenticated, upload.any(), ProfileValidator, profileController.update.bind(profileController))
 
 router.use(profileRoute)
 

@@ -115,8 +115,8 @@ export default class PromotionService {
     }
 
     public async generate_code() {
-        let uniqueCode: string = '';
-        let isUnique = false;
+        let uniqueCode: string = ''
+        let isUnique = false
         while (!isUnique) {
             const length: number = 6
             const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
@@ -199,7 +199,7 @@ export default class PromotionService {
 			if (!institution) {
 				throw new Error("Institution Not Found")
 			}
-			promotion.institutions.push(institution);
+			promotion.institutions.push(institution)
 			const data = this.promotionRepository.merge(promotion)
 			const result = await this.promotionRepository.save(data)
 			if (!result) {

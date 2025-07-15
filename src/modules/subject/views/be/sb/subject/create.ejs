@@ -36,19 +36,17 @@
                         </div>
                     </div>
                     <div class="form-group row">
-                        <label for="category_id" class="col-md-3 col-form-label text-md-right">Category</label>
-                        <div class="col-md-8 mb-3 mb-sm-0">
-                            <select name="category_id" id="category_id" class="select2 form-control form-control-user <% if(getError('category_id')) { %> is-invalid <% } %>" value="" autocomplete="category_id">
-                                <option disabled="disabled" selected="selected">Select an option</option>
+                        <label for="categories" class="col-md-3 col-form-label text-md-right">Category</label>
+                        <div class="col-md-8 mb-3 mb-sm-0 <% if(getError('categories')) { %> rounded border border-danger <% } %>">
+                            <% let i = 0; %>
+                            <div class="row">
                                 <% categories.forEach(category => { %>
-                                    <option value="<%= category.id %>" <%= (category.id == getOld('category_id')) ? 'selected' : '' %>><%= category.name %></option>
-                                <% }) %>
-                            </select>
-                            <% if(getError('category_id')) { %>
-                                <span class="invalid-feedback" status="alert">
-                                    <strong><%= getError('category_id')['msg'] %></strong>
-                                </span>
-                            <% } %>
+                                    <div class="col-lg-4 col-sm-6">
+                                        <input id="categories<%= i %>" type="checkbox" class="form-control-user <% if(getError('categories')) { %> is-invalid <% } %>" name="categories[]" value="<%= category.id %>" autocomplete="category">
+                                        <label for="categories<%= i %>" class="col-form-label" style="padding-bottom:5px;"><%= category.name %></label>
+                                    </div>
+                                <% i++; }); %>
+                            </div>
                         </div>
                     </div>
                     <div class="form-group row" id="div_desc">

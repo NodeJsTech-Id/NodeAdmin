@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, TableColumn } from "typeorm";
+import { MigrationInterface, QueryRunner, TableColumn } from "typeorm"
 
 export class AddOrderToSubjectSubsTable1724165215300 implements MigrationInterface {
 

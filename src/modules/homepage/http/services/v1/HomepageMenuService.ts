@@ -9,7 +9,7 @@ export default class HomepageMenuService {
 	public async index(filter: any) {
 		const cleanConditions = removePrefix(filter, 'q_')
 		let query = this.homepageMenuRepository.createQueryBuilder('homepage_menus')
-						.innerJoinAndSelect('homepage_menus.childs','childs')
+						.leftJoinAndSelect('homepage_menus.childs','childs')
 
 		// filter
 		if (cleanConditions.position) {

@@ -24,6 +24,7 @@ import { News } from '../modules/news/models/news.entity'
 import { NewsCategory } from '../modules/news/models/news_category.entity'
 import { HomepageMenu } from '../modules/homepage/models/homepage_menu.entity'
 import { SubjectSubDetailContent } from '../modules/subject/models/subject_sub_detail_content.entity'
+import { SubjectFile } from '../modules/subject/models/subject_file.entity'
 
 dotenv.config()
 
@@ -60,6 +61,7 @@ const AppDataSource = new DataSource({
         NewsCategory,
         HomepageMenu,
         SubjectSubDetailContent,
+        SubjectFile
     ],
     migrations: [
         path.resolve(__dirname, '../modules/**/migrations/*.ts')

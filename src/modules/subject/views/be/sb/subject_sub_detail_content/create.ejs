@@ -51,7 +51,7 @@
                     <div class="form-group row" id="div_content">
                         <label for="content" class="col-md-3 col-form-label text-md-right">Content</label>
                         <div class="col-md-8 mb-3 mb-sm-0">
-                            <textarea id="content" class="trumbowyg form-control form-control-user <% if(getError('content')) { %> is-invalid <% } %>" name="content" autocomplete="content"></textarea>
+                            <textarea id="content" data-subject-id="<%= subject_sub_detail.subject_sub.subject.id %>" class="contentField form-control form-control-user <% if(getError('content')) { %> is-invalid <% } %>" name="content" autocomplete="content"></textarea>
                             <% if(getError('content')) { %>
                                 <span class="invalid-feedback" status="alert">
                                     <strong><%= getError('content')['msg'] %></strong>
@@ -79,4 +79,148 @@
 
 <script>
     $(".select2").select2();
+</script>
+
+<div class="modal fade" id="fileManagerModal" tabindex="-1">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">File Manager</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="uploadForm" class="mb-3">
+                    <div class="input-group mb-3">
+                        <input type="file" name="file" class="form-control" placeholder="Select file..." aria-label="Select file..." aria-describedby="basic-addon2">
+                        <div class="input-group-append">
+                            <button class="btn btn-outline-primary" type="submit">Upload</button>
+                        </div>
+                    </div>
+                </form>
+                <hr>
+                <div id="fileList" class="d-flex flex-wrap gap-3"></div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function loadFileManager(subjectId) {
+        fetch(`/admin/v1/subject/${subjectId}/file`, {
+            credentials: 'include'
+        })
+        .then(res => res.json())
+        .then(response => {
+            const list = document.getElementById('fileList');
+            list.innerHTML = '';
+            if (response.data.datas.length == 0) {
+                const div = document.createElement('div');
+                div.className = 'p-2 m-auto';
+                div.innerHTML = `<p>File kosong</p>`;
+                list.appendChild(div);
+            }
+            response.data.datas.forEach(file => {
+                const div = document.createElement('div');
+                div.className = 'border p-2';
+                div.innerHTML = `
+                    <img src="${file.path}" alt="" style="max-height:150px;cursor:pointer;" onclick="insertToEditor('${file.path}')"><br>
+                    <button class="btn btn-sm btn-danger mt-1" onclick="if(confirm('Anda yakin ingin menghapus file ini?')) deleteFile('${subjectId}', '${file.id}')">Hapus</button>
+                `;
+                list.appendChild(div);
+            });
+        });
+    }
+
+    function insertToEditor(url) {
+        if (!window.trumbowygTarget) return;
+        const editor = window.trumbowygTarget;
+        // Pastikan dalam mode visual, bukan HTML
+        if (editor.isCode) {
+            editor.toggle(); // switch ke WYSIWYG
+        }
+        // Sisipkan gambar sebagai tag <img>
+        const html = `<img src="${url}" alt="Gambar" style="max-width: 100%;">`;
+        editor.execCmd('insertHTML', html);
+        editor.syncCode();
+        // Sembunyikan modal dan reset
+        window.trumbowygTarget = null;
+        window.modalFileManager.hide();
+    }
+
+    function deleteFile(subjectId, fileId) {
+        fetch(`/admin/v1/subject/${subjectId}/file/${fileId}/delete`, {
+            method: 'DELETE',
+            credentials: 'include',
+            headers: { 'Content-Type': 'application/json' },
+        })
+        .then(async res => {
+            const isJson = res.headers.get('content-type')?.includes('application/json');
+            if (!res.ok) {
+                const errorData = isJson ? await res.json() : { message: res.statusText || 'Internal Server Error' };
+                throw new Error(errorData.message);
+            }
+            const response = await res.json();
+            if (!response.status) {
+                throw new Error(response.message || 'Terjadi kesalahan');
+            }
+            loadFileManager(subjectId);
+        })
+        .catch(err => {
+            console.error('Upload gagal:', err);
+            alert(err.message);
+        });
+    }
+
+    document.getElementById('uploadForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+        const subjectId = window.trumbowygTarget?.$c?.attr('data-subject-id');
+        const formData = new FormData(this);
+        fetch(`/admin/v1/subject/${subjectId}/file/store`, {
+            method: 'POST',
+            body: formData,
+            credentials: 'include',
+        })
+        .then(async res => {
+            const isJson = res.headers.get('content-type')?.includes('application/json');
+            if (!res.ok) {
+                const errorData = isJson ? await res.json() : { message: res.statusText || 'Internal Server Error' };
+                throw new Error(errorData.message);
+            }
+            const response = await res.json();
+            if (!response.status) {
+                throw new Error(response.message || 'Terjadi kesalahan');
+            }
+            this.reset();
+            setTimeout(() => {
+                loadFileManager(subjectId);
+            }, 1000);
+        })
+        .catch(err => {
+            console.error('Upload gagal:', err);
+            alert(err.message);
+        });
+    });
+</script>
+<script src="/be/sb/js/trumbowyg.filemanager.js"></script>
+<script>
+    $(".contentField").trumbowyg({
+        btns: [
+            ['viewHTML'],
+            ['formatting'],
+            ['strong', 'em', 'del'],
+            ['superscript', 'subscript'],
+            ['link'],
+            ['filemanager'],
+            ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
+            ['unorderedList', 'orderedList'],
+            ['horizontalRule'],
+            ['removeformat'],
+            ['fullscreen']
+        ],
+        lang: 'id',
+        plugins: {
+            filemanager: true
+        }
+    });
 </script>

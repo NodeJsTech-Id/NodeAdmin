@@ -86,7 +86,11 @@
                             <tr>
                                 <td><input name="selected[]" value="<%= data.id %>" type="checkbox" /></td>
                                 <td><%= (i+1)+(paginate_data.page_size*(paginate_data.current_page-1)) %></td>
-                                <td><%= data.category.name %></td>
+                                <td>
+                                    <% data.categories.forEach(category => { %>
+                                        <span class="badge text-bg-primary"><%= category.name %></span>
+                                    <% }); %>
+                                </td>
                                 <td><%= data.name %></td>
                                 <td><%= data.desc %></td>
                                 <td align="center">

@@ -47,7 +47,13 @@ export default class SettingService {
                 const uploadResults = await Promise.all(
                     files.map((file: { fieldname: any, originalname: any, buffer: any }) => {
                         const fileName = generateUniqueFileName()
-                        const path = Module.filePath+fileName+"."+file.originalname.split('.').pop().toLowerCase()
+                        const isConvertible = ['jpg', 'jpeg', 'png', 'tiff', 'bmp'].includes(file.originalname.split('.').pop().toLowerCase())
+                        let path
+                        if (isConvertible) {
+                            path = Module.filePath+fileName+".webp"
+                        } else {
+                            path = Module.filePath+fileName+"."+file.originalname.split('.').pop().toLowerCase()
+                        }
                         fileService.uploadFile(path, file.buffer)
                         if (file.fieldname == 'icon') {
                             request.icon = path

@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, TableColumn } from "typeorm";
+import { MigrationInterface, QueryRunner, TableColumn } from "typeorm"
 
 export class AddNullableMailSettings1752390255273 implements MigrationInterface {
 

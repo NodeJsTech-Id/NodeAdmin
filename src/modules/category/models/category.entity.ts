@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, Index, CreateDateColumn, UpdateDateColumn, OneToMany } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, Index, CreateDateColumn, UpdateDateColumn, ManyToMany } from 'typeorm'
 import { Subject } from '../../subject/models/subject.entity'
 
 @Entity('categories')
@@ -27,6 +27,8 @@ export class Category {
     @UpdateDateColumn({ type: 'timestamp' })
     updated_at!: Date
 
-    @OneToMany(() => Subject, subject => subject.category)
+    // @OneToMany(() => Subject, subject => subject.category)
+    // subjects!: Subject[]
+    @ManyToMany(() => Subject, subject => subject.categories)
     subjects!: Subject[]
 }

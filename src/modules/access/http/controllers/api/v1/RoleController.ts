@@ -2,7 +2,6 @@ import { Request, Response } from 'express'
 import { validationResult } from 'express-validator'
 import RoleService from '../../../services/v1/RoleService'
 import ResponseHandler from '../../../../../../ResponseHandler'
-import appConfig from '../../../../../../config/app'
 
 export default class RoleController {
 	private roleService = new RoleService

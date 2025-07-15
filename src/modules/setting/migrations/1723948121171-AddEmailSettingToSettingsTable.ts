@@ -1,4 +1,4 @@
-import { MigrationInterface, QueryRunner, TableColumn } from "typeorm";
+import { MigrationInterface, QueryRunner, TableColumn } from "typeorm"
 
 export class AddEmailSettingToSettingsTable1723948121171 implements MigrationInterface {
 

@@ -1,31 +1,31 @@
 import { MigrationInterface, QueryRunner, Table } from "typeorm"
 
-export class CreateMeetingSchedulesTable1722646679500 implements MigrationInterface {
+export class CreateSubjectsCategoriesTable1752536933764 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.createTable(new Table(
-            {
-                name: "meetings_schedules",
+        await queryRunner.dropColumn("subjects", "category_id")
+        await queryRunner.createTable(
+            new Table({
+                name: "subjects_categories",
                 columns: [
                     {
-                        name: "meeting_id",
+                        name: "subject_id",
                         type: "varchar",
                         length: "36",
                     },
                     {
-                        name: "schedule_id",
+                        name: "category_id",
                         type: "varchar",
                         length: "36",
-                    }
+                    },
                 ],
-            }
-        ),
-            true
+            }),
+            true,
         )
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable("meetings_schedules",true)
+        await queryRunner.dropTable("subjects_categories")
     }
 
 }

@@ -4,7 +4,7 @@ import ResponseHandler from '../../../../ResponseHandler'
 
 const validator: ObjectSchema = Joi.object({
     name: Joi.string().required(),
-    category_id: Joi.string().required(),
+    categories: Joi.array().required().min(1),
     desc: Joi.string().allow("").optional(),
 })
 
