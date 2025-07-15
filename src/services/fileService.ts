@@ -17,16 +17,11 @@ class FileService {
                 finalName = `${basename}.webp`
             }
 
-            let result
-            if (is_public) {
-                result = await oss.put(finalName, finalBuffer, {
-                    headers: {
-                        'x-oss-object-acl': 'public-read'
-                    }
-                })
-            } else {
-                result = await oss.put(finalName, finalBuffer)
-            }
+            const result = await oss.put(finalName, finalBuffer, {
+                headers: {
+                    'x-oss-object-acl': is_public?'public-read':'private'
+                }
+            })
             return result
         } catch (e) {
             console.error('Upload/Convert error:', e)
