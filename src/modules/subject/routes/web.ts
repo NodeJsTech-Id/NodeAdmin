@@ -7,14 +7,11 @@ import { SubjectUpdateValidator } from '../http/validators/SubjectUpdateValidato
 import { SubjectSubCreateValidator } from '../http/validators/SubjectSubCreateValidator'
 import { SubjectSubUpdateValidator } from '../http/validators/SubjectSubUpdateValidator'
 import SubjectSubController from '../http/controllers/web/v1/SubjectSubController'
-import SubjectSubDetailController from '../http/controllers/web/v1/SubjectSubDetailController'
-import { SubjectSubDetailCreateValidator } from '../http/validators/SubjectSubDetailCreateValidator'
-import { SubjectSubDetailUpdateValidator } from '../http/validators/SubjectSubDetailUpdateValidator'
-import SubjectSubDetailContentController from '../http/controllers/web/v1/SubjectSubDetailContentController'
 import { SubjectSubDetailContentCreateValidator } from '../http/validators/SubjectSubDetailContentCreateValidator'
 import { SubjectSubDetailContentUpdateValidator } from '../http/validators/SubjectSubDetailContentUpdateValidator'
 import SubjectFileController from '../http/controllers/web/v1/SubjectFileController'
 import { upload, SubjectFileValidator } from '../http/validators/SubjectFileValidator'
+import SubjectSubContentController from '../http/controllers/web/v1/SubjectSubContentController'
 
 const router = Router()
 
@@ -41,30 +38,18 @@ subjectSubRoute.put('/admin/v1/subject_sub/:id/update', AccessMiddleware, ensure
 subjectSubRoute.get('/admin/v1/subject_sub/:id/delete', AccessMiddleware, ensureAuthenticated, subjectSubController.delete.bind(subjectSubController))
 subjectSubRoute.post('/admin/v1/subject_sub/delete_selected', AccessMiddleware, ensureAuthenticated, subjectSubController.delete_selected.bind(subjectSubController))
 
-const subjectSubDetailRoute = Router()
-const subjectSubDetailController = new SubjectSubDetailController()
-subjectSubDetailRoute.get('/admin/v1/subject_sub_detail', AccessMiddleware, ensureAuthenticated, subjectSubDetailController.index.bind(subjectSubDetailController))
-subjectSubDetailRoute.get('/admin/v1/subject_sub_detail/create', AccessMiddleware, ensureAuthenticated, subjectSubDetailController.create.bind(subjectSubDetailController))
-subjectSubDetailRoute.post('/admin/v1/subject_sub_detail/store', AccessMiddleware, ensureAuthenticated, SubjectSubDetailCreateValidator, subjectSubDetailController.store.bind(subjectSubDetailController))
-subjectSubDetailRoute.get('/admin/v1/subject_sub_detail/:id/edit', AccessMiddleware, ensureAuthenticated, subjectSubDetailController.edit.bind(subjectSubDetailController))
-subjectSubDetailRoute.get('/admin/v1/subject_sub_detail/:id/order_up', AccessMiddleware, ensureAuthenticated, subjectSubDetailController.order_up.bind(subjectSubDetailController))
-subjectSubDetailRoute.get('/admin/v1/subject_sub_detail/:id/order_down', AccessMiddleware, ensureAuthenticated, subjectSubDetailController.order_down.bind(subjectSubDetailController))
-subjectSubDetailRoute.put('/admin/v1/subject_sub_detail/:id/update', AccessMiddleware, ensureAuthenticated, SubjectSubDetailUpdateValidator, subjectSubDetailController.update.bind(subjectSubDetailController))
-subjectSubDetailRoute.get('/admin/v1/subject_sub_detail/:id/delete', AccessMiddleware, ensureAuthenticated, subjectSubDetailController.delete.bind(subjectSubDetailController))
-subjectSubDetailRoute.post('/admin/v1/subject_sub_detail/delete_selected', AccessMiddleware, ensureAuthenticated, subjectSubDetailController.delete_selected.bind(subjectSubDetailController))
-
 const subjectSubDetailContentRoute = Router()
-const subjectSubDetailContentController = new SubjectSubDetailContentController()
-subjectSubDetailContentRoute.get('/admin/v1/subject_sub_detail_content', AccessMiddleware, ensureAuthenticated, subjectSubDetailContentController.index.bind(subjectSubDetailContentController))
-subjectSubDetailContentRoute.get('/admin/v1/subject_sub_detail_content/create', AccessMiddleware, ensureAuthenticated, subjectSubDetailContentController.create.bind(subjectSubDetailContentController))
-subjectSubDetailContentRoute.post('/admin/v1/subject_sub_detail_content/store', AccessMiddleware, ensureAuthenticated, SubjectSubDetailContentCreateValidator, subjectSubDetailContentController.store.bind(subjectSubDetailContentController))
-subjectSubDetailContentRoute.get('/admin/v1/subject_sub_detail_content/:id/show', AccessMiddleware, ensureAuthenticated, subjectSubDetailContentController.show.bind(subjectSubDetailContentController))
-subjectSubDetailContentRoute.get('/admin/v1/subject_sub_detail_content/:id/edit', AccessMiddleware, ensureAuthenticated, subjectSubDetailContentController.edit.bind(subjectSubDetailContentController))
-subjectSubDetailContentRoute.get('/admin/v1/subject_sub_detail_content/:id/order_up', AccessMiddleware, ensureAuthenticated, subjectSubDetailContentController.order_up.bind(subjectSubDetailContentController))
-subjectSubDetailContentRoute.get('/admin/v1/subject_sub_detail_content/:id/order_down', AccessMiddleware, ensureAuthenticated, subjectSubDetailContentController.order_down.bind(subjectSubDetailContentController))
-subjectSubDetailContentRoute.put('/admin/v1/subject_sub_detail_content/:id/update', AccessMiddleware, ensureAuthenticated, SubjectSubDetailContentUpdateValidator, subjectSubDetailContentController.update.bind(subjectSubDetailContentController))
-subjectSubDetailContentRoute.get('/admin/v1/subject_sub_detail_content/:id/delete', AccessMiddleware, ensureAuthenticated, subjectSubDetailContentController.delete.bind(subjectSubDetailContentController))
-subjectSubDetailContentRoute.post('/admin/v1/subject_sub_detail_content/delete_selected', AccessMiddleware, ensureAuthenticated, subjectSubDetailContentController.delete_selected.bind(subjectSubDetailContentController))
+const subjectSubContentController = new SubjectSubContentController()
+subjectSubDetailContentRoute.get('/admin/v1/subject_sub_content', AccessMiddleware, ensureAuthenticated, subjectSubContentController.index.bind(subjectSubContentController))
+subjectSubDetailContentRoute.get('/admin/v1/subject_sub_content/create', AccessMiddleware, ensureAuthenticated, subjectSubContentController.create.bind(subjectSubContentController))
+subjectSubDetailContentRoute.post('/admin/v1/subject_sub_content/store', AccessMiddleware, ensureAuthenticated, SubjectSubDetailContentCreateValidator, subjectSubContentController.store.bind(subjectSubContentController))
+subjectSubDetailContentRoute.get('/admin/v1/subject_sub_content/:id/show', AccessMiddleware, ensureAuthenticated, subjectSubContentController.show.bind(subjectSubContentController))
+subjectSubDetailContentRoute.get('/admin/v1/subject_sub_content/:id/edit', AccessMiddleware, ensureAuthenticated, subjectSubContentController.edit.bind(subjectSubContentController))
+subjectSubDetailContentRoute.get('/admin/v1/subject_sub_content/:id/order_up', AccessMiddleware, ensureAuthenticated, subjectSubContentController.order_up.bind(subjectSubContentController))
+subjectSubDetailContentRoute.get('/admin/v1/subject_sub_content/:id/order_down', AccessMiddleware, ensureAuthenticated, subjectSubContentController.order_down.bind(subjectSubContentController))
+subjectSubDetailContentRoute.put('/admin/v1/subject_sub_content/:id/update', AccessMiddleware, ensureAuthenticated, SubjectSubDetailContentUpdateValidator, subjectSubContentController.update.bind(subjectSubContentController))
+subjectSubDetailContentRoute.get('/admin/v1/subject_sub_content/:id/delete', AccessMiddleware, ensureAuthenticated, subjectSubContentController.delete.bind(subjectSubContentController))
+subjectSubDetailContentRoute.post('/admin/v1/subject_sub_content/delete_selected', AccessMiddleware, ensureAuthenticated, subjectSubContentController.delete_selected.bind(subjectSubContentController))
 
 const subjectFileRoute = Router()
 const subjectFileController = new SubjectFileController()
@@ -72,6 +57,6 @@ subjectFileRoute.get('/admin/v1/subject/:subject_id/file', AccessMiddleware, ens
 subjectFileRoute.post('/admin/v1/subject/:subject_id/file/store', AccessMiddleware, ensureAuthenticated, upload.any(), SubjectFileValidator, subjectFileController.store.bind(subjectFileController))
 subjectFileRoute.delete('/admin/v1/subject/:subject_id/file/:id/delete', AccessMiddleware, ensureAuthenticated, subjectFileController.delete.bind(subjectFileController))
 
-router.use(subjectRoute,subjectSubRoute,subjectSubDetailRoute, subjectSubDetailContentRoute, subjectFileRoute)
+router.use(subjectRoute, subjectSubRoute, subjectSubDetailContentRoute, subjectFileRoute)
 
 export default router

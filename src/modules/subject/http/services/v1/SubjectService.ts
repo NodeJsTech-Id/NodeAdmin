@@ -3,14 +3,14 @@ import { AppDataSource } from '../../../../../index'
 import functions, { removePrefix } from '../../../../../helpers/functions'
 import { Subject } from '../../../models/subject.entity'
 import { SubjectSub } from '../../../models/subject_sub.entity'
-import { SubjectSubDetail } from '../../../models/subject_sub_detail.entity'
+import { SubjectSubContent } from '../../../models/subject_sub_content.entity'
 import { Category } from '../../../../category/models/category.entity'
 
 export default class SubjectService {
 	private subjectRepository = AppDataSource.getRepository(Subject)
 	private categoryRepository = AppDataSource.getRepository(Category)
 	private subjectSubRepository = AppDataSource.getRepository(SubjectSub)
-	private subjectSubDetailRepository = AppDataSource.getRepository(SubjectSubDetail)
+	private subjectSubContentRepository = AppDataSource.getRepository(SubjectSubContent)
 
 	public async index(filter: any) {
 		const cleanConditions = removePrefix(filter, 'q_')
@@ -117,7 +117,7 @@ export default class SubjectService {
 	}
 
 	public async delete(id: string) {
-		const data = await this.subjectRepository.findOne({ where: { id }, relations: ["subject_subs", "subject_subs.subject_sub_details"] })
+		const data = await this.subjectRepository.findOne({ where: { id }, relations: ["subject_subs", "subject_subs.subject_sub_contents"] })
 		if (!data) {
 			return false
 		}
@@ -126,8 +126,8 @@ export default class SubjectService {
 			return false
 		}
 		data.subject_subs.forEach(async (subject_sub) => {
-			const resultSubDetails = await this.subjectSubDetailRepository.remove(subject_sub.subject_sub_details)
-			if (!resultSubDetails) {
+			const resultSubCotent = await this.subjectSubContentRepository.remove(subject_sub.subject_sub_contents)
+			if (!resultSubCotent) {
 				return false
 			}
 		})

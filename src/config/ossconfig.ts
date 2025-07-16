@@ -13,7 +13,7 @@ const config = {
     endpoint: process.env.OSS_ENDPOINT,
     // Specify the name of the bucket. 
     bucket: process.env.OSS_BUCKET,
-    secure: process.env.OSS_SSL as unknown as boolean
+    secure: process.env.OSS_SSL === 'true'
 }
 
 const oss = new OSS(config)

@@ -9,6 +9,7 @@ import { sendMail } from '../../../../../../services/mailer'
 import bcrypt from 'bcryptjs'
 import appConfig from '../../../../../../config/app'
 import { Profession } from '../../../../../profession/models/profession.entity'
+import { StatusEnum } from '../../../../../../enums/StatusEnum'
 
 const generateOTP = (length: number = 6): string => {
 	let otp = ''
@@ -33,7 +34,7 @@ export default class AuthController {
     }
 
 	public async getRegister(req: Request, res: Response) {
-		const professions = await AppDataSource.getRepository(Profession).find()
+		const professions = await AppDataSource.getRepository(Profession).find({ where: { status: StatusEnum.ACTIVE } })
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/register'), {
 			professions,
             layout: './layouts/be/full-width'

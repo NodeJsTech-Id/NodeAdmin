@@ -109,8 +109,7 @@ export default class ClassService {
 
 		query = query.leftJoinAndSelect('subjects.classes','classes')
 					.leftJoinAndSelect('subjects.subject_subs', 'subject_subs')
-					.leftJoinAndSelect('subject_subs.subject_sub_details', 'subject_sub_details')
-					.leftJoinAndSelect('subject_sub_details.subject_sub_detail_contents', 'subject_sub_detail_contents')
+					.leftJoinAndSelect('subject_subs.subject_sub_contents', 'subject_sub_contents')
 		query = query.andWhere(`classes.id = '${id}'`)
 
 		// filter

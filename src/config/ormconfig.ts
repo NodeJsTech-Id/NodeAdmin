@@ -8,7 +8,6 @@ import { Setting } from '../modules/setting/models/setting.entity'
 import { Category } from '../modules/category/models/category.entity'
 import { Subject } from '../modules/subject/models/subject.entity'
 import { SubjectSub } from '../modules/subject/models/subject_sub.entity'
-import { SubjectSubDetail } from '../modules/subject/models/subject_sub_detail.entity'
 import { Class } from '../modules/class/models/class.entity'
 import { Schedule } from '../modules/schedule/models/schedule.entity'
 import { Room } from '../modules/room/models/room.entity'
@@ -23,7 +22,7 @@ import { Promotion } from '../modules/promotion/models/v1/promotion.entity'
 import { News } from '../modules/news/models/news.entity'
 import { NewsCategory } from '../modules/news/models/news_category.entity'
 import { HomepageMenu } from '../modules/homepage/models/homepage_menu.entity'
-import { SubjectSubDetailContent } from '../modules/subject/models/subject_sub_detail_content.entity'
+import { SubjectSubContent } from '../modules/subject/models/subject_sub_content.entity'
 import { SubjectFile } from '../modules/subject/models/subject_file.entity'
 
 dotenv.config()
@@ -45,7 +44,6 @@ const AppDataSource = new DataSource({
         Category,
         Subject,
         SubjectSub,
-        SubjectSubDetail,
         Class,
         Schedule,
         Room,
@@ -60,15 +58,14 @@ const AppDataSource = new DataSource({
         News,
         NewsCategory,
         HomepageMenu,
-        SubjectSubDetailContent,
+        SubjectSubContent,
         SubjectFile
     ],
     migrations: [
         path.resolve(__dirname, '../modules/**/migrations/*.ts')
     ],
     synchronize: false,
-    // logging: process.env.DB_LOGGING as unknown as boolean,
-    logging: false,
+    logging: process.env.DB_LOGGING === 'true',
 })
 
 export default AppDataSource

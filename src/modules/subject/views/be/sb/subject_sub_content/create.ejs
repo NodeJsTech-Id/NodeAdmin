@@ -10,7 +10,7 @@
 <% } %>
 <!-- Page Heading -->
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Subject Sub Detail Content Management</h1>
+    <h1 class="h3 mb-0 text-gray-800">Subject Sub Content Management</h1>
 </div>
 <!-- Content Row -->
 <div class="row">
@@ -22,25 +22,24 @@
                 <div class="text-start p-0 mb-4 font-weight-bold text-primary">
                     <div class="row m-0">
                         <div class="col-auto my-auto p-0">
-                            Subject : <span style="font-weight: bolder;"><%= subject_sub_detail.subject_sub.subject.name %></span> <br>
-                            Subject Sub : <span style="font-weight: bolder;"><%= subject_sub_detail.subject_sub.name %></span> <br>
-                            Subject Sub Detail : <span style="font-weight: bolder;"><%= subject_sub_detail.name %></span>
+                            Subject : <span style="font-weight: bolder;"><%= subject_sub.subject.name %></span> <br>
+                            Subject Sub : <span style="font-weight: bolder;"><%= subject_sub.name %></span> <br>
                         </div>
                     </div>
                 </div>
                 <hr>
                 <div class="row m-0 justify-content-between">
-                    <h6 class="col text-start p-0 font-weight-bold text-primary">Subject Sub Detail Content Form</h6>
+                    <h6 class="col text-start p-0 font-weight-bold text-primary">Subject Sub Content Form</h6>
                 </div> 
             </div>
             <!-- Card Body -->
             <div class="card-body" style="overflow-x:auto;padding:20px;">
-                <form method="POST" action="/admin/v1/subject_sub_detail_content/<%= data.id %>/update?_method=PUT&subject_sub_detail_id=<%= subject_sub_detail_id %>">
-                    <input type="hidden" name="subject_sub_detail_id" value="<%= subject_sub_detail_id %>">
+                <form method="POST" action="/admin/v1/subject_sub_content/store?subject_sub_id=<%= subject_sub_id %>">
+                    <input type="hidden" name="subject_sub_id" value="<%= subject_sub_id %>">
                     <div class="form-group row" id="div_name">
-                        <label for="name" class="col-md-3 col-form-label text-md-right">name</label>
+                        <label for="name" class="col-md-3 col-form-label text-md-right">Name</label>
                         <div class="col-md-8 mb-3 mb-sm-0">
-                            <input id="name" type="text" class="form-control form-control-user <% if(getError('name')) { %> is-invalid <% } %>" name="name" value="<%= data.name %>" autocomplete="name">
+                            <input id="name" type="text" class="form-control form-control-user <% if(getError('name')) { %> is-invalid <% } %>" name="name" value="<%= getOld('name') %>" autocomplete="name">
                             <% if(getError('name')) { %>
                                 <span class="invalid-feedback" status="alert">
                                     <strong><%= getError('name')['msg'] %></strong>
@@ -51,7 +50,7 @@
                     <div class="form-group row" id="div_content">
                         <label for="content" class="col-md-3 col-form-label text-md-right">Content</label>
                         <div class="col-md-8 mb-3 mb-sm-0">
-                            <textarea id="content"  data-subject-id="<%= subject_sub_detail.subject_sub.subject.id %>" class="contentField form-control form-control-user <% if(getError('content')) { %> is-invalid <% } %>" name="content" autocomplete="content"><%= data.content %></textarea>
+                            <textarea id="content" data-subject-id="<%= subject_sub.subject.id %>" class="contentField form-control form-control-user <% if(getError('content')) { %> is-invalid <% } %>" name="content" autocomplete="content"></textarea>
                             <% if(getError('content')) { %>
                                 <span class="invalid-feedback" status="alert">
                                     <strong><%= getError('content')['msg'] %></strong>
@@ -66,7 +65,7 @@
                             </button>
                         </div>
                         <div class="col-md-6 offset-md-12">
-                            <a href="/admin/v1/subject_sub_detail_content?subject_sub_detail_id=<%= subject_sub_detail_id %>" type="submit" class="btn btn-user btn-danger btn-block text-white">
+                            <a href="/admin/v1/subject_sub_content?subject_sub_id=<%= subject_sub_id %>" type="submit" class="btn btn-user btn-danger btn-block text-white">
                                 Back
                             </a>
                         </div>

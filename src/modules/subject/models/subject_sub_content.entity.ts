@@ -1,22 +1,22 @@
 import { Entity, PrimaryGeneratedColumn, Column, Index, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn } from 'typeorm'
-import { SubjectSubDetail } from './subject_sub_detail.entity'
+import { SubjectSub } from './subject_sub.entity'
 
-@Entity('subject_sub_detail_contents')
-export class SubjectSubDetailContent {
+@Entity('subject_sub_contents')
+export class SubjectSubContent {
     @PrimaryGeneratedColumn('uuid')
-    @Index('subject_sub_detail_contents__id')
+    @Index('subject_sub_contents__id')
     id!: string
 
     @Column({ length: 36 })
-    @Index('subject_sub_detail_contents__subject_sub_detail_id')
-    subject_sub_detail_id!: string
+    @Index('subject_sub_contents__subject_sub_id')
+    subject_sub_id!: string
 
     @Column()
-    @Index('subject_sub_detail_contents__name')
+    @Index('subject_sub_contents__name')
     name!: string
 
     @Column()
-    @Index('subject_sub_detail_contents__content')
+    @Index('subject_sub_contents__content')
     content!: string
 
     @Column()
@@ -34,7 +34,7 @@ export class SubjectSubDetailContent {
     @UpdateDateColumn({ type: 'timestamp' })
     updated_at!: Date
 
-    @ManyToOne(() => SubjectSubDetail, (subject_sub_detail) => subject_sub_detail.subject_sub_detail_contents)
-    @JoinColumn({ name: 'subject_sub_detail_id' })
-    subject_sub_detail!: SubjectSubDetail
+    @ManyToOne(() => SubjectSub, (subject_sub) => subject_sub.subject_sub_contents)
+    @JoinColumn({ name: 'subject_sub_id' })
+    subject_sub!: SubjectSub
 }

@@ -10,7 +10,7 @@
 <% } %>
 <!-- Page Heading -->
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Subject Sub Detail Content Management</h1>
+    <h1 class="h3 mb-0 text-gray-800">Subject Sub Content Management</h1>
 </div>
 <!-- Content Row -->
 <div class="row">
@@ -22,9 +22,8 @@
                 <div class="text-start p-0 mb-4 font-weight-bold text-primary">
                     <div class="row m-0">
                         <div class="col-auto my-auto p-0">
-                            Subject : <span style="font-weight: bolder;"><%= subject_sub_detail.subject_sub.subject.name %></span> <br>
-                            Subject Sub : <span style="font-weight: bolder;"><%= subject_sub_detail.subject_sub.name %></span> <br>
-                            Subject Sub Detail : <span style="font-weight: bolder;"><%= subject_sub_detail.name %></span>
+                            Subject : <span style="font-weight: bolder;"><%= subject_sub.subject.name %></span> <br>
+                            Subject Sub : <span style="font-weight: bolder;"><%= subject_sub.name %></span> <br>
                         </div>
                     </div>
                 </div>
@@ -33,7 +32,7 @@
                     <h6 class="col text-start p-0 font-weight-bold text-primary">Name <span style="font-weight: bolder;"><%= data.name %></span></h6>
                     <div class="col text-end p-0">
                         <div class="btn-group btn-sm nospiner" >
-                            <a  href="/admin/v1/subject_sub_detail_content?subject_sub_detail_id=<%= subject_sub_detail_id %>"  class="btn btn-warning btn-sm" >
+                            <a  href="/admin/v1/subject_sub_content?subject_sub_id=<%= subject_sub_id %>"  class="btn btn-warning btn-sm" >
                                 <i class="fas fa-fw fa-arrow-left"></i> Back
                             </a>
                         </div>                                      

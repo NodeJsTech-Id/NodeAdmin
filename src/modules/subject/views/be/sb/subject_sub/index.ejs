@@ -103,7 +103,7 @@
                                             Action
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a href="/admin/v1/subject_sub_detail?subject_sub_id=<%= data.id %>&subject_id=<%= subject_id %>" class="dropdown-item">Detail</a>
+                                            <a href="/admin/v1/subject_sub_content?subject_sub_id=<%= data.id %>&subject_id=<%= subject_id %>" class="dropdown-item">Content</a>
                                             <a href="/admin/v1/subject_sub/<%= data.id %>/edit?subject_id=<%= subject_id %>" class="dropdown-item">Edit</a>
                                             <% if (data.order_number != 0) { %><a href="/admin/v1/subject_sub/<%= data.id %>/order_up?subject_id=<%= subject_id %>" class="dropdown-item">Move Up</a><% } %>
                                             <% if (data.order_number != paginate_data.total_data-1) { %><a href="/admin/v1/subject_sub/<%= data.id %>/order_down?subject_id=<%= subject_id %>" class="dropdown-item">Move Down</a><% } %>

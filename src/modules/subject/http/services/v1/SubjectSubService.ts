@@ -3,12 +3,12 @@ import { AppDataSource } from '../../../../../index'
 import { SubjectSub } from '../../../models/subject_sub.entity'
 import functions, { removePrefix } from '../../../../../helpers/functions'
 import { Subject } from '../../../models/subject.entity'
-import { SubjectSubDetail } from '../../../models/subject_sub_detail.entity'
+import { SubjectSubContent } from '../../../models/subject_sub_content.entity'
 
 export default class SubjectSubService {
 	private subjectRepository = AppDataSource.getRepository(Subject)
 	private subjectSubRepository = AppDataSource.getRepository(SubjectSub)
-	private subjectSubDetailRepository = AppDataSource.getRepository(SubjectSubDetail)
+	private subjectSubContentRepository = AppDataSource.getRepository(SubjectSubContent)
 
 	public async index(filter: any) {
 		const subject_id = filter.subject_id
@@ -128,12 +128,12 @@ export default class SubjectSubService {
 	}
 
 	public async delete(id: string) {
-		const data = await this.subjectSubRepository.findOne({ where: { id }, relations: ["subject_sub_details"] })
+		const data = await this.subjectSubRepository.findOne({ where: { id }, relations: ["subject_sub_contents"] })
 		if (!data) {
 			return false
 		}
-		const resultSubDetails = await this.subjectSubDetailRepository.remove(data.subject_sub_details)
-		if (!resultSubDetails) {
+		const resultSubContents = await this.subjectSubContentRepository.remove(data.subject_sub_contents)
+		if (!resultSubContents) {
 			return false
 		}
 		const result = await this.subjectSubRepository.remove(data)

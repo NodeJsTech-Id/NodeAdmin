@@ -92,53 +92,26 @@
                                                             <td><%= subject_sub.name %></td>
                                                             <td><%= subject_sub.desc %></td>
                                                         </tr>
-                                                        <% if(subject_sub.subject_sub_details?.length > 0) { %>
+                                                        <% if(subject_sub.subject_sub_contents?.length > 0) { %>
                                                             <tr>
-                                                                <td>Detail</td>
+                                                                <td>Content</td>
                                                                 <td colspan="4">
                                                                     <table class="table table-bordered table-hover">
                                                                         <thead>
                                                                             <tr>
                                                                                 <th width="5%">No</th>
                                                                                 <th width="20%">Name</th>
-                                                                                <th width="10%">Description</th>
+                                                                                <th width="10%">Action</th>
                                                                             </tr>
                                                                         </thead>
                                                                         <tbody>
                                                                             <form id="selection">
-                                                                                <% subject_sub.subject_sub_details.forEach((subject_sub_detail,k) => { %>
+                                                                                <% subject_sub.subject_sub_contents.forEach((subject_sub_content,p) => { %>
                                                                                     <tr>
-                                                                                        <td><%= (k+1) %></td>
-                                                                                        <td><%= subject_sub_detail.name %></td>
-                                                                                        <td><%= subject_sub_detail.desc %></td>
+                                                                                        <td><%= (p+1) %></td>
+                                                                                        <td><%= subject_sub_content.name %></td>
+                                                                                        <td><a href="/admin/v1/class/mentee/<%= classData.id %>/content/<%= subject_sub_content.id %>/show" class="btn btn-sm btn-primary">Show Content</a></td>
                                                                                     </tr>
-                                                                                    <% if(subject_sub_detail.subject_sub_detail_contents?.length > 0) { %>
-                                                                                        <tr>
-                                                                                            <td>Content</td>
-                                                                                            <td colspan="4">
-                                                                                                <table class="table table-bordered table-hover">
-                                                                                                    <thead>
-                                                                                                        <tr>
-                                                                                                            <th width="5%">No</th>
-                                                                                                            <th width="20%">Name</th>
-                                                                                                            <th width="10%">Action</th>
-                                                                                                        </tr>
-                                                                                                    </thead>
-                                                                                                    <tbody>
-                                                                                                        <form id="selection">
-                                                                                                            <% subject_sub_detail.subject_sub_detail_contents.forEach((subject_sub_detail_content,p) => { %>
-                                                                                                                <tr>
-                                                                                                                    <td><%= (p+1) %></td>
-                                                                                                                    <td><%= subject_sub_detail_content.name %></td>
-                                                                                                                    <td><a href="/admin/v1/class/mentee/<%= classData.id %>/content/<%= subject_sub_detail_content.id %>/show" class="btn btn-sm btn-primary">Show Content</a></td>
-                                                                                                                </tr>
-                                                                                                            <% }); %>
-                                                                                                        </form>
-                                                                                                    </tbody>
-                                                                                                </table>
-                                                                                            </td>
-                                                                                        </tr>
-                                                                                    <% } %>
                                                                                 <% }); %>
                                                                             </form>
                                                                         </tbody>

@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, Index, CreateDateColumn, UpdateDateColumn, ManyToOne, JoinColumn, OneToMany } from 'typeorm'
 import { Subject } from './subject.entity'
-import { SubjectSubDetail } from './subject_sub_detail.entity'
+import { SubjectSubContent } from './subject_sub_content.entity'
 
 @Entity('subject_subs')
 export class SubjectSub {
@@ -39,6 +39,6 @@ export class SubjectSub {
     @JoinColumn({ name: 'subject_id' })
     subject!: Subject
 
-    @OneToMany(() => SubjectSubDetail, (subject_sub_detail) => subject_sub_detail.subject_sub)
-    subject_sub_details!: SubjectSubDetail[]
+    @OneToMany(() => SubjectSubContent, (subject_sub_content) => subject_sub_content.subject_sub)
+    subject_sub_contents!: SubjectSubContent[]
 }

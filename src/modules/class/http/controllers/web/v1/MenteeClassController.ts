@@ -3,7 +3,7 @@ import path from 'path'
 import Module from '../../../../Module'
 import ClassService from '../../../services/v1/ClassService'
 import appConfig from '../../../../../../config/app'
-import SubjectSubDetailContentService from '../../../../../subject/http/services/v1/SubjectSubDetailContentService'
+import SubjectSubDetailContentService from '../../../../../subject/http/services/v1/SubjectSubContentService'
 import { User } from '../../../../../access/models/user.entity'
 
 export default class MenteeClassController {
