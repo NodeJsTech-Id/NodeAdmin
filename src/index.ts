@@ -41,7 +41,7 @@ app.use(cors(corsOptions))
 // redis
 const RedisStore = connectRedis(session)
 const clientRedis = createClient({
-    url: process.env.KELASCENDIKIA_REDIS_URL,
+    url: process.env.REDIS_URL,
     database: 0,
     legacyMode: true,
 })
@@ -82,7 +82,7 @@ app.use(express.static('public'))
 // Configure session and passport
 app.use(session({
     store: new RedisStore({ client: clientRedis as any, ttl: 1000 * 60 * 60 * 6 }),
-    secret: process.env.KELASCENDIKIA_SESSION_SECRET || 'secret',
+    secret: process.env.SESSION_SECRET || 'secret',
     resave: false,
     saveUninitialized: false,
     cookie: {
@@ -129,7 +129,7 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, async (email, passwor
 
 passport.use(new JwtStrategy({
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.KELASCENDIKIA_JWT_SECRET || 'secret'
+    secretOrKey: process.env.JWT_SECRET || 'secret'
 }, async (jwtPayload, done) => {
     console.log(jwtPayload)
     console.log(jwtPayload.id)

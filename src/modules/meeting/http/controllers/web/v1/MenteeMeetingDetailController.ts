@@ -33,7 +33,7 @@ export default class MenteeMeetingDetailController {
                 credential: meeting.credential,
                 user,
                 join_token,
-                sdkKey: process.env.KELASCENDIKIA_ZOOM_MEETING_SDK_KEY,
+                sdkKey: process.env.ZOOM_MEETING_SDK_KEY,
                 layout: './layouts/be/plain'
             })
         }
@@ -53,7 +53,7 @@ export default class MenteeMeetingDetailController {
                 credential: meeting?.credential,
                 user,
                 join_token,
-                sdkKey: process.env.KELASCENDIKIA_ZOOM_MEETING_SDK_KEY,
+                sdkKey: process.env.ZOOM_MEETING_SDK_KEY,
                 layout: './layouts/be/plain'
             })
         }

@@ -33,7 +33,7 @@ export default class AuthController {
 			return ResponseHandler.error(res, "Invalid email or password", null, 401)
 		}
 
-		const token = jwt.sign({ id: user.id, email: user.email } as JwtPayload, process.env.KELASCENDIKIA_JWT_SECRET || 'secret', { expiresIn: '1h' })
+		const token = jwt.sign({ id: user.id, email: user.email } as JwtPayload, process.env.JWT_SECRET || 'secret', { expiresIn: '1h' })
 		return ResponseHandler.success(res, "Ok", {
 			access_token: token,
 			token_type: "Bearer",
