@@ -5,7 +5,7 @@ import { Class } from '../../../../class/models/class.entity'
 import { Room } from '../../../../room/models/room.entity'
 import { Schedule } from '../../../../schedule/models/schedule.entity'
 import { User } from '../../../../access/models/user.entity'
-import { In } from 'typeorm'
+import { In, Not } from 'typeorm'
 import app from '../../../../../config/app'
 import { MeetingDetail } from '../../../models/meeting_detail.entity'
 
@@ -200,41 +200,53 @@ export default class MeetingService {
 	public async store(request: any) {
 		return await AppDataSource.transaction(async (transactionalEntityManager) => {
 			try {
+				const dayOrder = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']
 				const schedules = await this.scheduleRepository.findBy({ id: In(request.schedules) })
 				if (!schedules.length) {
 					throw new Error("Schedules Not Found")
 				}
+				schedules.sort((a, b) => {
+					const dayA = dayOrder.indexOf(a.day)
+					const dayB = dayOrder.indexOf(b.day)
+					if (dayA !== dayB) {
+						return dayA - dayB // Urutkan berdasarkan urutan hari
+					}
+					return a.start.localeCompare(b.start) // Kalau hari sama, urutkan berdasarkan jam start
+				})
 				request = functions.removeEmptyFields(request)
 				const meeting = transactionalEntityManager.create(Meeting, { ...request, schedules })
 				const result = await transactionalEntityManager.save(meeting)
 				if (!result) {
 					throw new Error("Store Meeting Fail")
 				}
-
 				let days: any[] = []
 				schedules.forEach(e => {
 					pushIfNotExists(days,getKeyByValue(app.days,e.day))
 				})
 				const dates = getDatesByDay(request.date_start,request.date_end,days,request.meeting_number)
-				dates.forEach(async (date: string) => {
-					schedules.forEach(async (schedule: Schedule) => {
-						if (schedule.day === getDayName(date)) {
-							const dataDetail = transactionalEntityManager.create(MeetingDetail, {
-								meeting_id: result.id,
-								date_start: date,
-								date_end: date,
-								time_start: schedule.start,
-								time_end: schedule.end,
-								duration: calculateMinutesDifference(schedule.start,schedule.end),
-								status: "Not Start"
-							})
-							const resultSchedule = await transactionalEntityManager.save(dataDetail)
-							if (!resultSchedule) {
-								throw new Error("Store Meeting Detail Fail")
+				let meetingCount = 0
+				for (const date of dates) {
+					for (const schedule of schedules) {
+						if (meetingCount < request.meeting_number) {
+							if (schedule.day === getDayName(date)) {
+								const dataDetail = transactionalEntityManager.create(MeetingDetail, {
+									meeting_id: result.id,
+									date_start: date,
+									date_end: date,
+									time_start: schedule.start,
+									time_end: schedule.end,
+									duration: calculateMinutesDifference(schedule.start, schedule.end),
+									status: "Not Start"
+								})
+								const resultSchedule = await transactionalEntityManager.save(dataDetail)
+								if (!resultSchedule) {
+									throw new Error("Store Meeting Detail Fail")
+								}
+								meetingCount++
 							}
 						}
-					})
-				})
+					}
+				}
 				return result
 			} catch (error: any) {
 				throw error
@@ -257,43 +269,62 @@ export default class MeetingService {
 				if (!meeting) {
 					throw new Error('Meeting not found')
 				}
+				const dayOrder = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu', 'Minggu']
 				const schedules = await this.scheduleRepository.findBy({ id: In(request.schedules) })
 				if (!schedules.length) {
 					throw new Error("Schedules Not Found")
 				}
+				schedules.sort((a, b) => {
+					const dayA = dayOrder.indexOf(a.day)
+					const dayB = dayOrder.indexOf(b.day)
+					if (dayA !== dayB) {
+						return dayA - dayB // Urutkan berdasarkan urutan hari
+					}
+					return a.start.localeCompare(b.start) // Kalau hari sama, urutkan berdasarkan jam start
+				})
 				request = functions.removeEmptyFields(request)
 				const data = this.meetingRepository.merge(meeting, { ...request, schedules })
 				const result = await transactionalEntityManager.save(data)
 				if (!result) {
 					throw new Error("Update Meeting Fail")
 				}
-
 				let days: any[] = []
 				schedules.forEach(e => {
 					pushIfNotExists(days,getKeyByValue(app.days,e.day))
 				})
 				const dates = getDatesByDay(request.date_start,request.date_end,days,request.meeting_number)
-				dates.forEach(async (date: string) => {
-					schedules.forEach(async (schedule: Schedule) => {
-						if (schedule.day === getDayName(date) && new Date(date).getTime() > new Date().getTime()) {
-							const dataDetail = transactionalEntityManager.create(MeetingDetail, {
-								meeting_id: result.id,
-								date_start: date,
-								date_end: date,
-								time_start: schedule.start,
-								time_end: schedule.end,
-								duration: calculateMinutesDifference(schedule.start,schedule.end),
-								status: "Not Start",
-							})
-							if (!await transactionalEntityManager.exists(MeetingDetail,{where: dataDetail})) {
-								const resultSchedule = await transactionalEntityManager.save(dataDetail)
-								if (!resultSchedule) {
-									throw new Error("Store Meeting Detail Fail")
+				let detailsId: string[] = []
+				let meetingCount = 0
+				for (const date of dates) {
+					for (const schedule of schedules) {
+						if (meetingCount < request.meeting_number) {
+							if (schedule.day === getDayName(date) && new Date(date).getTime() > new Date().getTime()) {
+								const dataDetail = transactionalEntityManager.create(MeetingDetail, {
+									meeting_id: result.id,
+									date_start: date,
+									date_end: date,
+									time_start: schedule.start,
+									time_end: schedule.end,
+									duration: calculateMinutesDifference(schedule.start,schedule.end),
+									status: "Not Start",
+								})
+								const idDetail = await transactionalEntityManager.findOne(MeetingDetail,{where: dataDetail})
+								if (idDetail == null) {
+									const resultSchedule = await transactionalEntityManager.save(dataDetail)
+									if (!resultSchedule) {
+										throw new Error("Store Meeting Detail Fail")
+									}
+									detailsId.push(resultSchedule.id)
+								} else {
+									detailsId.push(idDetail.id)
 								}
+								meetingCount++
 							}
 						}
-					})
-				})
+					}
+				}
+				const removeDetail = await this.meetingDetailRepository.find({ where: { id: Not(In(detailsId)), status: "Not Start" } })
+				await this.meetingDetailRepository.remove(removeDetail)
 				return result
 			} catch (error: any) {
 				throw error
@@ -302,7 +333,7 @@ export default class MeetingService {
 	}
 
 	public async delete(id: string) {
-		const dataDetail = await this.meetingDetailRepository.find({ where: { id } })
+		const dataDetail = await this.meetingDetailRepository.find({ where: { meeting_id: id } })
 		if (!dataDetail) {
 			return false
 		}
@@ -310,7 +341,6 @@ export default class MeetingService {
 		if (!resultDetail) {
 			return false
 		}
-
 		const data = await this.meetingRepository.findOne({ where: { id } })
 		if (!data) {
 			return false
