@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import Joi, { ObjectSchema } from 'joi'
 import ResponseHandler from '../../../../ResponseHandler'
 
-const userSchema: ObjectSchema = Joi.object({
+const ruleSchema: ObjectSchema = Joi.object({
     date_start: Joi.string().required(),
     date_end: Joi.string().required(),
     time_start: Joi.string().required(),
@@ -14,7 +14,7 @@ const userSchema: ObjectSchema = Joi.object({
 const MeetingDetailUpdateValidator = (req: Request, res: Response, next: NextFunction): void => {
     let errorTotal: any[] = []
 
-    const { error } = userSchema.validate(req.body, { abortEarly: false })
+    const { error } = ruleSchema.validate(req.body, { abortEarly: false })
     if (error) {
         const errors = error.details.map(detail => ({
             path: detail.context?.key,

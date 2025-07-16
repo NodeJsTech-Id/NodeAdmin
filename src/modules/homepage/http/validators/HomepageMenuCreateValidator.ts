@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import Joi, { ObjectSchema } from 'joi'
 import ResponseHandler from '../../../../ResponseHandler'
 
-const userSchema: ObjectSchema = Joi.object({
+const ruleSchema: ObjectSchema = Joi.object({
     menu_id: Joi.string().allow("").optional(),
     position: Joi.string().required(),
     name: Joi.string().required(),
@@ -15,7 +15,7 @@ const userSchema: ObjectSchema = Joi.object({
 const HomepageMenuCreateValidator = (req: Request, res: Response, next: NextFunction): void => {
     let errorTotal: any[] = []
 
-    const { error } = userSchema.validate(req.body, { abortEarly: false })
+    const { error } = ruleSchema.validate(req.body, { abortEarly: false })
     if (error) {
         const errors = error.details.map(detail => ({
             path: detail.context?.key,

@@ -13,7 +13,7 @@ const fileSchema = Joi.object({
     size: Joi.number().max(app.max_photo_size).required() // Maksimum ukuran file 2MB
 })
 
-const userSchema: ObjectSchema = Joi.object({
+const ruleSchema: ObjectSchema = Joi.object({
     name: Joi.string().required(),
     phone: Joi.string().optional(),
     email: Joi.string().email().required(),
@@ -42,7 +42,7 @@ const RegisterValidator = (req: Request, res: Response, next: NextFunction): voi
         delete req.body.picture
     }
 
-    const { error } = userSchema.validate(req.body, { abortEarly: false })
+    const { error } = ruleSchema.validate(req.body, { abortEarly: false })
     if (error) {
         const errors = error.details.map(detail => ({
             path: detail.context?.key,
