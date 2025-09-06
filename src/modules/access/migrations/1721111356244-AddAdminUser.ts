@@ -1,9 +1,13 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { User } from "../models/user.entity";
-import { v6 as uuidv6 } from 'uuid';
-import { StatusEnum } from "../../../enums/StatusEnum";
-import bcrypt from 'bcryptjs';
 import { Role } from "../models/role.entity";
+import { v6 as uuidv6 } from 'uuid';
+import bcrypt from 'bcryptjs';
+
+enum StatusEnum {
+    ACTIVE = 'Active',
+    INACTIVE = 'Inactive'
+}
 
 export class AddAdminUser1721111356244 implements MigrationInterface {
 

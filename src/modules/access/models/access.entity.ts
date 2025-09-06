@@ -1,6 +1,10 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, Index, CreateDateColumn, UpdateDateColumn, JoinTable } from 'typeorm'
 import { Role } from './role.entity'
-import { StatusEnum } from '../../../enums/StatusEnum'
+
+enum StatusEnum {
+  ACTIVE = 'Active',
+  INACTIVE = 'Inactive'
+}
 
 @Entity('accesses')
 export class Access {
