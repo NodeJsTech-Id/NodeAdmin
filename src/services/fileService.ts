@@ -3,7 +3,7 @@ import oss, { ossConfig } from '../config/ossconfig'
 import sharp from 'sharp'
 
 class FileService {
-    async uploadFile(fileName: string, fileContent: Buffer, is_public: boolean = false): Promise<any> {
+    async uploadFile(fileName: string, fileContent: Buffer, is_public: boolean = false): Promise<string> {
         try {
             const ext = path.extname(fileName).toLowerCase().replace('.', '') // contoh: 'jpg'
             const basename = path.basename(fileName, path.extname(fileName))
@@ -22,11 +22,11 @@ class FileService {
                 uploadOptions.headers = { 'x-oss-object-acl': 'public-read' }
             }
 
-            const result = await oss.put(finalName, finalBuffer, uploadOptions)
-            return result
+            await oss.put(finalName, finalBuffer, uploadOptions)
+            return finalName
         } catch (e) {
             console.error('Upload/Convert error:', e)
-            return e
+            throw e
         }
     }
 

@@ -33,15 +33,16 @@ const userSchema: ObjectSchema = Joi.object({
 });
 
 const UserUpdateValidator = (req: Request, res: Response, next: NextFunction): void => {
-    const files: { [fieldname: string]: Express.Multer.File[] } = req.files as { [fieldname: string]: Express.Multer.File[] };
-    let fileArray: Express.Multer.File[] = []
-    if (files !== undefined && files !== null) {
-        fileArray = Object.values(files).flat();
-    }
+    const filesRaw = req.files as any
+    const fileArray: Express.Multer.File[] = Array.isArray(filesRaw)
+        ? (filesRaw as Express.Multer.File[])
+        : filesRaw && typeof filesRaw === 'object'
+            ? (Object.values(filesRaw).flat() as Express.Multer.File[])
+            : []
 
     let errorTotal: any[] = []
 
-    if (typeof files == 'undefined') {
+    if (!fileArray || fileArray.length === 0) {
         delete req.body.picture
     }
 
@@ -54,19 +55,17 @@ const UserUpdateValidator = (req: Request, res: Response, next: NextFunction): v
         errorTotal = errors
     }
 
-    if (typeof files != 'undefined') {
-        if (fileArray.length > 0) {
-            fileArray.map(file => {
-                const errorImage  = fileSchema.validate(file, { abortEarly: false }).error;
-                if (errorImage) {
-                    const errorsImage = errorImage.details.map(detail => ({
-                        path: file.fieldname,
-                        msg: detail.message,
-                    }));
-                    errorTotal = errorTotal.concat(errorsImage)
-                }
-            })
-        }
+    if (fileArray.length > 0) {
+        fileArray.map(file => {
+            const errorImage  = fileSchema.validate(file, { abortEarly: false }).error;
+            if (errorImage) {
+                const errorsImage = errorImage.details.map(detail => ({
+                    path: file.fieldname,
+                    msg: detail.message,
+                }));
+                errorTotal = errorTotal.concat(errorsImage)
+            }
+        })
     }
 
     if (req.url.includes('/api/')) {

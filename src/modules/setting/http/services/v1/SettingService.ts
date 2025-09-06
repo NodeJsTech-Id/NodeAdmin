@@ -43,21 +43,22 @@ export default class SettingService {
 		try {
 			const setting = await this.settingRepository.find()
 			request = functions.removeEmptyFields(request)
-            if (files) {
-                const uploadResults = await Promise.all(
-                    files.map((file: { fieldname: any, originalname: any; buffer: any }) => {
+            if (Array.isArray(files) && files.length > 0) {
+                await Promise.all(
+                    files.map((file: { fieldname: string, originalname: string; buffer: Buffer }) => {
                         const fileName = generateUniqueFileName()
-                        const path = Module.filePath+fileName+"."+file.originalname.split('.').pop().toLowerCase()
-                        fileService.uploadFile(path, file.buffer)
-                        if (file.fieldname == 'icon') {
-                            request.icon = path
-                        } else if (file.fieldname == 'logo') {
-                            request.logo = path
-                        } else if (file.fieldname == 'login_image') {
-                            request.login_image = path
-                        }
+                        const uploadPath = Module.filePath + fileName + "." + file.originalname.split('.').pop()!.toLowerCase()
+                        return fileService.uploadFile(uploadPath, file.buffer).then((savedName: string) => {
+                            if (file.fieldname == 'icon') {
+                                request.icon = savedName
+                            } else if (file.fieldname == 'logo') {
+                                request.logo = savedName
+                            } else if (file.fieldname == 'login_image') {
+                                request.login_image = savedName
+                            }
+                        })
                     })
-                );
+                )
             }
 			const data = this.settingRepository.merge(setting[0], { ...request })
 			const result = await this.settingRepository.save(data)

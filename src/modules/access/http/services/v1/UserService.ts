@@ -71,15 +71,16 @@ export default class UserService {
           throw new Error("Roles Not Found")
         }
       }
-      if (files) {
+      if (Array.isArray(files) && files.length > 0) {
         const fileName = request.id
-        const uploadResults = await Promise.all(
-          files.map((file: { originalname: any; buffer: any }) => {
-            const path = Module.filePath+"user/"+fileName+"."+file.originalname.split('.').pop().toLowerCase()
-            fileService.uploadFile(path, file.buffer)
-            request.picture = path
+        await Promise.all(
+          files.map((file: { originalname: string; buffer: Buffer }) => {
+            const uploadPath = Module.filePath + "user/" + fileName + "." + file.originalname.split('.').pop()!.toLowerCase()
+            return fileService.uploadFile(uploadPath, file.buffer).then((savedName: string) => {
+              request.picture = savedName
+            })
           })
-        );
+        )
       }
       request = functions.removeEmptyFields(request)
 			request.password = await bcrypt.hash(request.password, 10)
@@ -114,15 +115,16 @@ export default class UserService {
       if (typeof request.password !== 'undefined') {
         request.password = await bcrypt.hash(request.password, 10)
       }
-      if (files) {
+      if (Array.isArray(files) && files.length > 0) {
         const fileName = id
-        const uploadResults = await Promise.all(
-          files.map((file: { originalname: any; buffer: any }) => {
-            const path = Module.filePath+"user/"+fileName+"."+file.originalname.split('.').pop().toLowerCase()
-            fileService.uploadFile(path, file.buffer)
-            request.picture = path
+        await Promise.all(
+          files.map((file: { originalname: string; buffer: Buffer }) => {
+            const uploadPath = Module.filePath + "user/" + fileName + "." + file.originalname.split('.').pop()!.toLowerCase()
+            return fileService.uploadFile(uploadPath, file.buffer).then((savedName: string) => {
+              request.picture = savedName
+            })
           })
-        );
+        )
       }
       const data = this.userRepository.merge(user, { ...request, roles })
       const result = await this.userRepository.save(data)
