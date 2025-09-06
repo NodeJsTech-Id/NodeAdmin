@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner, Table, TableIndex } from "typeorm";
 
-export class CreateAccessTable1721110812491 implements MigrationInterface {
+export class CreatePermissionTable1721110812491 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
             new Table({
-                name: "accesses",
+                name: "permissions",
                 columns: [
                     {
                         name: "id",
@@ -62,37 +62,37 @@ export class CreateAccessTable1721110812491 implements MigrationInterface {
         )
 
         await queryRunner.createIndex(
-            "accesses",
+            "permissions",
             new TableIndex({
-                name: "accesses__id",
+                name: "permissions__id",
                 columnNames: ["id"],
             }),
         )
         await queryRunner.createIndex(
-            "accesses",
+            "permissions",
             new TableIndex({
-                name: "accesses__url",
+                name: "permissions__url",
                 columnNames: ["url"],
             }),
         )
         await queryRunner.createIndex(
-            "accesses",
+            "permissions",
             new TableIndex({
-                name: "accesses__method",
+                name: "permissions__method",
                 columnNames: ["method"],
             }),
         )
         await queryRunner.createIndex(
-            "accesses",
+            "permissions",
             new TableIndex({
-                name: "accesses__status",
+                name: "permissions__status",
                 columnNames: ["status"],
             }),
         )
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable("accesses")
+        await queryRunner.dropTable("permissions")
     }
 
 }

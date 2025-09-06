@@ -143,7 +143,7 @@ passport.serializeUser((user: any, done) => {
 
 passport.deserializeUser(async (id: string, done) => {
     try {
-        const user = await userRepository.findOne({ where: { id }, relations: ['roles', 'roles.accesses'] })
+        const user = await userRepository.findOne({ where: { id }, relations: ['roles', 'roles.permissions'] })
         done(null, user)
     } catch (err) {
         done(err, null)

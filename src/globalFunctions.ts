@@ -54,19 +54,19 @@ export const globalFunctions = async (req: Request, res: Response, next: NextFun
 			role.name === 'Administrator'
 		)
 		if (admin) return true
-		const found = user?.roles.some((role: { accesses: { url: string, method: string }[] }) =>
-			role.accesses.some((access: { url: string, method: string }) =>
-				access.url === url && access.method === method
-			)
-		)
+		const found = user?.roles.some((role: { permissions: { url: string, method: string }[] }) =>
+            role.permissions.some((permission: { url: string, method: string }) =>
+                permission.url === url && permission.method === method
+            )
+        )
 		return (typeof found == undefined) ? false:found
 	}
 
 	res.locals.hasRole = (roleName: string) => {
 		const user = req.user as User
-		const found = user?.roles.some((role: { name: string }) =>
-			role.name === roleName
-		)
+    const found = user?.roles.some((role: { name: string }) =>
+            role.name === roleName
+        )
 		return (typeof found == undefined) ? false:found
 	}
 

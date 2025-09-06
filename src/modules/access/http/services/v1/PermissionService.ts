@@ -1,11 +1,11 @@
 import { Not } from 'typeorm'
 import { AppDataSource } from '../../../../../index'
-import { Access } from '../../../models/access.entity'
+import { Permission } from '../../../models/permission.entity'
 import functions, { removePrefix } from '../../../../../helpers/functions'
 import { Application } from 'express'
 
-export default class AccessService {
-	private accessRepository = AppDataSource.getRepository(Access)
+export default class PermissionService {
+    private permissionRepository = AppDataSource.getRepository(Permission)
 
 	public async getAllRegisteredRoute(app: Application) {
         const routes: { method: string, path: string }[] = []
@@ -22,33 +22,33 @@ export default class AccessService {
 		}
 		extractRoutes(app._router.stack)
 		for (const route of routes) {
-			let access = await this.accessRepository.findOne({ where: { url: route.path, method: route.method } })
-			if (!access) {
-				access = this.accessRepository.create({
+			let permission = await this.permissionRepository.findOne({ where: { url: route.path, method: route.method } })
+			if (!permission) {
+				permission = this.permissionRepository.create({
 					url: route.path,
 					method: route.method
 				})
-				await this.accessRepository.save(access)
+				await this.permissionRepository.save(permission)
 			}
 		}
     }
 
 	public async index(filter: any) {
 		const cleanConditions = removePrefix(filter, 'q_')
-		let query = this.accessRepository.createQueryBuilder('accesses')
+        let query = this.permissionRepository.createQueryBuilder('permissions')
 
 		// filter
 		if (cleanConditions.url) {
-			query = query.andWhere(`accesses.url LIKE :url`, { url: `%${cleanConditions.url}%` })
+            query = query.andWhere(`permissions.url LIKE :url`, { url: `%${cleanConditions.url}%` })
 		}
 		if (cleanConditions.method) {
-			query = query.andWhere(`accesses.method = :method`, { method: cleanConditions.method })
+            query = query.andWhere(`permissions.method = :method`, { method: cleanConditions.method })
 		}
 		if (cleanConditions.status) {
-			query = query.andWhere(`accesses.status = :status`, { status: cleanConditions.status })
+            query = query.andWhere(`permissions.status = :status`, { status: cleanConditions.status })
 		}
 		if (cleanConditions.desc) {
-			query = query.andWhere(`accesses.desc LIKE :desc`, { desc: `%${cleanConditions.desc}%` })
+            query = query.andWhere(`permissions.desc LIKE :desc`, { desc: `%${cleanConditions.desc}%` })
 		}
 
 		query = query.skip(!cleanConditions.page?0:(parseInt(cleanConditions.page)-1)*parseInt(cleanConditions.page_size??10))
@@ -67,15 +67,15 @@ export default class AccessService {
 
 	public async store(request: any) {
 		try {
-			const find = await this.accessRepository.findOne({ where: { url: request.url } })
+			const find = await this.permissionRepository.findOne({ where: { url: request.url } })
 			if (find) {
-				throw new Error("Access Already Exists")
+				throw new Error("Permission Already Exists")
 			}
 			request = functions.removeEmptyFields(request)
-			const data = this.accessRepository.create({ ...request })
-			const result = await this.accessRepository.save(data)
+			const data = this.permissionRepository.create({ ...request })
+			const result = await this.permissionRepository.save(data)
 			if (!result) {
-				throw new Error("Store Access Fail")
+				throw new Error("Store Permission Fail")
 			}
 			return result
 		} catch (error: any) {
@@ -84,25 +84,25 @@ export default class AccessService {
 	}
 
 	public async edit(id: string) {
-		const data = await this.accessRepository.findOne({ where: { id } })
+		const data = await this.permissionRepository.findOne({ where: { id } })
 		return data
 	}
 
 	public async update(id: string, request: any) {
 		try {
-			const find = await this.accessRepository.findOne({ where: { id: Not(id), url: request.url } })
+			const find = await this.permissionRepository.findOne({ where: { id: Not(id), url: request.url } })
 			if (find) {
-				throw new Error("Access Already Exists")
+				throw new Error("Permission Already Exists")
 			}
-			const access = await this.accessRepository.findOne({ where: { id } })
-			if (!access) {
-				throw new Error('Access not found')
+			const permission = await this.permissionRepository.findOne({ where: { id } })
+			if (!permission) {
+				throw new Error('Permission not found')
 			}
 			request = functions.removeEmptyFields(request)
-			const data = this.accessRepository.merge(access, { ...request })
-			const result = await this.accessRepository.save(data)
+			const data = this.permissionRepository.merge(permission, { ...request })
+			const result = await this.permissionRepository.save(data)
 			if (!result) {
-				throw new Error("Update Access Fail")
+				throw new Error("Update Permission Fail")
 			}
 			return result
 		} catch (error: any) {
@@ -111,11 +111,11 @@ export default class AccessService {
 	}
 
 	public async delete(id: string) {
-		const data = await this.accessRepository.findOne({ where: { id } })
+		const data = await this.permissionRepository.findOne({ where: { id } })
 		if (!data) {
 			return false
 		}
-		const result = await this.accessRepository.remove(data)
+		const result = await this.permissionRepository.remove(data)
 		if (!result) {
 			return false
 		}

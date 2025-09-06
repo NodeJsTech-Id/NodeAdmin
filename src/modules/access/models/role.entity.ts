@@ -1,6 +1,6 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, JoinTable, Index, UpdateDateColumn, CreateDateColumn } from 'typeorm'
 import { User } from './user.entity'
-import { Access } from './access.entity'
+import { Permission } from './permission.entity'
 
 enum StatusEnum {
   ACTIVE = 'Active',
@@ -44,17 +44,17 @@ export class Role {
   @ManyToMany(() => User, user => user.roles)
   users!: User[]
 
-  @ManyToMany(() => Access, access => access.roles)
+  @ManyToMany(() => Permission, permission => permission.roles)
   @JoinTable({
-    name: 'roles_accesses',
+    name: 'roles_permissions',
     joinColumn: {
       name: 'role_id', // Kolom dalam tabel join yang mereferensikan Role
       referencedColumnName: 'id'
     },
     inverseJoinColumn: {
-      name: 'access_id', // Kolom dalam tabel join yang mereferensikan Access
+      name: 'permission_id', // Kolom dalam tabel join yang mereferensikan Permission
       referencedColumnName: 'id'
     }
   })
-  accesses!: Access[]
+  permissions!: Permission[]
 }

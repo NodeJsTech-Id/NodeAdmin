@@ -1,11 +1,11 @@
 import { Request, Response, NextFunction } from 'express'
 import { AppDataSource } from '../../../../index'
-import { Access } from '../../models/access.entity'
+import { Permission } from '../../models/permission.entity'
 import { User } from '../../models/user.entity'
 import { Like } from 'typeorm'
 
 const AccessMiddleware = async (req: Request, res: Response, next: NextFunction) => {
-    const accessRepository = AppDataSource.getRepository(Access)
+    const permissionRepository = AppDataSource.getRepository(Permission)
     const userRepository = AppDataSource.getRepository(User)
 
     let url = (req.path=='/')?'':req.path
@@ -13,13 +13,13 @@ const AccessMiddleware = async (req: Request, res: Response, next: NextFunction)
     let routeName: string
     let method: string
 
-    const findRoute = await accessRepository.findOne({
+    const findRoute = await permissionRepository.findOne({
         select: ['url','method'],
         where: { url }
     })
 
     if (!findRoute) {
-        const findRoute2 = await accessRepository.find({
+        const findRoute2 = await permissionRepository.find({
             select: ['url','method'],
             where: { url: Like('%:%') }
         })
@@ -47,17 +47,17 @@ const AccessMiddleware = async (req: Request, res: Response, next: NextFunction)
     const user = req.user as User
     const roles = await userRepository.findOne({
         where: { id: user?.id },
-        relations: ['roles', 'roles.accesses']
+        relations: ['roles', 'roles.permissions']
     })
 
-    const hasAccess = roles?.roles.some((role: { accesses: { url: string; method: string }[] }) =>
-        role.accesses.some((access: { url: string; method: string }) =>
-            access.url === routeName && access.method === method
+    const hasAccess = roles?.roles.some((role: { permissions: { url: string; method: string }[] }) =>
+        role.permissions.some((permission: { url: string; method: string }) =>
+            permission.url === routeName && permission.method === method
         )
     )
-    const isApi = roles?.roles.some((role: { accesses: any[] }) =>
-        role.accesses.some((access: { url: string | string[]; method: string }) =>
-            access.url === routeName && access.method === method && access.url.includes('/api/')
+    const isApi = roles?.roles.some((role: { permissions: any[] }) =>
+        role.permissions.some((permission: { url: string | string[]; method: string }) =>
+            permission.url === routeName && permission.method === method && permission.url.includes('/api/')
         )
     )
 

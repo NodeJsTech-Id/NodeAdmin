@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, Index, CreateDateColumn, UpdateDateColumn, JoinTable } from 'typeorm'
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, Index, CreateDateColumn, UpdateDateColumn } from 'typeorm'
 import { Role } from './role.entity'
 
 enum StatusEnum {
@@ -6,18 +6,18 @@ enum StatusEnum {
   INACTIVE = 'Inactive'
 }
 
-@Entity('accesses')
-export class Access {
+@Entity('permissions')
+export class Permission {
   @PrimaryGeneratedColumn('uuid')
-  @Index('accesses__id')
+  @Index('permissions__id')
   id!: string
 
   @Column()
-  @Index('accesses__url')
+  @Index('permissions__url')
   url!: string
 
   @Column()
-  @Index('accesses__method')
+  @Index('permissions__method')
   method!: string
 
   @Column({
@@ -25,11 +25,11 @@ export class Access {
     enum: StatusEnum,
     default: StatusEnum.ACTIVE
   })
-  @Index('accesses__status')
+  @Index('permissions__status')
   status!: StatusEnum
 
   @Column({ nullable: true })
-  @Index('accesses__desc')
+  @Index('permissions__desc')
   desc!: string
 
   @Column({ nullable: true })
@@ -44,6 +44,6 @@ export class Access {
   @UpdateDateColumn({ type: 'timestamp' })
   updated_at!: Date
 
-  @ManyToMany(() => Role, role => role.accesses)
-  roles!: Access[]
+  @ManyToMany(() => Role, role => role.permissions)
+  roles!: Role[]
 }

@@ -10,7 +10,7 @@
 <% } %>
 <!-- Page Heading -->
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Access Management</h1>
+    <h1 class="h3 mb-0 text-gray-800">Permission Management</h1>
 </div>
 <!-- Content Row -->
 <div class="row">
@@ -19,15 +19,15 @@
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Access Form</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Permission Form</h6>
             </div>
             <!-- Card Body -->
             <div class="card-body" style="overflow-x:auto;padding:20px;">
-                <form method="POST" action="/admin/v1/access/access/store">
+                <form method="POST" action="/admin/v1/access/permission/<%= data.id %>/update?_method=PUT">
                     <div class="form-group row" id="div_url">
                         <label for="url" class="col-md-3 col-form-label text-md-right">Url</label>
                         <div class="col-md-8 mb-3 mb-sm-0">
-                            <input id="url" type="text" class="form-control form-control-user <% if(getError('url')) { %> is-invalid <% } %>" name="url" value="" autocomplete="url">
+                            <input id="url" type="text" class="form-control form-control-user <% if(getError('url')) { %> is-invalid <% } %>" name="url" value="<%= data.url %>" autocomplete="url">
                             <% if(getError('url')) { %>
                                 <span class="invalid-feedback" status="alert">
                                     <strong><%= getError('url')['msg'] %></strong>
@@ -38,21 +38,10 @@
                     <div class="form-group row" id="div_method">
                         <label for="method" class="col-md-3 col-form-label text-md-right">Method</label>
                         <div class="col-md-8 mb-3 mb-sm-0">
-                            <input id="method" type="text" class="form-control form-control-user <% if(getError('method')) { %> is-invalid <% } %>" name="method" value="" autocomplete="method">
+                            <input id="method" type="text" class="form-control form-control-user <% if(getError('method')) { %> is-invalid <% } %>" name="method" value="<%= data.method %>" autocomplete="method">
                             <% if(getError('method')) { %>
                                 <span class="invalid-feedback" status="alert">
                                     <strong><%= getError('method')['msg'] %></strong>
-                                </span>
-                            <% } %>
-                        </div>
-                    </div>
-                    <div class="form-group row" id="div_desc">
-                        <label for="desc" class="col-md-3 col-form-label text-md-right">Description</label>
-                        <div class="col-md-8 mb-3 mb-sm-0">
-                            <input id="desc" type="text" class="form-control form-control-user <% if(getError('desc')) { %> is-invalid <% } %>" name="desc" value="" autocomplete="desc">
-                            <% if(getError('desc')) { %>
-                                <span class="invalid-feedback" status="alert">
-                                    <strong><%= getError('desc')['msg'] %></strong>
                                 </span>
                             <% } %>
                         </div>
@@ -61,12 +50,23 @@
                         <label for="status" class="col-md-3 col-form-label text-md-right">Status</label>
                         <div class="col-md-8 mb-3 mb-sm-0">
                             <select name="status" id="status" class="form-control form-control-user <% if(getError('status')) { %> is-invalid <% } %>" value="" required autocomplete="status">
-                                <option value="Active" <% (getOld('status') == 'Active') ? 'selected' : '' %>>Active</option>
-                                <option value="Inactive" <% (getOld('status') == 'Inactive') ? 'selected' : '' %>>Inactive</option>
+                                <option value="Active" <%= (data.status == 'Active') ? 'selected' : '' %>>Active</option>
+                                <option value="Inactive" <%= (data.status == 'Inactive') ? 'selected' : '' %>>Inactive</option>
                             </select>
                             <% if(getError('status')) { %>
                                 <span class="invalid-feedback" status="alert">
                                     <strong><%= getError('status')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
+                    <div class="form-group row" id="div_desc">
+                        <label for="desc" class="col-md-3 col-form-label text-md-right">Description</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <input id="desc" type="desc" class="form-control form-control-user <% if(getError('desc')) { %> is-invalid <% } %>" name="desc" value="<%= data.desc %>" autocomplete="desc">
+                            <% if(getError('desc')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('desc')['msg'] %></strong>
                                 </span>
                             <% } %>
                         </div>
@@ -78,7 +78,7 @@
                             </button>
                         </div>
                         <div class="col-md-6 offset-md-12">
-                            <a href="/admin/v1/access/access" type="submit" class="btn btn-user btn-danger btn-block text-white">
+                            <a href="/admin/v1/access/permission" type="submit" class="btn btn-user btn-danger btn-block text-white">
                                 Back
                             </a>
                         </div>
@@ -88,3 +88,20 @@
         </div>                
     </div>
 </div>
+<script>
+    $(document).ready(function(){            
+        if($('#blocked').val() == 1){
+            $('#div_blocked_reason').show();
+        }else{
+            $('#div_blocked_reason').hide();
+        }
+        $('#blocked').click(function(){
+            if(this.checked){
+                $('#div_blocked_reason').show();
+            }else{
+                $('#blocked_reason').val('');
+                $('#div_blocked_reason').hide();
+            }
+        });
+    });
+</script>

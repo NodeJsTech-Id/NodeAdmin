@@ -1,19 +1,19 @@
 import { Request, Response } from 'express'
 import path from 'path'
 import Module from '../../../../Module'
-import AccessService from '../../../services/v1/AccessService'
+import PermissionService from '../../../services/v1/PermissionService'
 import { validationResult } from 'express-validator'
 import { app } from '../../../../../../index'
 import appConfig from '../../../../../../config/app'
 
-export default class AccessController {
-    private accessService = new AccessService
+export default class PermissionController {
+    private permissionService = new PermissionService
 
     public async index(req: Request, res: Response) {
-		this.accessService.getAllRegisteredRoute(app)
+		this.permissionService.getAllRegisteredRoute(app)
         const filter = req.query
-        const {datas,paginate_data} = await this.accessService.index(filter)
-        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/accesses/index'), {
+        const {datas,paginate_data} = await this.permissionService.index(filter)
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/permission/index'), {
             datas,
             filter,
             paginate_data,
@@ -22,7 +22,7 @@ export default class AccessController {
     }
 
     public async create(req: Request, res: Response) {
-        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/accesses/create'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/permission/create'), {
             layout: './layouts'+appConfig.be_layout+'/main'
         })
     }
@@ -36,25 +36,25 @@ export default class AccessController {
             if (!errors.isEmpty()) {
                 req.session.errors = errors.array()
                 req.session.old = req.body
-                return res.redirect('/admin/v1/access/access/create')
+                return res.redirect('/admin/v1/access/permission/create')
             }
-            const result = await this.accessService.store(req.body)
+            const result = await this.permissionService.store(req.body)
             if (result instanceof Error) {
                 throw new Error(result.message)
             }
-            req.session.flashMessage = { key: 'success', message: 'Store Access Success.' }
-            res.redirect('/admin/v1/access/access')
+            req.session.flashMessage = { key: 'success', message: 'Store Permission Success.' }
+            res.redirect('/admin/v1/access/permission')
         } catch (err: any) {
             req.session.flashMessage = { key: 'error', message: err.message }
             req.session.old = req.body
-            return res.redirect('/admin/v1/access/access/create')
+            return res.redirect('/admin/v1/access/permission/create')
         }
     }
 
     public async edit(req: Request, res: Response) {
-        const result = await this.accessService.edit(req.params.id)
+        const result = await this.permissionService.edit(req.params.id)
         const data = result
-        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/accesses/edit'), {
+        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/permission/edit'), {
             data,
             layout: './layouts'+appConfig.be_layout+'/main'
         })
@@ -65,35 +65,35 @@ export default class AccessController {
             const errors = validationResult(req)
             if (!errors.isEmpty()) {
                 req.session.errors = errors.array()
-                return res.redirect('/admin/v1/access/access/'+req.params.id+'/edit')
+                return res.redirect('/admin/v1/access/permission/'+req.params.id+'/edit')
             }
-            const result = await this.accessService.update(req.params.id, req.body)
+            const result = await this.permissionService.update(req.params.id, req.body)
             if (result instanceof Error) {
                 throw new Error(result.message)
             }
-            req.session.flashMessage = { key: 'success', message: 'Update Access Success.' }
-            res.redirect('/admin/v1/access/access')
+            req.session.flashMessage = { key: 'success', message: 'Update Permission Success.' }
+            res.redirect('/admin/v1/access/permission')
         } catch (err: any) {
             req.session.flashMessage = { key: 'error', message: err.message }
-            return res.redirect('/admin/v1/access/access/'+req.params.id+'/edit')
+            return res.redirect('/admin/v1/access/permission/'+req.params.id+'/edit')
         }
     }
 
     public async delete(req: Request, res: Response) {
-        const result = await this.accessService.delete(req.params.id)
+        const result = await this.permissionService.delete(req.params.id)
         if (!result) {
-            req.session.flashMessage = { key: 'error', message: 'Delete Access Fail.' }
-            return res.redirect('/admin/v1/access/access')
+            req.session.flashMessage = { key: 'error', message: 'Delete Permission Fail.' }
+            return res.redirect('/admin/v1/access/permission')
         }
-        req.session.flashMessage = { key: 'success', message: 'Delete Access Success.' }
-        res.redirect('/admin/v1/access/access')
+        req.session.flashMessage = { key: 'success', message: 'Delete Permission Success.' }
+        res.redirect('/admin/v1/access/permission')
     }
 
     public async delete_selected(req: Request, res: Response) {
         req.body.selected.forEach(async (id: string) => {
-            await this.accessService.delete(id)
+            await this.permissionService.delete(id)
         });
-        req.session.flashMessage = { key: 'success', message: 'Delete Access Success.' }
-        res.redirect('/admin/v1/access/access')
+        req.session.flashMessage = { key: 'success', message: 'Delete Permission Success.' }
+        res.redirect('/admin/v1/access/permission')
     }
 }

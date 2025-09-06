@@ -1,11 +1,11 @@
 import { MigrationInterface, QueryRunner, Table } from "typeorm";
 
-export class CreateRoleAccessTable1721110973824 implements MigrationInterface {
+export class CreateRolePermissionTable1721110973824 implements MigrationInterface {
 
     public async up(queryRunner: QueryRunner): Promise<void> {
         await queryRunner.createTable(
             new Table({
-                name: "roles_accesses",
+                name: "roles_permissions",
                 columns: [
                     {
                         name: "role_id",
@@ -13,7 +13,7 @@ export class CreateRoleAccessTable1721110973824 implements MigrationInterface {
                         length: "36",
                     },
                     {
-                        name: "access_id",
+                        name: "permission_id",
                         type: "varchar",
                         length: "36",
                     },
@@ -24,7 +24,7 @@ export class CreateRoleAccessTable1721110973824 implements MigrationInterface {
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {
-        await queryRunner.dropTable("roles_accesses")
+        await queryRunner.dropTable("roles_permissions")
     }
 
 }

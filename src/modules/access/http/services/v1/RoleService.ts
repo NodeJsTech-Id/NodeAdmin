@@ -1,12 +1,12 @@
 import { Not } from 'typeorm'
 import { AppDataSource } from '../../../../../index'
 import { Role } from '../../../models/role.entity'
-import { Access } from '../../../models/access.entity'
+import { Permission } from '../../../models/permission.entity'
 import functions, { removePrefix } from '../../../../../helpers/functions'
 
 export default class RoleService {
 	private roleRepository = AppDataSource.getRepository(Role)
-	private accessRepository = AppDataSource.getRepository(Access)
+    private permissionRepository = AppDataSource.getRepository(Permission)
 
 	public async index(filter: any) {
 		const cleanConditions = removePrefix(filter, 'q_')
@@ -94,38 +94,38 @@ export default class RoleService {
 		return result
 	}
 
-	public async access(role_id: string,filter:any) {
+	public async permission(role_id: string,filter:any) {
 		const cleanConditions = removePrefix(filter, 'q_')
-		const role = await this.roleRepository.findOne({ where: { id: role_id }, relations: ['accesses'] })
-		let query = this.accessRepository.createQueryBuilder('accesses')
+        const role = await this.roleRepository.findOne({ where: { id: role_id }, relations: ['permissions'] })
+        let query = this.permissionRepository.createQueryBuilder('permissions')
 
 		// filter
 		if (cleanConditions.url) {
-			query = query.andWhere(`accesses.url LIKE :url`, { url: `%${cleanConditions.url}%` })
+            query = query.andWhere(`permissions.url LIKE :url`, { url: `%${cleanConditions.url}%` })
 		}
 		if (cleanConditions.method) {
-			query = query.andWhere(`accesses.method = :method`, { method: cleanConditions.method })
+            query = query.andWhere(`permissions.method = :method`, { method: cleanConditions.method })
 		}
 		if (cleanConditions.status) {
-			if (cleanConditions.status == 'Active') {
-				query = query.leftJoinAndSelect('accesses.roles', 'role')
-					.andWhere('role.id = :role_id', { role_id })
-			} else if (cleanConditions.status == 'Inactive') {
-				query = query.leftJoinAndSelect('accesses.roles', 'role')
-				.where(qb => {
-					const subQuery = qb.subQuery()
-						.select('roles_accesses.access_id')
-						.from('roles_accesses', 'roles_accesses')
-						.where('roles_accesses.role_id = :roleId')
-						.getQuery()
-					return `accesses.id NOT IN ${subQuery}`
-				})
-				.setParameter('roleId', role_id)
-			}
-		}
-		if (cleanConditions.desc) {
-			query = query.andWhere(`accesses.desc LIKE :desc`, { desc: `%${cleanConditions.desc}%` })
-		}
+            if (cleanConditions.status == 'Active') {
+                query = query.leftJoinAndSelect('permissions.roles', 'role')
+                        .andWhere('role.id = :role_id', { role_id })
+            } else if (cleanConditions.status == 'Inactive') {
+                query = query.leftJoinAndSelect('permissions.roles', 'role')
+                .where(qb => {
+                    const subQuery = qb.subQuery()
+                        .select('roles_permissions.permission_id')
+                        .from('roles_permissions', 'roles_permissions')
+                        .where('roles_permissions.role_id = :roleId')
+                        .getQuery()
+                    return `permissions.id NOT IN ${subQuery}`
+                })
+                .setParameter('roleId', role_id)
+            }
+        }
+        if (cleanConditions.desc) {
+            query = query.andWhere(`permissions.desc LIKE :desc`, { desc: `%${cleanConditions.desc}%` })
+        }
 
 		query = query.skip(!cleanConditions.page?0:(parseInt(cleanConditions.page)-1)*parseInt(cleanConditions.page_size??10))
 			.take(cleanConditions.page_size??10)
@@ -141,25 +141,25 @@ export default class RoleService {
 		return { datas:datas[0], role, paginate_data }
 	}
 
-	public async access_assign(role_id: string, access_id: string) {
+	public async permission_assign(role_id: string, permission_id: string) {
 		try {
-			const role = await this.roleRepository.findOne({
-				where: { id: role_id },
-				relations: ['accesses']
-			})
+        const role = await this.roleRepository.findOne({
+            where: { id: role_id },
+            relations: ['permissions']
+        })
 			if (!role) {
 				throw new Error('Role not found')
 			}
-			const access = await this.accessRepository.findOne({
-				where: { id: access_id }
-			})
-			if (!access) {
-				throw new Error('Access not found')
+        const permission = await this.permissionRepository.findOne({
+            where: { id: permission_id }
+        })
+			if (!permission) {
+				throw new Error('Permission not found')
 			}
-			role.accesses.push(access)
+        role.permissions.push(permission as any)
 			const result = await this.roleRepository.save(role)
 			if (!result) {
-				throw new Error("Assign Access Fail")
+				throw new Error("Assign Permission Fail")
 			}
 			return result
 		} catch (error) {
@@ -167,27 +167,27 @@ export default class RoleService {
 		}
 	}
 
-	public async access_assign_selected(role_id: string, accesses: string[]) {
+	public async permission_assign_selected(role_id: string, permissions: string[]) {
 		try {
-			const role = await this.roleRepository.findOne({
-				where: { id: role_id },
-				relations: ['accesses']
-			})
+        const role = await this.roleRepository.findOne({
+            where: { id: role_id },
+            relations: ['permissions']
+        })
 			if (!role) {
 				throw new Error('Role not found')
 			}
-			accesses.forEach(async (access_id: string) => {
-				const access = await this.accessRepository.findOne({
-					where: { id: access_id }
-				})
-				if (!access) {
-					throw new Error('Access not found')
+			permissions.forEach(async (permission_id: string) => {
+            const permission = await this.permissionRepository.findOne({
+                where: { id: permission_id }
+            })
+				if (!permission) {
+					throw new Error('Permission not found')
 				}
-				role.accesses.push(access)
+            role.permissions.push(permission as any)
 			})
 			const result = await this.roleRepository.save(role)
 			if (!result) {
-				throw new Error("Assign Access Fail")
+				throw new Error("Assign Permission Fail")
 			}
 			return result
 		} catch (error) {
@@ -195,19 +195,19 @@ export default class RoleService {
 		}
 	}
 
-	public async access_unassign(role_id: string, access_id: string) {
+	public async permission_unassign(role_id: string, permission_id: string) {
 		try {
-			const role = await this.roleRepository.findOne({
-				where: { id: role_id },
-				relations: ['accesses']
-			})
+        const role = await this.roleRepository.findOne({
+            where: { id: role_id },
+            relations: ['permissions']
+        })
 			if (!role) {
 				throw new Error('Role not found')
 			}
-			role.accesses = role.accesses.filter((access: { id: string }) => access.id !== access_id)
+        role.permissions = role.permissions.filter((permission: { id: string }) => permission.id !== permission_id)
 			const result = await this.roleRepository.save(role)
 			if (!result) {
-				throw new Error("Unassign Access Fail")
+				throw new Error("Unassign Permission Fail")
 			}
 			return result
 		} catch (error) {
@@ -215,21 +215,21 @@ export default class RoleService {
 		}
 	}
 
-	public async access_unassign_selected(role_id: string, accesses: string[]) {
+	public async permission_unassign_selected(role_id: string, permissions: string[]) {
 		try {
-			const role = await this.roleRepository.findOne({
-				where: { id: role_id },
-				relations: ['accesses']
-			})
+        const role = await this.roleRepository.findOne({
+            where: { id: role_id },
+            relations: ['permissions']
+        })
 			if (!role) {
 				throw new Error('Role not found')
 			}
-			accesses.forEach(access_id => {
-				role.accesses = role.accesses.filter((access: { id: string }) => access.id !== access_id)
-			})
+        permissions.forEach(permission_id => {
+            role.permissions = role.permissions.filter((permission: { id: string }) => permission.id !== permission_id)
+        })
 			const result = await this.roleRepository.save(role)
 			if (!result) {
-				throw new Error("Unassign Access Fail")
+				throw new Error("Unassign Permission Fail")
 			}
 			return result
 		} catch (error) {

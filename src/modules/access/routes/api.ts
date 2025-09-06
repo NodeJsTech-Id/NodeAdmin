@@ -1,11 +1,11 @@
 import { Router } from 'express'
 import UserController from '../http/controllers/api/v1/UserController'
-import AccessController from '../http/controllers/api/v1/AccessController'
+import PermissionController from '../http/controllers/api/v1/PermissionController'
 import AccessMiddleware from '../http/middleware/AccessMiddleware'
 import { ensureAuthenticatedApi } from '../../auth/http/middleware/authMiddleware'
 import RoleController from '../http/controllers/api/v1/RoleController'
 import { roleValidationRules } from '../http/validators/RoleValidator'
-import { accessValidationRules } from '../http/validators/AccessValidator'
+import { permissionValidationRules } from '../http/validators/PermissionValidator'
 import { upload, UserCreateValidator } from '../http/validators/UserCreateValidator'
 import { UserUpdateValidator } from '../http/validators/UserUpdateValidator'
 
@@ -23,15 +23,15 @@ userRoute.get('/api/v1/access/user/:id/delete', AccessMiddleware, ensureAuthenti
 userRoute.post('/api/v1/access/user/delete_selected', AccessMiddleware, ensureAuthenticatedApi, userController.delete_selected.bind(userController))
 
 // define route & set middleware access
-const accessRoute = Router()
+const permissionRoute = Router()
 
-const accessController = new AccessController()
-accessRoute.get('/api/v1/access/access', AccessMiddleware, ensureAuthenticatedApi, accessController.index.bind(accessController))
-accessRoute.post('/api/v1/access/access/store', AccessMiddleware, ensureAuthenticatedApi, accessValidationRules(), accessController.store.bind(accessController))
-accessRoute.get('/api/v1/access/access/:id/edit', AccessMiddleware, ensureAuthenticatedApi, accessController.edit.bind(accessController))
-accessRoute.put('/api/v1/access/access/:id/update', AccessMiddleware, ensureAuthenticatedApi, accessValidationRules(), accessController.update.bind(accessController))
-accessRoute.get('/api/v1/access/access/:id/delete', AccessMiddleware, ensureAuthenticatedApi, accessController.delete.bind(accessController))
-accessRoute.post('/api/v1/access/access/delete_selected', AccessMiddleware, ensureAuthenticatedApi, accessController.delete_selected.bind(accessController))
+const permissionController = new PermissionController()
+permissionRoute.get('/api/v1/access/permission', AccessMiddleware, ensureAuthenticatedApi, permissionController.index.bind(permissionController))
+permissionRoute.post('/api/v1/access/permission/store', AccessMiddleware, ensureAuthenticatedApi, permissionValidationRules(), permissionController.store.bind(permissionController))
+permissionRoute.get('/api/v1/access/permission/:id/edit', AccessMiddleware, ensureAuthenticatedApi, permissionController.edit.bind(permissionController))
+permissionRoute.put('/api/v1/access/permission/:id/update', AccessMiddleware, ensureAuthenticatedApi, permissionValidationRules(), permissionController.update.bind(permissionController))
+permissionRoute.get('/api/v1/access/permission/:id/delete', AccessMiddleware, ensureAuthenticatedApi, permissionController.delete.bind(permissionController))
+permissionRoute.post('/api/v1/access/permission/delete_selected', AccessMiddleware, ensureAuthenticatedApi, permissionController.delete_selected.bind(permissionController))
 
 // define route & set middleware role
 const roleRoute = Router()
@@ -39,16 +39,16 @@ const roleRoute = Router()
 const roleController = new RoleController()
 roleRoute.get('/api/v1/access/role', AccessMiddleware, ensureAuthenticatedApi, roleController.index.bind(roleController))
 roleRoute.post('/api/v1/access/role/store', AccessMiddleware, ensureAuthenticatedApi, roleValidationRules(), roleController.store.bind(roleController))
-roleRoute.get('/api/v1/access/role/:id/access', AccessMiddleware, ensureAuthenticatedApi, roleController.access.bind(roleController))
-roleRoute.get('/api/v1/access/role/:id/access/:access_id/assign', AccessMiddleware, ensureAuthenticatedApi, roleController.access_assign.bind(roleController))
-roleRoute.post('/api/v1/access/role/:id/access/assign_selected', AccessMiddleware, ensureAuthenticatedApi, roleController.access_assign_selected.bind(roleController))
-roleRoute.get('/api/v1/access/role/:id/access/:access_id/unassign', AccessMiddleware, ensureAuthenticatedApi, roleController.access_unassign.bind(roleController))
-roleRoute.post('/api/v1/access/role/:id/access/unassign_selected', AccessMiddleware, ensureAuthenticatedApi, roleController.access_unassign_selected.bind(roleController))
+roleRoute.get('/api/v1/access/role/:id/permission', AccessMiddleware, ensureAuthenticatedApi, roleController.permission.bind(roleController))
+roleRoute.get('/api/v1/access/role/:id/permission/:permission_id/assign', AccessMiddleware, ensureAuthenticatedApi, roleController.permission_assign.bind(roleController))
+roleRoute.post('/api/v1/access/role/:id/permission/assign_selected', AccessMiddleware, ensureAuthenticatedApi, roleController.permission_assign_selected.bind(roleController))
+roleRoute.get('/api/v1/access/role/:id/permission/:permission_id/unassign', AccessMiddleware, ensureAuthenticatedApi, roleController.permission_unassign.bind(roleController))
+roleRoute.post('/api/v1/access/role/:id/permission/unassign_selected', AccessMiddleware, ensureAuthenticatedApi, roleController.permission_unassign_selected.bind(roleController))
 roleRoute.get('/api/v1/access/role/:id/edit', AccessMiddleware, ensureAuthenticatedApi, roleController.edit.bind(roleController))
 roleRoute.put('/api/v1/access/role/:id/update', AccessMiddleware, ensureAuthenticatedApi, roleValidationRules(), roleController.update.bind(roleController))
 roleRoute.get('/api/v1/access/role/:id/delete', AccessMiddleware, ensureAuthenticatedApi, roleController.delete.bind(roleController))
 roleRoute.post('/api/v1/access/role/delete_selected', AccessMiddleware, ensureAuthenticatedApi, roleController.delete_selected.bind(roleController))
 
-router.use(userRoute,accessRoute,roleRoute)
+router.use(userRoute,permissionRoute,roleRoute)
 
 export default router

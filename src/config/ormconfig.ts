@@ -1,7 +1,7 @@
 import { DataSource } from 'typeorm';
 import * as dotenv from 'dotenv';
 import path from 'path';
-import { Access } from '../modules/access/models/access.entity';
+import { Permission } from '../modules/access/models/permission.entity';
 import { Role } from '../modules/access/models/role.entity';
 import { User } from '../modules/access/models/user.entity';
 import { Setting } from '../modules/setting/models/setting.entity';
@@ -16,7 +16,7 @@ const AppDataSource = new DataSource({
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
     entities: [
-        Access, Role, User, Setting
+        Permission, Role, User, Setting
     ],
     migrations: [
         path.resolve(__dirname, '../modules/**/migrations/*.ts')

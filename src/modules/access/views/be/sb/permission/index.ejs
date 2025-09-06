@@ -9,7 +9,7 @@
     </div>
 <% } %>
 <div class="d-sm-flex align-items-center justify-content-between mb-4">
-    <h1 class="h3 mb-0 text-gray-800">Access Management</h1>
+    <h1 class="h3 mb-0 text-gray-800">Permission Management</h1>
     <div class="d-none d-sm-inline-block">
     </div>
 </div>
@@ -20,12 +20,12 @@
         <div class="card shadow mb-4">
             <!-- Card Header - Dropdown -->
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
-                <h6 class="m-0 font-weight-bold text-primary">Access List</h6>
+                <h6 class="m-0 font-weight-bold text-primary">Permission List</h6>
                 <div class="btn-group btn-sm nospiner" >
-                    <a  href="/admin/v1/access/access/create"  class="btn btn-success btn-sm" >
+                    <a  href="/admin/v1/access/permission/create"  class="btn btn-success btn-sm" >
                         <i class="fas fa-fw fa-plus"></i> Add Data
                     </a>
-                    <button type="submit" form="selection" formmethod="post" formaction="/admin/v1/access/access/delete_selected" onclick="return confirm('Confirm Delete')" class="btn btn-danger btn-sm">
+                    <button type="submit" form="selection" formmethod="post" formaction="/admin/v1/access/permission/delete_selected" onclick="return confirm('Confirm Delete')" class="btn btn-danger btn-sm">
                         <i class="fas fa-fw fa-times"></i> Delete Selected
                     </button>
                 </div>                                      
@@ -73,7 +73,7 @@
                                         <button type="submit" form="searchform" class="btn btn-sm btn-success">
                                             <i class="fas fa-fw fa-search"></i>
                                         </button>
-                                        <a  href="/admin/v1/access/access"  class="btn btn-sm btn-danger">
+                                        <a  href="/admin/v1/access/permission"  class="btn btn-sm btn-danger">
                                             <i class="fas fa-fw fa-times"></i>                                            
                                         </a>
                                     </div>                                      
@@ -106,8 +106,8 @@
                                             Action
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a href="/admin/v1/access/access/<%= data.id %>/edit" class="dropdown-item">Edit</a>
-                                            <a href="/admin/v1/access/access/<%= data.id %>/delete" onclick="return confirm('Confirm Delete')" class="dropdown-item">Delete</a>                                              
+                                            <a href="/admin/v1/access/permission/<%= data.id %>/edit" class="dropdown-item">Edit</a>
+                                            <a href="/admin/v1/access/permission/<%= data.id %>/delete" onclick="return confirm('Confirm Delete')" class="dropdown-item">Delete</a>                                              
                                         </div>
                                     </div>
                                 </td>

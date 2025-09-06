@@ -1,6 +1,6 @@
 import { body } from 'express-validator'
 
-export const accessValidationRules = () => {
+export const permissionValidationRules = () => {
     let rule = [
         body('url').notEmpty().withMessage('Url is required'),
         body('status').notEmpty().withMessage('Status is required'),

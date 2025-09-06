@@ -68,15 +68,15 @@ export default class RoleController {
         return ResponseHandler.success(res, 'Success')
     }
 
-    public async access(req: Request, res: Response) {
+    public async permission(req: Request, res: Response) {
         const filter = req.query
-        const { datas, role, paginate_data } = await this.roleService.access(req.params.id,filter)
+        const { datas, role, paginate_data } = await this.roleService.permission(req.params.id,filter)
         return ResponseHandler.success(res, 'Success', {role,datas,paginate_data})
     }
 
-    public async access_assign(req: Request, res: Response) {
+    public async permission_assign(req: Request, res: Response) {
         try {
-            const result = await this.roleService.access_assign(req.params.id, req.params.access_id)
+            const result = await this.roleService.permission_assign(req.params.id, req.params.permission_id)
             if (result instanceof Error) {
                 throw new Error(result.message)
             }
@@ -86,9 +86,9 @@ export default class RoleController {
         }
     }
 
-    public async access_assign_selected(req: Request, res: Response) {
+    public async permission_assign_selected(req: Request, res: Response) {
         try {
-            const result = await this.roleService.access_assign_selected(req.params.id, req.body.selected)
+            const result = await this.roleService.permission_assign_selected(req.params.id, req.body.selected)
             if (result instanceof Error) {
                 throw new Error(result.message)
             }
@@ -98,9 +98,9 @@ export default class RoleController {
         }
     }
 
-    public async access_unassign(req: Request, res: Response) {
+    public async permission_unassign(req: Request, res: Response) {
         try {
-            const result = await this.roleService.access_unassign(req.params.id, req.params.access_id)
+            const result = await this.roleService.permission_unassign(req.params.id, req.params.permission_id)
             if (result instanceof Error) {
                 throw new Error(result.message)
             }
@@ -110,9 +110,9 @@ export default class RoleController {
         }
     }
 
-    public async access_unassign_selected(req: Request, res: Response) {
+    public async permission_unassign_selected(req: Request, res: Response) {
         try {
-            const result = await this.roleService.access_unassign_selected(req.params.id, req.body.selected)
+            const result = await this.roleService.permission_unassign_selected(req.params.id, req.body.selected)
             if (result instanceof Error) {
                 throw new Error(result.message)
             }
