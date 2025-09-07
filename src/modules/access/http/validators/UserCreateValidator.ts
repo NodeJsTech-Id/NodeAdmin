@@ -26,6 +26,7 @@ const userSchema: ObjectSchema = Joi.object({
         then: Joi.required(),
         otherwise: Joi.optional(),
     }),
+    timezone: Joi.string().optional(),
     password: Joi.string().min(8).required(),
     password_confirmation: Joi.string().valid(Joi.ref('password')).required().messages({
         'any.only': 'Password & confirm password not match.'

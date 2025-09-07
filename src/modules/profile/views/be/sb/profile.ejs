@@ -77,6 +77,21 @@
                             <% } %>
                         </div>
                     </div>
+                    <div class="form-group row" id="div_timezone">
+                        <label for="timezone" class="col-md-3 col-form-label text-md-right">Timezone</label>
+                        <div class="col-md-8 mb-3 mb-sm-0">
+                            <select id="timezone" name="timezone" class="form-control form-control-user <% if(getError('timezone')) { %> is-invalid <% } %>">
+                                <% (timezones || []).forEach(tz => { %>
+                                    <option value="<%= tz %>" <%= (data.timezone === tz) ? 'selected' : '' %>><%= tz %></option>
+                                <% }) %>
+                            </select>
+                            <% if(getError('timezone')) { %>
+                                <span class="invalid-feedback" status="alert">
+                                    <strong><%= getError('timezone')['msg'] %></strong>
+                                </span>
+                            <% } %>
+                        </div>
+                    </div>
                     <div class="form-group row" id="div_password">
                         <label for="password" class="col-md-3 col-form-label text-md-right">Password</label>
                         <div class="col-md-8 mb-3 mb-sm-0">

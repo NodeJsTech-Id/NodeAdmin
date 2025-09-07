@@ -1,4 +1,6 @@
 import 'dotenv/config'
+// Force application-level timezone to UTC
+process.env.TZ = 'UTC'
 import 'reflect-metadata'
 import cookieParser from 'cookie-parser'
 import express, {

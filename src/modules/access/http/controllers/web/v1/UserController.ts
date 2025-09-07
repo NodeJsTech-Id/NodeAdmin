@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import path from 'path'
 import Module from '../../../../Module'
+import { getTimezones } from '../../../../../../utils/timezones'
 import UserService from '../../../services/v1/UserService'
 import appConfig from '../../../../../../config/app'
 
@@ -21,8 +22,10 @@ export default class UserController {
 
     public async create(req: Request, res: Response) {
         const roles = await this.userService.create()
+        const timezones = getTimezones()
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/users/create'), {
             roles,
+            timezones,
             layout: './layouts'+appConfig.be_layout+'/main'
         })
     }
@@ -45,9 +48,11 @@ export default class UserController {
     public async edit(req: Request, res: Response) {
         const result = await this.userService.edit(req.params.id)
         const { data, roles } = result
+        const timezones = getTimezones()
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/users/edit'), {
             data,
             roles,
+            timezones,
             layout: './layouts'+appConfig.be_layout+'/main'
         })
     }

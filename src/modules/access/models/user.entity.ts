@@ -55,6 +55,10 @@ export class User {
   @Column({ nullable: true })
   blocked_reason!: string
 
+  @Column({ nullable: true, default: 'UTC' })
+  @Index('users__timezone')
+  timezone!: string
+
   @Column({ nullable: true })
   created_by!: string
 

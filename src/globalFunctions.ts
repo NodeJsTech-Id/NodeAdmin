@@ -3,6 +3,11 @@ import fileService from './services/fileService'
 import { User } from './modules/access/models/user.entity'
 import { Setting } from './modules/setting/models/setting.entity'
 import AppDataSource from './config/ormconfig'
+import dayjs from 'dayjs'
+import utc from 'dayjs/plugin/utc'
+import tz from 'dayjs/plugin/timezone'
+dayjs.extend(utc)
+dayjs.extend(tz)
 
 export const globalFunctions = async (req: Request, res: Response, next: NextFunction) => {
 	res.locals.getError = (key: string) => {
@@ -34,6 +39,15 @@ export const globalFunctions = async (req: Request, res: Response, next: NextFun
 	res.locals.queryParams = req.query
 
 	res.locals.auth = req.user as User
+
+	// Provide date helpers with user-specific timezone (default UTC)
+	const userTz = (req.user as User)?.timezone || 'UTC'
+	res.locals.userTimezone = userTz
+	res.locals.formatDate = (date: string | Date | number, format = 'YYYY-MM-DD HH:mm:ss') => {
+		if (!date) return ''
+		return dayjs.utc(date).tz(userTz).format(format)
+	}
+	res.locals.now = (format = 'YYYY-MM-DD HH:mm:ss') => dayjs.utc().tz(userTz).format(format)
 
 	const setting = await AppDataSource.getRepository(Setting).find()
 	res.locals.setting = setting[0]

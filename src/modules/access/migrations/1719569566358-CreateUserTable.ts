@@ -62,6 +62,13 @@ export class CreateUserTable1719569566358 implements MigrationInterface {
                         isNullable: true,
                     },
                     {
+                        name: "timezone",
+                        type: "varchar",
+                        length: "255",
+                        isNullable: true,
+                        default: `'UTC'`
+                    },
+                    {
                         name: "blocked",
                         type: "boolean",
                         default: false
@@ -139,6 +146,13 @@ export class CreateUserTable1719569566358 implements MigrationInterface {
             new TableIndex({
                 name: "users__status",
                 columnNames: ["status"],
+            }),
+        )
+        await queryRunner.createIndex(
+            "users",
+            new TableIndex({
+                name: "users__timezone",
+                columnNames: ["timezone"],
             }),
         )
         await queryRunner.createIndex(

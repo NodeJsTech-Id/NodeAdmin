@@ -1,6 +1,7 @@
 import { Request, Response } from 'express'
 import path from 'path'
 import Module from '../../../../Module'
+import { getTimezones } from '../../../../../../utils/timezones'
 import UserService from '../../../../../access/http/services/v1/UserService'
 import { User } from '../../../../../access/models/user.entity'
 import appConfig from '../../../../../../config/app'
@@ -11,9 +12,11 @@ export default class ProfileController {
     public async index(req: Request, res: Response) {
         const result = await this.userService.edit(req.params.id)
         const { data, roles } = result
+        const timezones = getTimezones()
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/profile'), {
             data,
             roles,
+            timezones,
             layout: './layouts'+appConfig.be_layout+'/main'
         })
     }
