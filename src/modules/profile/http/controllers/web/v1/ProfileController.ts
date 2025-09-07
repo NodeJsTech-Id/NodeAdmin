@@ -10,7 +10,8 @@ export default class ProfileController {
     private userService = new UserService
 
     public async index(req: Request, res: Response) {
-        const result = await this.userService.edit(req.params.id)
+        const user = req.user as User
+        const result = await this.userService.edit(user.id)
         const { data, roles } = result
         const timezones = getTimezones()
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/profile'), {
@@ -25,7 +26,7 @@ export default class ProfileController {
         try {
             req.body.blocked = (!req.body.blocked) ? false : true
             const user = req.user as User
-            const result = await this.userService.update(user.id, req.body, req.files)
+            const result = await this.userService.updateProfile(user.id, req.body, req.files)
             if (result instanceof Error) {
                 throw new Error(result.message)
             }

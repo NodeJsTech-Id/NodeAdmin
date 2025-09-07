@@ -117,6 +117,20 @@ app.use((req: Request, res: Response, next: NextFunction) => {
 })
 app.use(globalFunctions)
 
+// Convert dates in view locals to user's timezone automatically on render
+import { convertDatesDeep } from './utils/date'
+app.use((req: Request, res: Response, next: NextFunction) => {
+    const originalRender = res.render.bind(res)
+    res.render = ((view: string, locals?: any, callback?: any) => {
+        const tz = res.locals.userTimezone || 'UTC'
+        if (locals && typeof locals === 'object') {
+            locals = convertDatesDeep(locals, tz)
+        }
+        return originalRender(view, locals, callback)
+    }) as any
+    next()
+})
+
 // auth config
 const userRepository = AppDataSource.getRepository(User)
 passport.use(new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {
@@ -193,6 +207,13 @@ const initializeApp = async () => {
     try {
         await AppDataSource.initialize()
         console.log('Data Source has been initialized!')
+        // Try to enforce UTC at the session level for the pool
+        try {
+            await AppDataSource.query("SET time_zone = '+00:00'")
+            console.log('MySQL session time_zone set to +00:00')
+        } catch (e: any) {
+            console.warn('Could not set MySQL session time_zone. Ensure server is UTC:', (e && (e as any).message) || e)
+        }
         app.listen(PORT, () => {
             console.log(`Server is running on ${process.env.APP_HOST}:${PORT}`)
         })

@@ -44,12 +44,13 @@ export class CreateRoleTable1721110573828 implements MigrationInterface {
                     {
                         name: "created_at",
                         type: "timestamp",
-                        default: 'CURRENT_TIMESTAMP'
+                        default: "CURRENT_TIMESTAMP"
                     },
                     {
                         name: "updated_at",
                         type: "timestamp",
-                        default: 'CURRENT_TIMESTAMP'
+                        default: "CURRENT_TIMESTAMP",
+                        onUpdate: "CURRENT_TIMESTAMP"
                     },
                 ],
             }),

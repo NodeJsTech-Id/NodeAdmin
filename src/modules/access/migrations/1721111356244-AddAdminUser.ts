@@ -1,12 +1,12 @@
 import { MigrationInterface, QueryRunner } from "typeorm";
 import { User } from "../models/user.entity";
 import { Role } from "../models/role.entity";
-import { v6 as uuidv6 } from 'uuid';
-import bcrypt from 'bcryptjs';
+import { v6 as uuidv6 } from "uuid";
+import bcrypt from "bcryptjs";
 
 enum StatusEnum {
-    ACTIVE = 'Active',
-    INACTIVE = 'Inactive'
+    ACTIVE = "Active",
+    INACTIVE = "Inactive"
 }
 
 export class AddAdminUser1721111356244 implements MigrationInterface {
@@ -23,6 +23,7 @@ export class AddAdminUser1721111356244 implements MigrationInterface {
             email_verified_at: new Date().toISOString(),
             password: await bcrypt.hash("12345678", 10),
             status: StatusEnum.ACTIVE,
+            timezone: "Asia/Jakarta",
             blocked: false,
             blocked_reason: "",
         })

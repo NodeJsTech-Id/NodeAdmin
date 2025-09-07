@@ -77,64 +77,9 @@ export class CreateSettingTable1721122178244 implements MigrationInterface {
                     collation: "utf8mb4_unicode_ci"
                 },
                 {
-                    name: "facebook",
-                    type: "varchar",
-                    length: "255",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
-                },
-                {
-                    name: "twitter",
-                    type: "varchar",
-                    length: "255",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
-                },
-                {
-                    name: "google",
-                    type: "varchar",
-                    length: "255",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
-                },
-                {
-                    name: "instagram",
-                    type: "varchar",
-                    length: "255",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
-                },
-                {
                     name: "copyright",
                     type: "varchar",
                     length: "255",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
-                },
-                {
-                    name: "maps_key",
-                    type: "varchar",
-                    length: "255",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
-                },
-                {
-                    name: "latitude",
-                    type: "varchar",
-                    length: "255",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
-                },
-                {
-                    name: "longitude",
-                    type: "varchar",
-                    length: "255",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
-                },
-                {
-                    name: "api_key",
-                    type: "text",
                     isNullable: true,
                     collation: "utf8mb4_unicode_ci"
                 },
@@ -200,37 +145,9 @@ export class CreateSettingTable1721122178244 implements MigrationInterface {
                     columnNames: ["email"]
                 },
                 {
-                    name: "settings__facebook",
-                    columnNames: ["facebook"]
-                },
-                {
-                    name: "settings__twitter",
-                    columnNames: ["twitter"]
-                },
-                {
-                    name: "settings__google",
-                    columnNames: ["google"]
-                },
-                {
-                    name: "settings__instagram",
-                    columnNames: ["instagram"]
-                },
-                {
                     name: "settings__copyright",
                     columnNames: ["copyright"]
                 },
-                {
-                    name: "settings__maps_key",
-                    columnNames: ["maps_key"]
-                },
-                {
-                    name: "settings__latitude",
-                    columnNames: ["latitude"]
-                },
-                {
-                    name: "settings__longitude",
-                    columnNames: ["longitude"]
-                }
             ]
         }), true);
     }

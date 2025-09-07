@@ -66,7 +66,7 @@ export class CreateUserTable1719569566358 implements MigrationInterface {
                         type: "varchar",
                         length: "255",
                         isNullable: true,
-                        default: `'UTC'`
+                        default: `"UTC"`
                     },
                     {
                         name: "blocked",
@@ -94,12 +94,13 @@ export class CreateUserTable1719569566358 implements MigrationInterface {
                     {
                         name: "created_at",
                         type: "timestamp",
-                        default: 'CURRENT_TIMESTAMP'
+                        default: "CURRENT_TIMESTAMP"
                     },
                     {
                         name: "updated_at",
                         type: "timestamp",
-                        default: 'CURRENT_TIMESTAMP'
+                        default: "CURRENT_TIMESTAMP",
+                        onUpdate: "CURRENT_TIMESTAMP"
                     },
                 ],
             }),

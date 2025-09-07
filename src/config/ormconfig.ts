@@ -15,8 +15,8 @@ const AppDataSource = new DataSource({
     username: process.env.DB_USERNAME,
     password: process.env.DB_PASSWORD,
     database: process.env.DB_DATABASE,
-    // Ensure connection uses UTC
-    extra: { timezone: 'Z' },
+    // Ensure driver treats datetimes as UTC
+    timezone: 'Z',
     entities: [
         Permission, Role, User, Setting
     ],

@@ -137,6 +137,39 @@ export default class UserService {
     }
   }
 
+  public async updateProfile(id: string, request: any, files: any = null) {
+    try {
+      const user = await this.userRepository.findOne({ where: { id }, relations: ['roles'] })
+      if (!user) {
+        throw new Error('User not found')
+      }
+      request = functions.removeEmptyFields(request)
+      if (typeof request.password !== 'undefined') {
+        request.password = await bcrypt.hash(request.password, 10)
+      }
+      if (Array.isArray(files) && files.length > 0) {
+        const fileName = id
+        await Promise.all(
+          files.map((file: { originalname: string; buffer: Buffer }) => {
+            const uploadPath = Module.filePath + "user/" + fileName + "." + file.originalname.split('.').pop()!.toLowerCase()
+            return fileService.uploadFile(uploadPath, file.buffer).then((savedName: string) => {
+              request.picture = savedName
+            })
+          })
+        )
+      }
+      // Do not touch roles in profile update
+      const data = this.userRepository.merge(user, { ...request })
+      const result = await this.userRepository.save(data)
+      if (!result) {
+        throw new Error("Update Profile Fail")
+      }
+      return result
+    } catch (error: any) {
+      return error
+    }
+  }
+
   public async delete(id: string) {
     const data = await this.userRepository.findOne({ where: { id } })
     if (!data) {
