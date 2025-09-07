@@ -30,7 +30,7 @@
                     <p class="small text-muted">Enter your Email to continue</p>
                 </div>
         
-                <form method="post" action="/admin/v1/auth/reset/request">
+                <form method="post" action="<%= route('admin.v1.auth.reset.request') %>">
                     <div class="form-group row mb-3" id="div_email">
                         <label for="email" class="col-md-3 col-form-label text-md-right">Email</label>
                         <div class="col-md-8 mb-3 mb-sm-0">
@@ -46,7 +46,7 @@
                 </form>
                 <hr class="border border-dark border-5 my-4">
                 <div class="text-center small">
-                    <a class="text-black" href="/auth/login">back?</a>
+                    <a class="text-black" href="<%= route('web.auth.login') %>">back?</a>
                 </div>
             </div>
         </div>

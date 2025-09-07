@@ -48,15 +48,15 @@ export const globalFunctions = async (req: Request, res: Response, next: NextFun
 		return fileService.getFile(fileName)
 	}
 
-	res.locals.hasAccess = (url: string, method: string) => {
+	res.locals.hasAccess = (name: string, method: string) => {
 		const user = req.user as User
 		const admin = user?.roles.some((role: { name: string }) =>
 			role.name === 'Administrator'
 		)
 		if (admin) return true
-		const found = user?.roles.some((role: { permissions: { url: string, method: string }[] }) =>
-            role.permissions.some((permission: { url: string, method: string }) =>
-                permission.url === url && permission.method === method
+		const found = user?.roles.some((role: { permissions: { name: string, method: string }[] }) =>
+            role.permissions.some((permission: { name: string, method: string }) =>
+                permission.name === name && permission.method === method
             )
         )
 		return (typeof found == undefined) ? false:found

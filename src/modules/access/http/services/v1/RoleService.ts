@@ -100,8 +100,8 @@ export default class RoleService {
         let query = this.permissionRepository.createQueryBuilder('permissions')
 
 		// filter
-		if (cleanConditions.url) {
-            query = query.andWhere(`permissions.url LIKE :url`, { url: `%${cleanConditions.url}%` })
+		if (cleanConditions.name) {
+            query = query.andWhere(`permissions.name LIKE :name`, { name: `%${cleanConditions.name}%` })
 		}
 		if (cleanConditions.method) {
             query = query.andWhere(`permissions.method = :method`, { method: cleanConditions.method })

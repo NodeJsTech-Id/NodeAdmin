@@ -3,6 +3,7 @@ import { AppDataSource } from '../../../../../index'
 import { Permission } from '../../../models/permission.entity'
 import functions, { removePrefix } from '../../../../../helpers/functions'
 import { Application } from 'express'
+import named from '../../../../../utils/namedRoutes'
 
 export default class PermissionService {
     private permissionRepository = AppDataSource.getRepository(Permission)
@@ -21,16 +22,18 @@ export default class PermissionService {
 			})
 		}
 		extractRoutes(app._router.stack)
-		for (const route of routes) {
-			let permission = await this.permissionRepository.findOne({ where: { url: route.path, method: route.method } })
-			if (!permission) {
-				permission = this.permissionRepository.create({
-					url: route.path,
-					method: route.method
-				})
-				await this.permissionRepository.save(permission)
-			}
-		}
+        for (const route of routes) {
+            const name = named.getNameByPathAndMethod(route.path, route.method)
+            if (!name) continue // only persist named routes
+            let permission = await this.permissionRepository.findOne({ where: { name, method: route.method } })
+            if (!permission) {
+                permission = this.permissionRepository.create({
+                    name,
+                    method: route.method
+                })
+                await this.permissionRepository.save(permission)
+            }
+        }
     }
 
 	public async index(filter: any) {
@@ -38,8 +41,8 @@ export default class PermissionService {
         let query = this.permissionRepository.createQueryBuilder('permissions')
 
 		// filter
-		if (cleanConditions.url) {
-            query = query.andWhere(`permissions.url LIKE :url`, { url: `%${cleanConditions.url}%` })
+		if (cleanConditions.name) {
+            query = query.andWhere(`permissions.name LIKE :name`, { name: `%${cleanConditions.name}%` })
 		}
 		if (cleanConditions.method) {
             query = query.andWhere(`permissions.method = :method`, { method: cleanConditions.method })
@@ -67,7 +70,7 @@ export default class PermissionService {
 
 	public async store(request: any) {
 		try {
-			const find = await this.permissionRepository.findOne({ where: { url: request.url } })
+			const find = await this.permissionRepository.findOne({ where: { name: request.name } })
 			if (find) {
 				throw new Error("Permission Already Exists")
 			}
@@ -90,7 +93,7 @@ export default class PermissionService {
 
 	public async update(id: string, request: any) {
 		try {
-			const find = await this.permissionRepository.findOne({ where: { id: Not(id), url: request.url } })
+			const find = await this.permissionRepository.findOne({ where: { id: Not(id), name: request.name } })
 			if (find) {
 				throw new Error("Permission Already Exists")
 			}

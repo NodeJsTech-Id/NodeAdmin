@@ -22,10 +22,10 @@
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary">Permission List</h6>
                 <div class="btn-group btn-sm nospiner" >
-                    <button type="submit" form="selection" formmethod="post" formaction="/admin/v1/access/role/<%= role.id %>/permission/assign_selected" onclick="return confirm('Confirm Assign')" class="btn btn-info btn-sm">
+                    <button type="submit" form="selection" formmethod="post" formaction="<%= route('admin.v1.access.role.permission.assign_selected', { id: role.id }) %>" onclick="return confirm('Confirm Assign')" class="btn btn-info btn-sm">
                         <i class="fas fa-fw fa-check"></i> Assign Selected
                     </button>
-                    <button type="submit" form="selection" formmethod="post" formaction="/admin/v1/access/role/<%= role.id %>/permission/unassign_selected" onclick="return confirm('Confirm Unassign')" class="btn btn-danger btn-sm">
+                    <button type="submit" form="selection" formmethod="post" formaction="<%= route('admin.v1.access.role.permission.unassign_selected', { id: role.id }) %>" onclick="return confirm('Confirm Unassign')" class="btn btn-danger btn-sm">
                         <i class="fas fa-fw fa-times"></i> Unassign Selected
                     </button>
                 </div>                                      
@@ -46,7 +46,7 @@
                                     </select>
                                 </th>
                                 <th width="20%">
-                                    <input id="q_url" type="text" class="form-control form-control-user" name="q_url" value="<%= filter.q_url %>" autocomplete="q_url">
+                                    <input id="q_name" type="text" class="form-control form-control-user" name="q_name" value="<%= filter.q_name %>" autocomplete="q_name">
                                 </th>
                                 <th width="10%">
                                     <select name="q_status" id="q_status"  class="form-control form-control-user" value="" autocomplete="q_status">
@@ -63,7 +63,7 @@
                                         <button type="submit" form="searchform" class="btn btn-sm btn-success">
                                             <i class="fas fa-fw fa-search"></i>
                                         </button>
-                                        <a  href="/admin/v1/access/role/<%= role.id %>/permission"  class="btn btn-sm btn-danger">
+                                        <a  href="<%= route('admin.v1.access.role.permission', { id: role.id }) %>"  class="btn btn-sm btn-danger">
                                             <i class="fas fa-fw fa-times"></i>                                            
                                         </a>
                                     </div>                                      
@@ -72,7 +72,7 @@
                             <tr>
                                 <th width="5%"><input type="checkbox" id="checkall"/></th>
                                 <th width="5%">No</th>
-                                <th width="20%">Url</th>
+                                <th width="20%">Name</th>
                                 <th width="15%">Status</th>
                                 <th width="10%">Description</th>
                                 <th width="5%">Action</th>
@@ -85,7 +85,7 @@
                             <tr>
                                 <td><input name="selected[]" value="<%= data.id %>" type="checkbox" /></td>
                                 <td><%= (i+1)+(paginate_data.page_size*(paginate_data.current_page-1)) %></td>
-                                <td><%= data.url %></td>
+                                <td><%= data.name %></td>
                                 <td><center><img src="<%= (role.permissions.some(r => r.id === data.id)) ? getFile('modules/access/true.png') : getFile('modules/access/false.png') %>" width="30px" height="30px"></center></td>
                                 <td><%= data.desc %></td>
                                 <td align="center">
@@ -94,8 +94,8 @@
                                             Action
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a href="/admin/v1/access/role/<%= role.id %>/permission/<%= data.id %>/assign" class="dropdown-item">Assign</a>
-                                            <a href="/admin/v1/access/role/<%= role.id %>/permission/<%= data.id %>/unassign" class="dropdown-item">Unassign</a>                                              
+                                            <a href="<%= route('admin.v1.access.role.permission.assign', { id: role.id, permission_id: data.id }) %>" class="dropdown-item">Assign</a>
+                                            <a href="<%= route('admin.v1.access.role.permission.unassign', { id: role.id, permission_id: data.id }) %>" class="dropdown-item">Unassign</a>                                              
                                         </div>
                                     </div>
                                 </td>

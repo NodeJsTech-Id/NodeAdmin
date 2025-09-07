@@ -32,7 +32,7 @@
             </div>
             <!-- Card Body -->
             <div class="card-body" style="overflow-x:auto;padding:20px;">
-                <form method="POST" action="/admin/v1/access/user/store" enctype="multipart/form-data">
+                <form method="POST" action="<%= route('admin.v1.access.user.store') %>" enctype="multipart/form-data">
                     <div class="form-group row" id="div_code">
                         <label for="code" class="col-md-3 col-form-label text-md-right">Code</label>
                         <div class="col-md-8 mb-3 mb-sm-0">
@@ -171,7 +171,7 @@
                             </button>
                         </div>
                         <div class="col-md-6 offset-md-12">
-                            <a href="/admin/v1/access/user" type="submit" class="btn btn-user btn-danger btn-block text-white">
+                            <a href="<%= route('admin.v1.access.user.index') %>" type="submit" class="btn btn-user btn-danger btn-block text-white">
                                 Back
                             </a>
                         </div>

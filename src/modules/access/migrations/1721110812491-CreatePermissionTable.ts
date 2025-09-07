@@ -14,7 +14,7 @@ export class CreatePermissionTable1721110812491 implements MigrationInterface {
                         isPrimary: true,
                     },
                     {
-                        name: "url",
+                        name: "name",
                         type: "varchar",
                         length: "255",
                     },
@@ -71,8 +71,8 @@ export class CreatePermissionTable1721110812491 implements MigrationInterface {
         await queryRunner.createIndex(
             "permissions",
             new TableIndex({
-                name: "permissions__url",
-                columnNames: ["url"],
+                name: "permissions__name",
+                columnNames: ["name"],
             }),
         )
         await queryRunner.createIndex(

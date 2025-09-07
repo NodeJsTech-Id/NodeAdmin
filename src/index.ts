@@ -12,6 +12,7 @@ import fs from 'fs'
 import methodOverride from 'method-override'
 import path from 'path'
 import passport from 'passport'
+import named from './utils/namedRoutes'
 import { globalFunctions } from './globalFunctions'
 import { Strategy as LocalStrategy } from 'passport-local'
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
@@ -25,6 +26,9 @@ import ResponseHandler from './ResponseHandler'
 import connectRedis from 'connect-redis'
 
 const app = express()
+// enable named routes on app and expose helper
+named.extendExpress(app)
+app.locals.route = (name: string, params?: Record<string, string | number>) => (app as any).namedRoutes.build(name, params)
 const PORT = process.env.APP_PORT
 
 // config CORS
@@ -105,6 +109,8 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     delete req.session.old
     res.locals.successMessages = req.flash('success')
     res.locals.errorMessages = req.flash('error')
+    // expose route builder to views
+    res.locals.route = (name: string, params?: Record<string, string | number>) => (req.app as any).namedRoutes.build(name, params)
     next()
 })
 app.use(globalFunctions)
@@ -153,9 +159,9 @@ passport.deserializeUser(async (id: string, done) => {
 // Redirect root to /admin/users if authenticated, otherwise to /auth/login
 app.get('/', (req, res) => {
     if (req.isAuthenticated()) {
-        res.redirect('/admin/v1/dashboard')
+        res.redirect((req.app as any).namedRoutes.build('admin.v1.dashboard.index'))
     } else {
-        res.redirect('/auth/login')
+        res.redirect((req.app as any).namedRoutes.build('web.auth.login'))
     }
 })
 

@@ -10,7 +10,7 @@ export default class PermissionController {
     private permissionService = new PermissionService
 
     public async index(req: Request, res: Response) {
-		this.permissionService.getAllRegisteredRoute(app)
+		await this.permissionService.getAllRegisteredRoute(app)
         const filter = req.query
         const {datas,paginate_data} = await this.permissionService.index(filter)
         res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/permission/index'), {

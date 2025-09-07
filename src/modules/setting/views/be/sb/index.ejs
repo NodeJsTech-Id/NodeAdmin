@@ -23,7 +23,7 @@
             </div>
             <!-- Card Body -->
             <div class="card-body" style="overflow-x:auto;padding:20px;">
-                <form method="POST" action="/admin/v1/setting/update?_method=PUT" enctype="multipart/form-data">
+                <form method="POST" action="<%= route('admin.v1.setting.update') %>?_method=PUT" enctype="multipart/form-data">
                     <div class="form-group row">
                         <label for="initial" class="col-md-3 col-form-label text-md-right">Company Initial [initial]</label>
                         <div class="col-md-8 mb-3 mb-sm-0">

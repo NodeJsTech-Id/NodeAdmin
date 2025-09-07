@@ -3,46 +3,16 @@ import { AppDataSource } from '../../../../index'
 import { Permission } from '../../models/permission.entity'
 import { User } from '../../models/user.entity'
 import { Like } from 'typeorm'
+import named from '../../../../utils/namedRoutes'
 
 const AccessMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const permissionRepository = AppDataSource.getRepository(Permission)
     const userRepository = AppDataSource.getRepository(User)
 
-    let url = (req.path=='/')?'':req.path
-    url = req.baseUrl+url
-    let routeName: string
-    let method: string
-
-    const findRoute = await permissionRepository.findOne({
-        select: ['url','method'],
-        where: { url }
-    })
-
-    if (!findRoute) {
-        const findRoute2 = await permissionRepository.find({
-            select: ['url','method'],
-            where: { url: Like('%:%') }
-        })
-        findRoute2.forEach( (route: { url: string, method: string }) => {
-            const pathParts = route.url.split('/')
-            const reqPathParts = url.split('/')
-            if (pathParts.length === reqPathParts.length) {
-                let match = true
-                pathParts.forEach((part, index) => {
-                    if (part !== reqPathParts[index] && !part.startsWith(':')) {
-                        match = false
-                    }
-                })
-                if (match) {
-                    routeName = route.url
-                    method = route.method
-                }
-            }
-        })
-    } else {
-        routeName = findRoute.url
-        method = findRoute.method
-    }
+    // Determine the current route's declared path (with params) and derive its name
+    const declaredPath = (req.baseUrl || '') + ((req.route?.path === '/' ? '' : (req.route?.path as string | undefined)) || (req.path === '/' ? '' : req.path))
+    const method = req.method.toUpperCase()
+    const routeName = named.getNameByPathAndMethod(declaredPath, method)
 
     const user = req.user as User
     const roles = await userRepository.findOne({
@@ -50,16 +20,13 @@ const AccessMiddleware = async (req: Request, res: Response, next: NextFunction)
         relations: ['roles', 'roles.permissions']
     })
 
-    const hasAccess = roles?.roles.some((role: { permissions: { url: string; method: string }[] }) =>
-        role.permissions.some((permission: { url: string; method: string }) =>
-            permission.url === routeName && permission.method === method
+    const hasAccess = !!roles?.roles.some((role: { permissions: { name: string; method: string }[] }) =>
+        role.permissions.some((permission: { name: string; method: string }) =>
+            permission.name === routeName && permission.method === method
         )
     )
-    const isApi = roles?.roles.some((role: { permissions: any[] }) =>
-        role.permissions.some((permission: { url: string | string[]; method: string }) =>
-            permission.url === routeName && permission.method === method && permission.url.includes('/api/')
-        )
-    )
+    const currentPath = routeName ? named.getPathByName(routeName) || '' : ''
+    const isApi = currentPath.includes('/api/')
 
     if (!roles?.roles.some(role => role.name == 'Administrator')) {
         if (!hasAccess) {

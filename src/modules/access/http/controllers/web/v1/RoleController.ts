@@ -34,18 +34,18 @@ export default class RoleController {
             if (!errors.isEmpty()) {
                 req.session.errors = errors.array()
                 req.session.old = req.body
-                return res.redirect('/admin/v1/permission/role/create')
+                return res.redirect((req.app as any).namedRoutes.build('admin.v1.access.role.create'))
             }
             const result = await this.roleService.store(req.body)
             if (result instanceof Error) {
                 throw new Error(result.message)
             }
             req.session.flashMessage = { key: 'success', message: 'Store Role Success.' }
-            res.redirect('/admin/v1/permission/role')
+            res.redirect((req.app as any).namedRoutes.build('admin.v1.access.role.index'))
         } catch (err: any) {
             req.session.flashMessage = { key: 'error', message: err.message }
             req.session.old = req.body
-            return res.redirect('/admin/v1/permission/role/create')
+            return res.redirect((req.app as any).namedRoutes.build('admin.v1.access.role.create'))
         }
     }
 
@@ -63,17 +63,17 @@ export default class RoleController {
             const errors = validationResult(req)
             if (!errors.isEmpty()) {
                 req.session.errors = errors.array()
-                return res.redirect('/admin/v1/permission/role/'+req.params.id+'/edit')
+                return res.redirect((req.app as any).namedRoutes.build('admin.v1.access.role.edit', { id: req.params.id }))
             }
             const result = await this.roleService.update(req.params.id, req.body)
             if (result instanceof Error) {
                 throw new Error(result.message)
             }
             req.session.flashMessage = { key: 'success', message: 'Update Role Success.' }
-            res.redirect('/admin/v1/permission/role')
+            res.redirect((req.app as any).namedRoutes.build('admin.v1.access.role.index'))
         } catch (err: any) {
             req.session.flashMessage = { key: 'error', message: err.message }
-            return res.redirect('/admin/v1/permission/role/'+req.params.id+'/edit')
+            return res.redirect((req.app as any).namedRoutes.build('admin.v1.access.role.edit', { id: req.params.id }))
         }
     }
 
@@ -81,10 +81,10 @@ export default class RoleController {
         const result = await this.roleService.delete(req.params.id)
         if (!result) {
             req.session.flashMessage = { key: 'error', message: 'Delete Role Fail.' }
-            return res.redirect('/admin/v1/permission/role')
+            return res.redirect((req.app as any).namedRoutes.build('admin.v1.access.role.index'))
         }
         req.session.flashMessage = { key: 'success', message: 'Delete Role Success.' }
-        res.redirect('/admin/v1/permission/role')
+        res.redirect((req.app as any).namedRoutes.build('admin.v1.access.role.index'))
     }
 
     public async delete_selected(req: Request, res: Response) {
@@ -92,7 +92,7 @@ export default class RoleController {
             await this.roleService.delete(id)
         });
         req.session.flashMessage = { key: 'success', message: 'Delete Role Success.' }
-        res.redirect('/admin/v1/permission/role')
+        res.redirect((req.app as any).namedRoutes.build('admin.v1.access.role.index'))
     }
 
     public async permission(req: Request, res: Response) {

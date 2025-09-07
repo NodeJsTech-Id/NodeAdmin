@@ -22,10 +22,10 @@
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary">Role List</h6>
                 <div class="btn-group btn-sm nospiner" >
-                    <a  href="/admin/v1/access/role/create"  class="btn btn-success btn-sm" >
+                    <a  href="<%= route('admin.v1.access.role.create') %>"  class="btn btn-success btn-sm" >
                         <i class="fas fa-fw fa-plus"></i> Add Data
                     </a>
-                    <button type="submit" form="selection" formmethod="post" formaction="/admin/v1/access/role/delete_selected" onclick="return confirm('Confirm Delete')" class="btn btn-danger btn-sm">
+                    <button type="submit" form="selection" formmethod="post" formaction="<%= route('admin.v1.access.role.delete_selected') %>" onclick="return confirm('Confirm Delete')" class="btn btn-danger btn-sm">
                         <i class="fas fa-fw fa-times"></i> Delete Selected
                     </button>
                 </div>                                      
@@ -63,7 +63,7 @@
                                         <button type="submit" form="searchform" class="btn btn-sm btn-success">
                                             <i class="fas fa-fw fa-search"></i>
                                         </button>
-                                        <a  href="/admin/v1/access/role"  class="btn btn-sm btn-danger">
+                                        <a  href="<%= route('admin.v1.access.role.index') %>"  class="btn btn-sm btn-danger">
                                             <i class="fas fa-fw fa-times"></i>                                            
                                         </a>
                                     </div>                                      
@@ -94,9 +94,9 @@
                                             Action
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a href="/admin/v1/access/role/<%= data.id %>/permission" class="dropdown-item">Permission</a>
-                                            <a href="/admin/v1/access/role/<%= data.id %>/edit" class="dropdown-item">Edit</a>
-                                            <a href="/admin/v1/access/role/<%= data.id %>/delete" onclick="return confirm('Confirm Delete')" class="dropdown-item">Delete</a>                                              
+                                            <a href="<%= route('admin.v1.access.role.permission', { id: data.id }) %>" class="dropdown-item">Permission</a>
+                                            <a href="<%= route('admin.v1.access.role.edit', { id: data.id }) %>" class="dropdown-item">Edit</a>
+                                            <a href="<%= route('admin.v1.access.role.delete', { id: data.id }) %>" onclick="return confirm('Confirm Delete')" class="dropdown-item">Delete</a>                                              
                                         </div>
                                     </div>
                                 </td>

@@ -22,10 +22,10 @@
             <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
                 <h6 class="m-0 font-weight-bold text-primary">Permission List</h6>
                 <div class="btn-group btn-sm nospiner" >
-                    <a  href="/admin/v1/access/permission/create"  class="btn btn-success btn-sm" >
+                    <a  href="<%= route('admin.v1.access.permission.create') %>"  class="btn btn-success btn-sm" >
                         <i class="fas fa-fw fa-plus"></i> Add Data
                     </a>
-                    <button type="submit" form="selection" formmethod="post" formaction="/admin/v1/access/permission/delete_selected" onclick="return confirm('Confirm Delete')" class="btn btn-danger btn-sm">
+                    <button type="submit" form="selection" formmethod="post" formaction="<%= route('admin.v1.access.permission.delete_selected') %>" onclick="return confirm('Confirm Delete')" class="btn btn-danger btn-sm">
                         <i class="fas fa-fw fa-times"></i> Delete Selected
                     </button>
                 </div>                                      
@@ -46,7 +46,7 @@
                                     </select>
                                 </th>
                                 <th width="20%">
-                                    <input id="q_url" type="text" class="form-control form-control-user" name="q_url" value="<%= filter.q_url %>" autocomplete="q_url">
+                                    <input id="q_name" type="text" class="form-control form-control-user" name="q_name" value="<%= filter.q_name %>" autocomplete="q_name">
                                 </th>
                                 <th width="20%">
                                     <select name="q_method" id="q_method"  class="form-control form-control-user" value="" autocomplete="q_method">
@@ -73,7 +73,7 @@
                                         <button type="submit" form="searchform" class="btn btn-sm btn-success">
                                             <i class="fas fa-fw fa-search"></i>
                                         </button>
-                                        <a  href="/admin/v1/access/permission"  class="btn btn-sm btn-danger">
+                                        <a  href="<%= route('admin.v1.access.permission.index') %>"  class="btn btn-sm btn-danger">
                                             <i class="fas fa-fw fa-times"></i>                                            
                                         </a>
                                     </div>                                      
@@ -82,7 +82,7 @@
                             <tr>
                                 <th width="5%"><input type="checkbox" id="checkall"/></th>
                                 <th width="5%">No</th>
-                                <th width="20%">Url</th>
+                                <th width="20%">Name</th>
                                 <th width="20%">Method</th>
                                 <th width="15%">Status</th>
                                 <th width="10%">Description</th>
@@ -96,7 +96,7 @@
                             <tr>
                                 <td><input name="selected[]" value="<%= data.id %>" type="checkbox" /></td>
                                 <td><%= (i+1)+(paginate_data.page_size*(paginate_data.current_page-1)) %></td>
-                                <td><%= data.url %></td>
+                                <td><%= data.name %></td>
                                 <td><%= data.method %></td>
                                 <td><center><img src="<%= (data.status == 'Active') ? getFile('modules/access/true.png') : getFile('modules/access/false.png') %>" width="30px" height="30px"></center></td>
                                 <td><%= data.desc %></td>
@@ -106,8 +106,8 @@
                                             Action
                                         </button>
                                         <div class="dropdown-menu">
-                                            <a href="/admin/v1/access/permission/<%= data.id %>/edit" class="dropdown-item">Edit</a>
-                                            <a href="/admin/v1/access/permission/<%= data.id %>/delete" onclick="return confirm('Confirm Delete')" class="dropdown-item">Delete</a>                                              
+                                            <a href="<%= route('admin.v1.access.permission.edit', { id: data.id }) %>" class="dropdown-item">Edit</a>
+                                            <a href="<%= route('admin.v1.access.permission.delete', { id: data.id }) %>" onclick="return confirm('Confirm Delete')" class="dropdown-item">Delete</a>                                              
                                         </div>
                                     </div>
                                 </td>

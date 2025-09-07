@@ -13,8 +13,8 @@ export class Permission {
   id!: string
 
   @Column()
-  @Index('permissions__url')
-  url!: string
+  @Index('permissions__name')
+  name!: string
 
   @Column()
   @Index('permissions__method')
