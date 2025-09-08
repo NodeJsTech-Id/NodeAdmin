@@ -78,7 +78,7 @@
                         </div>
                     </div>
                     <div class="form-group row" id="div_timezone">
-                        <label for="timezone" class="col-md-3 col-form-label text-md-right">Timezone (<%= data.updated_at %>)</label>
+                        <label for="timezone" class="col-md-3 col-form-label text-md-right">Timezone</label>
                         <div class="col-md-8 mb-3 mb-sm-0">
                             <select id="timezone" name="timezone" class="form-control form-control-user <% if(getError('timezone')) { %> is-invalid <% } %>">
                                 <% (timezones || []).forEach(tz => { %>
