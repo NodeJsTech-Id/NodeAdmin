@@ -25,6 +25,17 @@
         document.querySelectorAll('form').forEach(function (f) {
             var method = (f.getAttribute('method') || 'get').toLowerCase();
             if (method === 'get') return;
+            var enctype = (f.getAttribute('enctype') || '').toLowerCase();
+            if (enctype.indexOf('multipart') !== -1) {
+                // Form multipart: body baru diparse multer SETELAH csrf middleware,
+                // jadi hidden field _csrf tak terbaca. Taruh token di query action.
+                var action = f.getAttribute('action') || '';
+                if (action.indexOf('_csrf=') === -1) {
+                    action += (action.indexOf('?') !== -1 ? '&' : '?') + '_csrf=' + encodeURIComponent(token);
+                    f.setAttribute('action', action);
+                }
+                return;
+            }
             if (f.querySelector('input[name="_csrf"]')) return;
             var input = document.createElement('input');
             input.type = 'hidden'; input.name = '_csrf'; input.value = token;

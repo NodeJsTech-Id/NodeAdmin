@@ -4,3 +4,6 @@ dist
 # Runtime logs
 dev.log
 *.log
+
+# Test coverage reports
+coverage/

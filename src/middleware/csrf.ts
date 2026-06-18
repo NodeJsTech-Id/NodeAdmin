@@ -5,7 +5,8 @@ import crypto from 'crypto'
  * Proteksi CSRF sederhana (synchronizer token pattern) tanpa dependency tambahan.
  * - Token disimpan di session, diekspos ke view via res.locals.csrfToken.
  * - Request mutasi (POST/PUT/DELETE/PATCH) wajib menyertakan token yang cocok
- *   lewat field `_csrf` (body) atau header `x-csrf-token`.
+ *   lewat field `_csrf` (body), query `?_csrf=` (untuk form multipart yang body-nya
+ *   baru diparse multer SETELAH middleware ini), atau header `x-csrf-token`.
  * - Enduser API (Bearer JWT, prefix /api/) dilewati — stateless, tak pakai cookie session.
  */
 
@@ -25,7 +26,7 @@ export const csrfProtection = (req: Request, res: Response, next: NextFunction) 
 
     if (SAFE.has(req.method)) return next()
 
-    const sent = (req.body && req.body._csrf) || req.headers['x-csrf-token']
+    const sent = (req.body && req.body._csrf) || req.query._csrf || req.headers['x-csrf-token']
     if (sent && typeof sent === 'string' && sent.length === token.length &&
         crypto.timingSafeEqual(Buffer.from(sent), Buffer.from(token))) {
         return next()
