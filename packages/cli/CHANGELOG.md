@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/cli
 
+## 1.1.1
+
+### Patch Changes
+
+- Tambah README per-paket (cara install, penggunaan, daftar export/command) agar tampil di halaman npm.
+
 ## 1.1.0
 
 ### Minor Changes
