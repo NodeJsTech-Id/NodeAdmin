@@ -116,15 +116,85 @@ if (fs.existsSync(modulesDir) && fs.existsSync(testsDir)) {
     }
 }
 
-// ---- Laporan ----
+// ---- Completeness kontekstual (sesuai kebutuhan modul) ----
+// MODE: default 'enforce' (gap = gate, exit 1). Override sementara dengan
+// COMPLETENESS=report untuk sekadar melihat gap tanpa menggagalkan.
+const COMPLETENESS_MODE = process.env.COMPLETENESS || 'enforce'
+const completenessGaps = []
+function gap(modul, msg) { completenessGaps.push({ modul, msg }) }
+
+if (fs.existsSync(modulesDir)) {
+    const allTestFiles = []
+    if (fs.existsSync(testsDir)) walk(testsDir, (p) => allTestFiles.push(rel(p).toLowerCase()))
+    const featureFiles = []
+    const bddDir = path.join(testsDir, 'bdd', 'features')
+    if (fs.existsSync(bddDir)) for (const f of fs.readdirSync(bddDir)) featureFiles.push(f.toLowerCase())
+    const apiDocs = (() => { const p = path.join(ROOT, 'docs', 'API.md'); return fs.existsSync(p) ? fs.readFileSync(p, 'utf8').toLowerCase() : '' })()
+
+    for (const mod of fs.readdirSync(modulesDir, { withFileTypes: true })) {
+        if (!mod.isDirectory()) continue
+        const name = mod.name
+        const dir = path.join(modulesDir, name)
+        const has = (glob) => { let n = 0; walk(dir, (p) => { if (glob(p)) n++ }); return n }
+
+        const hasEntity = has((p) => p.endsWith('.entity.ts')) > 0
+        const hasMigration = fs.existsSync(path.join(dir, 'migrations')) && fs.readdirSync(path.join(dir, 'migrations')).some(f => f.endsWith('.ts'))
+        const serviceFiles = []; walk(dir, (p) => { if (/\/services\/v1\/\w+Service\.ts$/.test(rel(p)) && !/\/I\w+Service\.ts$/.test(rel(p))) serviceFiles.push(p) })
+        const hasService = serviceFiles.length > 0
+        const hasViews = has((p) => p.endsWith('.ejs')) > 0
+        const hasWebRoute = fs.existsSync(path.join(dir, 'routes', 'web.ts'))
+        const hasApiRoute = fs.existsSync(path.join(dir, 'routes', 'api.ts'))
+        const hasValidator = fs.existsSync(path.join(dir, 'http', 'validators'))
+        const writeMethod = serviceFiles.some(p => /async\s+(store|update)\s*\(/.test(fs.readFileSync(p, 'utf8')))
+        // Subjek modul untuk pencocokan test: nama modul + nama tiap service (tanpa "Service") + nama entity.
+        const subjects = new Set([name])
+        serviceFiles.forEach(p => subjects.add(path.basename(p, '.ts').replace(/Service$/, '').toLowerCase()))
+        walk(dir, (p) => { if (p.endsWith('.entity.ts')) subjects.add(path.basename(p, '.entity.ts').toLowerCase()) })
+        const matchTest = (filterFn) => allTestFiles.some(t => filterFn(t) && [...subjects].some(s => t.includes(s)))
+        const hasIntegrationTest = matchTest(t => t.includes('integration'))
+        const hasApiTest = matchTest(t => t.includes('/api/') || /\/api\b|api\./.test(t))
+        const hasBdd = featureFiles.some(f => [...subjects].some(s => f.includes(s)))
+        const hasAnyTest = matchTest(() => true) || hasBdd  // test jenis apa pun yang menyebut modul
+        const hasRoute = hasWebRoute || hasApiRoute
+
+        // --- Aturan kontekstual ---
+        // Entity → migration wajib
+        if (hasEntity && !hasMigration) gap(name, 'punya entity tapi tak ada migration.')
+        // Input tulis → validator wajib
+        if (writeMethod && !hasValidator) gap(name, 'service punya store/update (input) tapi tak ada validator.')
+        // Views → route web wajib
+        if (hasViews && !hasWebRoute) gap(name, 'punya views tapi tak ada routes/web.ts.')
+
+        // --- Testing: WAJIB untuk fitur apa pun (modul yang terjangkau lewat route) ---
+        if (hasRoute && !hasAnyTest) gap(name, 'fitur ber-route WAJIB punya minimal 1 test yang menyebut modul (tests/**/*<modul|service|entity>*).')
+        if (hasService && !hasIntegrationTest) gap(name, 'punya service → wajib integration test (tests/integration/).')
+        if (hasService && hasViews && !hasBdd) gap(name, 'fitur user-facing (service+views) → wajib skenario BDD (tests/bdd/features/).')
+
+        // --- API OPSIONAL: tidak dipaksa ada. Tapi BILA ada, kelengkapannya dipaksa ---
+        if (hasApiRoute && !hasApiTest) gap(name, 'punya routes/api.ts → wajib api test (tests/api/).')
+        if (hasApiRoute && !apiDocs.includes(name)) gap(name, 'punya API → wajib terdokumentasi di docs/API.md.')
+    }
+}
+
+// ---- Laporan (kumpulkan SEMUA dulu, baru exit sekali di akhir) ----
 if (warnings.length) {
     console.log('\n⚠️  Warnings:')
     for (const w of warnings) console.log(`  - ${w.file}: ${w.msg}`)
 }
 
 if (violations.length) {
-    console.error('\n❌ Pelanggaran konvensi (' + violations.length + '):\n')
+    console.error('\n❌ Pelanggaran PRINSIP/POLA (' + violations.length + '):\n')
     for (const v of violations) console.error(`  ${v.file}:${v.line}\n     → ${v.msg}`)
+}
+
+const completenessBlocks = COMPLETENESS_MODE === 'enforce' && completenessGaps.length > 0
+if (completenessGaps.length) {
+    const head = completenessBlocks ? '\n❌ Kelengkapan modul kurang (sesuai kebutuhan):' : '\nℹ️  Completeness gaps (mode laporan — belum memblok):'
+    console.error(head)
+    for (const g of completenessGaps) console.error(`  - [${g.modul}] ${g.msg}`)
+}
+
+if (violations.length || completenessBlocks) {
     console.error('\nPerbaiki sesuai AGENTS.md / docs/MODULE_GUIDE.md sebelum melanjutkan.\n')
     process.exit(1)
 }

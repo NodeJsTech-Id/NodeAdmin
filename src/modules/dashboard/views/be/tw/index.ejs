@@ -19,8 +19,8 @@
     <div class="flex items-center justify-between">
       <div>
         <p class="text-gray-600 text-sm font-medium">Total Users</p>
-        <p class="text-3xl font-bold text-gray-800 counter" data-target="1234">0</p>
-        <p class="text-green-500 text-sm mt-1"><i class="fas fa-arrow-up"></i> +12% dari bulan lalu</p>
+        <p class="text-3xl font-bold text-gray-800 counter" data-target="<%= stats.users %>">0</p>
+        <p class="text-gray-400 text-sm mt-1">pengguna terdaftar</p>
       </div>
       <div class="w-12 h-12 rounded-lg flex items-center justify-center" style="background:var(--theme-light)">
         <i class="fas fa-users text-xl" style="color:var(--primary)"></i>
@@ -31,12 +31,12 @@
   <div class="stat-card bg-white rounded-xl shadow-lg p-6 hover-scale border-l-4 border-green-500">
     <div class="flex items-center justify-between">
       <div>
-        <p class="text-gray-600 text-sm font-medium">Revenue</p>
-        <p class="text-3xl font-bold text-gray-800">$<span class="counter" data-target="98765">0</span></p>
-        <p class="text-green-500 text-sm mt-1"><i class="fas fa-arrow-up"></i> +8% dari bulan lalu</p>
+        <p class="text-gray-600 text-sm font-medium">Roles</p>
+        <p class="text-3xl font-bold text-gray-800 counter" data-target="<%= stats.roles %>">0</p>
+        <p class="text-gray-400 text-sm mt-1">peran akses</p>
       </div>
       <div class="w-12 h-12 bg-green-100 rounded-lg flex items-center justify-center">
-        <i class="fas fa-dollar-sign text-green-600 text-xl"></i>
+        <i class="fas fa-user-shield text-green-600 text-xl"></i>
       </div>
     </div>
   </div>
@@ -44,12 +44,12 @@
   <div class="stat-card bg-white rounded-xl shadow-lg p-6 hover-scale border-l-4 border-yellow-500">
     <div class="flex items-center justify-between">
       <div>
-        <p class="text-gray-600 text-sm font-medium">Orders</p>
-        <p class="text-3xl font-bold text-gray-800 counter" data-target="567">0</p>
-        <p class="text-yellow-500 text-sm mt-1"><i class="fas fa-minus"></i> -2% dari bulan lalu</p>
+        <p class="text-gray-600 text-sm font-medium">Permissions</p>
+        <p class="text-3xl font-bold text-gray-800 counter" data-target="<%= stats.permissions %>">0</p>
+        <p class="text-gray-400 text-sm mt-1">izin terdaftar</p>
       </div>
       <div class="w-12 h-12 bg-yellow-100 rounded-lg flex items-center justify-center">
-        <i class="fas fa-shopping-cart text-yellow-600 text-xl"></i>
+        <i class="fas fa-key text-yellow-600 text-xl"></i>
       </div>
     </div>
   </div>
@@ -57,12 +57,12 @@
   <div class="stat-card bg-white rounded-xl shadow-lg p-6 hover-scale border-l-4 border-purple-500">
     <div class="flex items-center justify-between">
       <div>
-        <p class="text-gray-600 text-sm font-medium">Conversion Rate</p>
-        <p class="text-3xl font-bold text-gray-800"><span class="counter" data-target="3">0</span>%</p>
-        <p class="text-green-500 text-sm mt-1"><i class="fas fa-arrow-up"></i> +5% dari bulan lalu</p>
+        <p class="text-gray-600 text-sm font-medium">Theme Aktif</p>
+        <p class="text-2xl font-bold text-gray-800"><%= themeName %></p>
+        <p class="text-gray-400 text-sm mt-1">template</p>
       </div>
       <div class="w-12 h-12 bg-purple-100 rounded-lg flex items-center justify-center">
-        <i class="fas fa-chart-line text-purple-600 text-xl"></i>
+        <i class="fas fa-palette text-purple-600 text-xl"></i>
       </div>
     </div>
   </div>

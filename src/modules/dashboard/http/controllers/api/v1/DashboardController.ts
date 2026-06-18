@@ -1,9 +1,8 @@
 import { Request, Response } from 'express'
 import { injectable, inject } from 'tsyringe'
-import Module from '../../../../Module'
-import { renderView } from '../../../../../../utils/view'
 import { IDashboardService } from '../../../services/v1/IDashboardService'
 import { TOKENS } from '../../../../../../tokens'
+import ResponseHandler from '../../../../../../ResponseHandler'
 
 @injectable()
 export default class DashboardController {
@@ -11,6 +10,6 @@ export default class DashboardController {
 
     public async index(req: Request, res: Response) {
         const stats = await this.dashboardService.stats()
-        renderView(res, Module.path, 'index', { stats })
+        return ResponseHandler.success(res, 'Success', stats)
     }
 }

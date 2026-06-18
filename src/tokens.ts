@@ -12,4 +12,5 @@ export const TOKENS = {
     IRoleService: Symbol('IRoleService'),
     IPermissionService: Symbol('IPermissionService'),
     ISettingService: Symbol('ISettingService'),
+    IDashboardService: Symbol('IDashboardService'),
 } as const

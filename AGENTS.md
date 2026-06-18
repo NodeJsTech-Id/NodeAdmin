@@ -30,6 +30,46 @@ Route (named-routes)
 5. **Config terpusat.** Akses env HANYA via `env` dari `src/config/env.ts`. **Dilarang** `process.env.*` di dalam `src/modules/`.
 6. **Portabilitas DB.** Entity pakai tipe abstrak (`text`, `varchar`, `timestamp`, `boolean`). **Dilarang** `longtext`/`mediumtext`/`datetime` dan `@Create/UpdateDateColumn({ type: ... })`.
 
+## Sebelum Coding: Sajikan Rencana Artefak + Konfirmasi
+
+Saat diminta membuat fitur/modul, AI **wajib** lebih dulu menyimpulkan artefak yang dibutuhkan (pakai Matriks di bawah) lalu **menyajikan rencana** ke user. **Ajukan pertanyaan HANYA bila ambigu**; jika prompt sudah jelas, sajikan rencana lalu lanjut.
+
+Pertanyaan klarifikasi yang umum perlu (bila ambigu):
+- Butuh **UI admin** (halaman web) atau **API-only**?
+- **Read-only** (lihat saja) atau **CRUD** (ada input tulis)?
+- Butuh endpoint **API** (untuk mobile/integrasi) atau cukup web?
+
+Contoh format rencana:
+> Fitur **Product**: entity+migration, IProductService+ProductService, validator (ada input), views CRUD, route web **+ api**, test (integration+api+bdd), update README+docs/API.md. → *Butuh UI admin atau API-only?*
+
+## Matriks Kebutuhan Artefak
+
+**TEST WAJIB untuk fitur APA PUN.** Setiap modul yang terjangkau lewat route harus punya minimal 1 test. Modul ber-service → wajib **integration test**; user-facing (service+views) → wajib **BDD**. Ini di-enforce checker (blok).
+
+**Selalu ada** (modul fungsional ber-service):
+| Artefak | Catatan |
+|---------|---------|
+| Service + `I*Service` | semua logika bisnis |
+| Controller | pintu HTTP |
+| Route (≥1) | minimal web atau api |
+| **Test** | **WAJIB** — ≥1 test/modul; integration jika ada service; BDD jika user-facing |
+| Update docs | README; + `docs/API.md` bila ada API |
+
+**Kondisional** (sesuai kebutuhan — checker memaksa sesuai sifat modul):
+| Artefak | Wajib JIKA | Aturan checker |
+|---------|------------|----------------|
+| Entity | menyimpan data | — |
+| Migration | **ada entity** | entity → migration **wajib** |
+| Validation | **ada input tulis** (store/update) | service punya store/update → validator **wajib** |
+| Views | ada **UI admin** | views → route web **wajib** |
+| Route web | ada views | — |
+| Route API | fitur perlu API (mobile/integrasi) | ada `routes/api.ts` → api test + entri `docs/API.md` **wajib** |
+
+**API itu OPSIONAL** untuk modul baru — **tidak dipaksa ada**. Untuk modul resource (CRUD data), **tawarkan** ke user apakah perlu API. JIKA dibuat (`routes/api.ts` ada), checker memaksa kelengkapannya (api test + docs). Modul boleh web-only.
+> Catatan: semua modul **existing** (access/setting/dashboard/profile/auth) sudah dilengkapi API + test sebagai **referensi pola yang utuh** — ikuti mereka.
+
+> Checker (`npm run lint:conventions`) memverifikasi kelengkapan ini **kontekstual** — hanya memaksa artefak yang relevan dengan apa yang dibangun, bukan membabi-buta.
+
 ## Checklist Membuat Modul Baru
 
 Ikuti `docs/MODULE_GUIDE.md` (ada template lengkap). Urutan & file wajib:

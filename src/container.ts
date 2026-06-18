@@ -29,9 +29,11 @@ import UserService from './modules/access/http/services/v1/UserService'
 import RoleService from './modules/access/http/services/v1/RoleService'
 import PermissionService from './modules/access/http/services/v1/PermissionService'
 import SettingService from './modules/setting/http/services/v1/SettingService'
+import DashboardService from './modules/dashboard/http/services/v1/DashboardService'
 container.register(TOKENS.IUserService, { useClass: UserService })
 container.register(TOKENS.IRoleService, { useClass: RoleService })
 container.register(TOKENS.IPermissionService, { useClass: PermissionService })
 container.register(TOKENS.ISettingService, { useClass: SettingService })
+container.register(TOKENS.IDashboardService, { useClass: DashboardService })
 
 export { container, TOKENS }

@@ -114,6 +114,28 @@ Contoh body store:
 
 ---
 
+## Dashboard — `/api/v1/dashboard`
+
+| Method | Path | Aksi |
+|--------|------|------|
+| GET | `/api/v1/dashboard` | Statistik ringkas (`{ users, roles, permissions }`) |
+
+Contoh response:
+```json
+{ "status": true, "message": "Success", "data": { "users": 2, "roles": 2, "permissions": 0 } }
+```
+
+---
+
+## Setting — `/api/v1/setting`
+
+| Method | Path | Aksi |
+|--------|------|------|
+| GET | `/api/v1/setting` | Ambil data setting (termasuk `theme`) |
+| PUT | `/api/v1/setting/update` | Update setting (mis. `theme`, `name`, dll) |
+
+---
+
 ## Profile — `/api/v1/profile`
 
 | Method | Path | Aksi |

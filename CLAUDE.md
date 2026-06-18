@@ -4,8 +4,8 @@
 
 ## Wajib sebelum menulis/mengubah kode
 1. Baca `AGENTS.md` (alur, prinsip SOLID/DI, error handling, security, larangan).
-2. Untuk modul/fitur baru: ikuti `docs/MODULE_GUIDE.md` (template per file).
-3. Sebelum menganggap selesai: jalankan `npm run lint:conventions` → harus lolos, lalu `npx tsc --noEmit` & `npm test`.
+2. **Fitur/modul baru**: simpulkan artefak via "Matriks Kebutuhan Artefak" di AGENTS.md, **sajikan rencana artefak** ke user; tanya bila ambigu (UI vs API-only, read-only vs CRUD, perlu API?). Lalu ikuti `docs/MODULE_GUIDE.md`.
+3. Sebelum menganggap selesai: `npm run lint:conventions` (cek pola + kelengkapan kontekstual) → lolos, lalu `npx tsc --noEmit` & `npm test`.
 
 ## Inti yang TIDAK boleh dilanggar
 - DI: service/controller `@injectable`, di-inject (bukan `new`); service `implements I*Service`.
