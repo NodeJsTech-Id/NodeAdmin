@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/cli
 
+## 1.1.2
+
+### Patch Changes
+
+- Longgarkan peer dependency typeorm (`^0.3.20` → `>=0.3.20`) dan jadikan optional. CLI hanya shell-out `npx typeorm` di `make-migration`, sehingga tak perlu mengunci mayor — memperbaiki konflik ERESOLVE saat app turunan memakai typeorm 1.x.
+
 ## 1.1.1
 
 ### Patch Changes
