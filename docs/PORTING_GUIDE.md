@@ -6,6 +6,21 @@ Dokumen ini memandu pembuatan **bootstrap setara** di framework lain dengan **ko
 
 ---
 
+## Nama App Baku
+
+Hasil porting memakai konvensi nama `{Framework}Admin` (folder project, nama app, judul default):
+
+| Framework | Nama | Framework | Nama |
+|-----------|------|-----------|------|
+| Node/Express (ini) | **NodeAdmin** | Django | **DjangoAdmin** |
+| Laravel | **LaravelAdmin** | .NET Core | **DotNetAdmin** |
+| NestJS | **NestAdmin** | Rust (Rocket) | **RustAdmin** |
+| Spring Boot | **SpringAdmin** | | |
+
+Pakai nama ini untuk: folder project, `APP_NAME` di env, judul halaman, dan referensi di README/docs hasil porting.
+
+---
+
 ## Bagian 1 — Konsep Inti (BAHASA-AGNOSTIK)
 
 Berlaku untuk SEMUA target. Ini "kontrak" yang harus dipenuhi versi mana pun.
@@ -94,7 +109,8 @@ Daftar lengkap kapabilitas NodeAdmin. App hasil porting **harus** punya padanann
 - [ ] **Email** (reset OTP, notifikasi) via SMTP konfigurable.
 - [ ] **UI server-side** (template engine native + Tailwind): layout/partial (head/sidebar/topbar/foot), tabel + search + pagination, form CRUD, status pakai ikon, fallback gambar gagal-load.
 - [ ] **Sidebar dinamis** — item menu tampil sesuai permission user (`hasAccess`), penanda menu aktif.
-- [ ] Modul inti: **User, Role, Permission (RBAC), Profile, Setting, Dashboard (stats)**.
+- [ ] **Halaman showcase komponen UI** (`/admin/v1/components` setara) — acuan hidup elemen: stat card+counter, chart (themeable), badge/status, alert, button+dropdown, form, tabel+pagination.
+- [ ] Modul inti: **User, Role, Permission (RBAC), Profile, Setting, Dashboard (stats), Components (showcase)**.
 
 #### 🧪 Testing (wajib tiap fitur)
 - [ ] **Unit** (helper murni), **Integration** (service↔DB, SQLite in-memory), **API** (HTTP), **Security** (RBAC/CSRF/rate-limit/JWT/mass-assign), **Smoke**, **E2E** (browser), **BDD** (skenario).
@@ -107,7 +123,7 @@ Daftar lengkap kapabilitas NodeAdmin. App hasil porting **harus** punya padanann
 - [ ] **Aturan AI**: sajikan rencana artefak + tanya bila ambigu sebelum coding; verifikasi (checker+typecheck+test) sampai hijau.
 
 #### 📚 Dokumentasi
-- [ ] README (fitur, instalasi, env, multi-DB, testing, deployment), ARCHITECTURE, MODULE_GUIDE, TESTING, API (daftar endpoint).
+- [ ] README (fitur, instalasi, env, multi-DB, testing, deployment), ARCHITECTURE, MODULE_GUIDE, TESTING, API (daftar endpoint), **UI_COMPONENTS (katalog snippet komponen)**.
 - [ ] `.gitignore` mengecualikan artefak generated (log, coverage, build).
 
 ---
@@ -157,6 +173,7 @@ WAJIB hasilkan juga:
   - Convention checker idiomatik {FRAMEWORK} + integrasi CI
   - Equivalent "/make-module" (generator/command) bila framework mendukung
   - 1 modul percontohan lengkap (mis. User/Role/Permission) sebagai acuan pola
+  - Halaman showcase komponen UI + docs/UI_COMPONENTS.md (katalog snippet)
 
 Kerjakan BERTAHAP (rencanakan fase dulu, jangan one-shot): 
   fondasi → 1 modul percontohan → guardrails → sisanya. Verifikasi tiap fase (build+test hijau).

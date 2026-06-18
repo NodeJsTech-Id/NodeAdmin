@@ -2,6 +2,19 @@
 
 Kumpulan prompt **tinggal copy-paste** untuk menduplikasi konsep NodeAdmin ke framework lain.
 
+## Nama app baku (`{Framework}Admin`)
+Semua hasil porting WAJIB pakai nama standar berikut (folder project + nama app):
+
+| Framework | Nama app |
+|-----------|----------|
+| Node/Express (referensi) | **NodeAdmin** |
+| Laravel | **LaravelAdmin** |
+| NestJS | **NestAdmin** |
+| Spring Boot | **SpringAdmin** |
+| Django | **DjangoAdmin** |
+| .NET Core | **DotNetAdmin** |
+| Rust (Rocket) | **RustAdmin** |
+
 ## Cara pakai (3 langkah)
 1. **Scaffold project target kosong** (perintah di tiap bagian).
 2. **Buka AI (Claude Code/Cursor/dll)** dengan akses ke DUA folder: `NodeAdmin/` (referensi) + folder target.
@@ -14,11 +27,12 @@ Kumpulan prompt **tinggal copy-paste** untuk menduplikasi konsep NodeAdmin ke fr
 ## 0. Blok umum (otomatis dirujuk tiap prompt)
 
 Tiap prompt di bawah sudah memuat instruksi standar ini:
+- **Nama app baku** `{Framework}Admin` (lihat tabel di atas) — dipakai untuk folder project, `APP_NAME` env, judul halaman, dan README/docs hasil porting.
 - Baca `docs/PORTING_GUIDE.md` (Bagian 1 konsep + tabel framework terkait), `AGENTS.md`, `docs/ARCHITECTURE.md`, `docs/MODULE_GUIDE.md`, `docs/TESTING.md`.
 - Pertahankan prinsip: SOLID/DI, DRY, SoC, Clean Code, error terpusat, RBAC, env tervalidasi, theme switcher (DB-driven), test wajib tiap fitur, guardrail.
 - **WAJIB penuhi SELURUH "Capability Checklist" di PORTING_GUIDE Bagian 1** (keamanan: helmet/CSRF/rate-limit/JWT+sesi/bcrypt/OTP-hash/mass-assign/upload-magicbyte/secret-fail-fast; performa: kompresi/cache-setting/static-cache/pool/pagination/anti-N+1; arsitektur; multi-DB; fitur; testing; guardrail). App porting harus IDENTIK kapabilitasnya dengan NodeAdmin.
 - **ORM WAJIB multi-database (dialect-agnostic) + migration kode portabel + tipe kolom abstrak** (lihat "Kriteria ORM & Migration" di PORTING_GUIDE Bagian 1). Test pakai SQLite in-memory. Hindari tipe/SQL vendor.
-- Hasilkan juga: AGENTS.md versi target + convention checker + CI + equivalent `/make-module` + 1 modul percontohan (User/Role/Permission) lengkap.
+- Hasilkan juga: AGENTS.md versi target + convention checker + CI + equivalent `/make-module` + 1 modul percontohan (User/Role/Permission) lengkap + **halaman showcase komponen UI (`/admin/v1/components` setara) + docs/UI_COMPONENTS.md**.
 - BERTAHAP: fondasi → modul percontohan → guardrail → sisanya. Verifikasi tiap fase.
 
 ---
@@ -27,7 +41,7 @@ Tiap prompt di bawah sudah memuat instruksi standar ini:
 
 Scaffold:
 ```bash
-composer create-project laravel/laravel LaravelAdmin
+composer create-project laravel/laravel LaravelAdmin   # nama baku: LaravelAdmin
 ```
 
 Prompt:
@@ -62,7 +76,7 @@ Kerjakan BERTAHAP, rencanakan fase dulu, verifikasi tiap fase (composer test + c
 
 Scaffold:
 ```bash
-npm i -g @nestjs/cli && nest new nest-admin
+npm i -g @nestjs/cli && nest new NestAdmin   # nama baku: NestAdmin
 ```
 
 Prompt:
@@ -94,7 +108,7 @@ generator, dan modul percontohan User/Role/Permission. BERTAHAP + verifikasi tia
 
 ## 3. Spring Boot (Java)
 
-Scaffold: buat project di https://start.spring.io (deps: Web, Data JPA, Security, Validation, driver DB).
+Scaffold: buat project di https://start.spring.io (artifact/nama baku: **SpringAdmin**; deps: Web, Data JPA, Security, Validation, driver DB).
 
 Prompt:
 ```
@@ -129,6 +143,7 @@ generator modul, dan modul percontohan User/Role/Permission. BERTAHAP + verifika
 
 Scaffold:
 ```bash
+mkdir DjangoAdmin && cd DjangoAdmin   # folder baku: DjangoAdmin
 pip install django djangorestframework && django-admin startproject config .
 ```
 
@@ -163,7 +178,7 @@ dan modul percontohan User/Role/Permission. BERTAHAP + verifikasi tiap fase.
 
 Scaffold:
 ```bash
-dotnet new webapi -n DotnetAdmin   # atau: dotnet new mvc
+dotnet new webapi -n DotNetAdmin   # nama baku: DotNetAdmin (atau: dotnet new mvc)
 ```
 
 Prompt:
@@ -199,7 +214,7 @@ dan modul percontohan User/Role/Permission. BERTAHAP + verifikasi tiap fase.
 
 Scaffold:
 ```bash
-cargo new rust-admin && cd rust-admin   # tambah rocket, diesel/sea-orm di Cargo.toml
+cargo new RustAdmin && cd RustAdmin   # nama baku: RustAdmin (tambah rocket, sea-orm di Cargo.toml)
 ```
 
 Prompt:
