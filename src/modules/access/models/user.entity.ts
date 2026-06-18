@@ -37,11 +37,12 @@ export class User {
   @Column({ nullable: true })
   password_otp!: string
 
-  @Column({
-    type: 'enum',
-    enum: StatusEnum,
-    default: StatusEnum.ACTIVE
-  })
+  // Masa berlaku OTP (epoch ms). Bigint agar muat timestamp ms.
+  @Column({ type: 'bigint', nullable: true })
+  password_otp_expires!: string | null
+
+  // varchar + enum TS (bukan native ENUM) agar seragam di semua dialek TypeORM
+  @Column({ type: 'varchar', length: 20, default: StatusEnum.ACTIVE })
   @Index('users__status')
   status!: StatusEnum
 
@@ -65,10 +66,10 @@ export class User {
   @Column({ nullable: true })
   updated_by!: string
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn()
   created_at!: Date
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn()
   updated_at!: Date
 
   @ManyToMany(() => Role, role => role.users)

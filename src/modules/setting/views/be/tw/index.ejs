@@ -1,0 +1,136 @@
+<% if(getFlashMessage('error')) { %>
+  <div class="alert alert-danger shadow-sm"><%= getFlashMessage('error').message %></div>
+<% } %>
+<% if(getFlashMessage('success')) { %>
+  <div class="alert alert-success shadow-sm"><%= getFlashMessage('success').message %></div>
+<% } %>
+
+<div class="flex items-center justify-between mb-6">
+  <h1 class="text-2xl font-bold text-gray-800">Setting Management</h1>
+</div>
+
+<form method="POST" action="<%= route('admin.v1.setting.update') %>?_method=PUT" enctype="multipart/form-data">
+
+  <!-- ===== Template / Theme Switcher ===== -->
+  <div class="tw-card p-6 mb-6">
+    <div class="flex items-center gap-2 mb-1">
+      <i class="fas fa-palette" style="color:var(--primary)"></i>
+      <h2 class="text-lg font-bold" style="color:var(--primary)">Template</h2>
+    </div>
+    <p class="text-sm text-gray-500 mb-4">Pilih template — seluruh tampilan admin akan berubah warnanya setelah disimpan.</p>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4">
+      <% Object.keys(themes).forEach(function(name) { var p = themes[name]; var active = (data.theme || themeName) === name; %>
+        <label class="cursor-pointer block">
+          <input type="radio" name="theme" value="<%= name %>" class="sr-only theme-radio" <%= active ? 'checked' : '' %>>
+          <div class="theme-swatch rounded-xl overflow-hidden border-2 transition <%= active ? 'border-gray-800' : 'border-transparent' %>"
+               style="box-shadow:0 4px 10px rgba(0,0,0,.08)">
+            <div class="h-16 flex">
+              <div class="flex-1" style="background:<%= p.dark %>"></div>
+              <div class="flex-1" style="background:<%= p.primary %>"></div>
+              <div class="flex-1" style="background:<%= p.secondary %>"></div>
+              <div class="flex-1" style="background:<%= p.light %>"></div>
+            </div>
+            <div class="bg-white py-2 px-3 flex items-center justify-between">
+              <span class="text-sm font-semibold text-gray-700"><%= name %></span>
+              <i class="fas fa-check-circle check-icon <%= active ? '' : 'hidden' %>" style="color:<%= p.primary %>"></i>
+            </div>
+          </div>
+        </label>
+      <% }); %>
+    </div>
+  </div>
+
+  <!-- ===== Form Setting ===== -->
+  <div class="tw-card p-6">
+    <h2 class="text-lg font-bold mb-4" style="color:var(--primary)">Setting Form</h2>
+
+    <div class="mb-3">
+      <label for="initial" class="form-label fw-semibold">Company Initial [initial]</label>
+      <input id="initial" type="text" class="form-control <% if(getError('initial')) { %>is-invalid<% } %>" name="initial" value="<%= data.initial %>">
+      <% if(getError('initial')) { %><div class="invalid-feedback"><%= getError('initial')['msg'] %></div><% } %>
+    </div>
+
+    <div class="mb-3">
+      <label for="name" class="form-label fw-semibold">Company Name [name]</label>
+      <input id="name" type="text" class="form-control <% if(getError('name')) { %>is-invalid<% } %>" name="name" value="<%= data.name %>">
+      <% if(getError('name')) { %><div class="invalid-feedback"><%= getError('name')['msg'] %></div><% } %>
+    </div>
+
+    <div class="mb-3">
+      <label for="description" class="form-label fw-semibold">Description [description]</label>
+      <textarea id="description" class="form-control <% if(getError('description')) { %>is-invalid<% } %>" name="description"><%= data.description %></textarea>
+      <% if(getError('description')) { %><div class="invalid-feedback"><%= getError('description')['msg'] %></div><% } %>
+    </div>
+
+    <div class="mb-4">
+      <label for="icon" class="form-label fw-semibold">Company Icon [icon]</label>
+      <div class="d-flex align-items-center gap-3">
+        <img src="<%= getFile(data.icon) %>" width="90" height="90" class="rounded border p-1" style="object-fit:contain">
+        <input id="icon" type="file" class="form-control <% if(getError('icon')) { %>is-invalid<% } %>" name="icon">
+      </div>
+      <% if(getError('icon')) { %><div class="text-danger small mt-1"><%= getError('icon')['msg'] %></div><% } %>
+    </div>
+
+    <div class="mb-4">
+      <label for="logo" class="form-label fw-semibold">Company Logo [logo]</label>
+      <div class="d-flex align-items-center gap-3">
+        <img src="<%= getFile(data.logo) %>" width="90" height="90" class="rounded border p-1" style="object-fit:contain">
+        <input id="logo" type="file" class="form-control <% if(getError('logo')) { %>is-invalid<% } %>" name="logo">
+      </div>
+      <% if(getError('logo')) { %><div class="text-danger small mt-1"><%= getError('logo')['msg'] %></div><% } %>
+    </div>
+
+    <div class="mb-4">
+      <label for="login_image" class="form-label fw-semibold">Login Image [login_image]</label>
+      <div class="d-flex align-items-center gap-3">
+        <img src="<%= getFile(data.login_image) %>" width="90" height="90" class="rounded border p-1" style="object-fit:contain">
+        <input id="login_image" type="file" class="form-control <% if(getError('login_image')) { %>is-invalid<% } %>" name="login_image">
+      </div>
+      <% if(getError('login_image')) { %><div class="text-danger small mt-1"><%= getError('login_image')['msg'] %></div><% } %>
+    </div>
+
+    <div class="mb-3">
+      <label for="phone" class="form-label fw-semibold">Phone [phone]</label>
+      <input id="phone" type="text" class="form-control <% if(getError('phone')) { %>is-invalid<% } %>" name="phone" value="<%= data.phone %>">
+      <% if(getError('phone')) { %><div class="invalid-feedback"><%= getError('phone')['msg'] %></div><% } %>
+    </div>
+
+    <div class="mb-3">
+      <label for="address" class="form-label fw-semibold">Address [address]</label>
+      <input id="address" type="text" class="form-control <% if(getError('address')) { %>is-invalid<% } %>" name="address" value="<%= data.address %>">
+      <% if(getError('address')) { %><div class="invalid-feedback"><%= getError('address')['msg'] %></div><% } %>
+    </div>
+
+    <div class="mb-3">
+      <label for="email" class="form-label fw-semibold">Email [email]</label>
+      <input id="email" type="email" class="form-control <% if(getError('email')) { %>is-invalid<% } %>" name="email" value="<%= data.email %>">
+      <% if(getError('email')) { %><div class="invalid-feedback"><%= getError('email')['msg'] %></div><% } %>
+    </div>
+
+    <div class="mb-4">
+      <label for="copyright" class="form-label fw-semibold">Copyright Text [copyright]</label>
+      <input id="copyright" type="text" class="form-control <% if(getError('copyright')) { %>is-invalid<% } %>" name="copyright" value="<%= data.copyright %>">
+      <% if(getError('copyright')) { %><div class="invalid-feedback"><%= getError('copyright')['msg'] %></div><% } %>
+    </div>
+
+    <button type="submit" class="btn btn-primary-tw px-4 py-2">
+      <i class="fas fa-save me-1"></i> Save
+    </button>
+  </div>
+</form>
+
+<script>
+  // Highlight swatch terpilih secara langsung (UX) sebelum submit
+  document.querySelectorAll('.theme-radio').forEach(function (r) {
+    r.addEventListener('change', function () {
+      document.querySelectorAll('.theme-swatch').forEach(function (s) {
+        s.classList.remove('border-gray-800'); s.classList.add('border-transparent');
+      });
+      document.querySelectorAll('.check-icon').forEach(function (c) { c.classList.add('hidden'); });
+      var box = r.closest('label').querySelector('.theme-swatch');
+      box.classList.add('border-gray-800'); box.classList.remove('border-transparent');
+      r.closest('label').querySelector('.check-icon').classList.remove('hidden');
+    });
+  });
+</script>

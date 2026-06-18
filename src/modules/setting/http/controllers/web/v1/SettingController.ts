@@ -1,32 +1,22 @@
 import { Request, Response } from 'express'
-import path from 'path'
+import { injectable, inject } from 'tsyringe'
 import Module from '../../../../Module'
-import SettingService from '../../../services/v1/SettingService'
-import appConfig from '../../../../../../config/app'
+import { ISettingService } from '../../../services/v1/ISettingService'
+import { TOKENS } from '../../../../../../tokens'
+import { renderView } from '../../../../../../utils/view'
 
+@injectable()
 export default class SettingController {
-    private settingService = new SettingService
+    constructor(@inject(TOKENS.ISettingService) private settingService: ISettingService) {}
 
     public async index(req: Request, res: Response) {
         const {data} = await this.settingService.index()
-        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/index'), {
-            data,
-            layout: './layouts'+appConfig.be_layout+'/main'
-        })
+        renderView(res, Module.path, 'index', { data })
     }
 
     public async update(req: Request, res: Response) {
-        try {
-            const result = await this.settingService.update(req.body, req.files)
-            if (result instanceof Error) {
-                throw new Error(result.message)
-            }
-            req.session.flashMessage = { key: 'success', message: 'Save Setting Success.' }
-            res.redirect('/admin/v1/setting')
-        } catch (err: any) {
-            req.session.flashMessage = { key: 'error', message: err.message }
-            req.session.old = req.body
-            return res.redirect('/admin/v1/setting')
-        }
+        await this.settingService.update(req.body, req.files)
+        req.session.flashMessage = { key: 'success', message: 'Save Setting Success.' }
+        res.redirect('/admin/v1/setting')
     }
 }

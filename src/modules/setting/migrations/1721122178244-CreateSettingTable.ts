@@ -11,91 +11,78 @@ export class CreateSettingTable1721122178244 implements MigrationInterface {
                     type: "char",
                     length: "36",
                     isPrimary: true,
-                    isNullable: false,
-                    collation: "utf8mb4_unicode_ci"
+                    isNullable: false
                 },
                 {
                     name: "initial",
                     type: "varchar",
                     length: "255",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
+                    isNullable: true
                 },
                 {
                     name: "name",
                     type: "varchar",
                     length: "255",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
+                    isNullable: true
                 },
                 {
                     name: "description",
-                    type: "longtext",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
+                    type: "text",
+                    isNullable: true
                 },
                 {
                     name: "icon",
                     type: "varchar",
                     length: "255",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
+                    isNullable: true
                 },
                 {
                     name: "logo",
                     type: "varchar",
                     length: "255",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
+                    isNullable: true
                 },
                 {
                     name: "login_image",
                     type: "varchar",
                     length: "255",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
+                    isNullable: true
                 },
                 {
                     name: "phone",
                     type: "varchar",
                     length: "255",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
+                    isNullable: true
                 },
                 {
                     name: "address",
                     type: "varchar",
                     length: "255",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
+                    isNullable: true
                 },
                 {
                     name: "email",
                     type: "varchar",
                     length: "255",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
+                    isNullable: true
                 },
                 {
                     name: "copyright",
                     type: "varchar",
                     length: "255",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
+                    isNullable: true
                 },
                 {
                     name: "created_by",
                     type: "char",
                     length: "36",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
+                    isNullable: true
                 },
                 {
                     name: "updated_by",
                     type: "char",
                     length: "36",
-                    isNullable: true,
-                    collation: "utf8mb4_unicode_ci"
+                    isNullable: true
                 },
                 {
                     name: "created_at",
@@ -107,7 +94,6 @@ export class CreateSettingTable1721122178244 implements MigrationInterface {
                     name: "updated_at",
                     type: "timestamp",
                     default: "CURRENT_TIMESTAMP",
-                    onUpdate: "CURRENT_TIMESTAMP",
                     isNullable: true
                 }
             ],

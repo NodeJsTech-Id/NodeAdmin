@@ -26,16 +26,30 @@ import AppDataSource from './config/ormconfig'
 import { createClient } from 'redis'
 import ResponseHandler from './ResponseHandler'
 import connectRedis from 'connect-redis'
+import helmet from 'helmet'
+import compression from 'compression'
+import env from './config/env'
+import './container' // registrasi DI (repository factories + services)
 
 const app = express()
 // enable named routes on app and expose helper
 named.extendExpress(app)
 app.locals.route = (name: string, params?: Record<string, string | number>) => (app as any).namedRoutes.build(name, params)
-const PORT = process.env.APP_PORT
+const PORT = env.app.port
 
-// config CORS
+// Security headers (helmet). CSP dilonggarkan untuk CDN aset (Tailwind/jQuery/dll)
+// dan inline script/style yang masih dipakai view.
+app.use(helmet({
+    contentSecurityPolicy: false, // CDN + inline; aktifkan CSP granular bila aset sudah self-host
+    crossOriginEmbedderPolicy: false,
+}))
+
+// Kompresi gzip/brotli untuk semua response
+app.use(compression())
+
+// config CORS — origin tanpa trailing slash agar match Origin header browser
 const corsOptions = {
-    origin: process.env.APP_HOST+`:${PORT}/`,
+    origin: `${env.app.host}:${PORT}`,
     optionsSuccessStatus: 200,
     methods: 'GET,POST,PUT,DELETE',
     credentials: true
@@ -46,7 +60,7 @@ app.use(cors(corsOptions))
 // redis
 const RedisStore = connectRedis(session)
 const clientRedis = createClient({
-    url: process.env.REDIS_URL,
+    url: env.redis.url,
     legacyMode: true,
 })
 
@@ -63,7 +77,10 @@ const cntRedis = async () => {
     }
 }
 
+const isTest = env.nodeEnv === 'test'
+
 const ensureRedisConnected = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    if (isTest) return next() // test pakai MemoryStore, tak butuh Redis
     if (!clientRedis.isOpen) {
         try {
             await clientRedis.connect();
@@ -75,24 +92,31 @@ const ensureRedisConnected = async (req: express.Request, res: express.Response,
     next();
 }
 
+// Static assets paling awal + cache header (lewati session/redis/global mw)
+app.use(express.static('public', {
+    maxAge: env.isProd ? '7d' : 0,
+    etag: true,
+}))
+
 // express config
 app.use(ensureRedisConnected)
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use(methodOverride('_method'))
 app.use(cookieParser())
-app.use(express.static('public'))
 
-// Configure session and passport
+// Configure session and passport.
+// Test memakai MemoryStore default (tanpa Redis) agar suite terisolasi & cepat.
 app.use(session({
-    store: new RedisStore({ client: clientRedis as any, ttl: 1000 * 60 * 60 * 6 }),
-    secret: process.env.KELASCENDIKIA_SESSION_SECRET || 'secret',
+    ...(isTest ? {} : { store: new RedisStore({ client: clientRedis as any, ttl: env.session.ttlMs }) }),
+    secret: env.session.secret,
     resave: false,
     saveUninitialized: false,
     cookie: {
-        secure: false,
+        secure: env.isProd,        // HTTPS-only di production
         httpOnly: true,
-        maxAge: 1000 * 60 * 60 * 6
+        sameSite: 'lax',
+        maxAge: env.session.ttlMs
     }
 }))
 app.use(passport.initialize())
@@ -116,6 +140,10 @@ app.use((req: Request, res: Response, next: NextFunction) => {
     next()
 })
 app.use(globalFunctions)
+
+// Proteksi CSRF untuk form web (API /api/ dilewati — stateless JWT)
+import { csrfProtection } from './middleware/csrf'
+app.use(csrfProtection)
 
 // Convert dates in view locals to user's timezone automatically on render
 import { convertDatesDeep } from './utils/date'
@@ -149,9 +177,10 @@ passport.use(new LocalStrategy({ usernameField: 'email' }, async (email, passwor
 
 passport.use(new JwtStrategy({
     jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-    secretOrKey: process.env.JWT_SECRET || 'secret'
+    secretOrKey: env.jwt.secret,
+    algorithms: [env.jwt.algorithm]
 }, async (jwtPayload, done) => {
-    const user = await userRepository.findOne(jwtPayload.id)
+    const user = await userRepository.findOne({ where: { id: jwtPayload.id } })
     if (!user) {
         return done(null, false)
     }
@@ -202,28 +231,47 @@ fs.readdirSync(path.join(__dirname,'modules')).forEach(module => {
     loadRoutes(path.join(__dirname,'modules',module))
 })
 
+// Error handler terpusat — WAJIB terdaftar terakhir (setelah semua route)
+import { errorHandler } from './middleware/errorHandler'
+app.use(errorHandler)
+
 // Ekspor aplikasi dan inisialisasi AppDataSource
 const initializeApp = async () => {
     try {
         await AppDataSource.initialize()
         console.log('Data Source has been initialized!')
-        // Try to enforce UTC at the session level for the pool
-        try {
-            await AppDataSource.query("SET time_zone = '+00:00'")
-            console.log('MySQL session time_zone set to +00:00')
-        } catch (e: any) {
-            console.warn('Could not set MySQL session time_zone. Ensure server is UTC:', (e && (e as any).message) || e)
-        }
+        // UTC dijamin lewat process.env.TZ='UTC' (proses) + opsi driver per-dialek
+        // di ormconfig (timezone:'Z' untuk mysql/mariadb). Tidak perlu raw SQL
+        // spesifik-vendor di sini agar tetap dialect-agnostic.
         app.listen(PORT, () => {
-            console.log(`Server is running on ${process.env.APP_HOST}:${PORT}`)
+            console.log(`Server is running on ${env.app.host}:${PORT}`)
         })
     } catch (error) {
         console.error('Error during Data Source initialization:', error)
     }
 }
 
-cntRedis().then(() => {
-    initializeApp()
-}).catch(console.error)
+// Graceful shutdown — tutup koneksi Redis & DataSource agar tidak menggantung
+const shutdown = async (signal: string) => {
+    console.log(`\n${signal} diterima, menutup koneksi...`)
+    try {
+        if (clientRedis.isOpen) await clientRedis.quit()
+        if (AppDataSource.isInitialized) await AppDataSource.destroy()
+    } catch (e) {
+        console.error('Error saat shutdown:', e)
+    } finally {
+        process.exit(0)
+    }
+}
+
+// Bootstrap server HANYA saat dijalankan langsung (node dist/index.js / ts-node).
+// Saat di-import (mis. oleh supertest), app diekspor tanpa listen/connect.
+if (require.main === module) {
+    cntRedis().then(() => {
+        initializeApp()
+    }).catch(console.error)
+    process.on('SIGTERM', () => shutdown('SIGTERM'))
+    process.on('SIGINT', () => shutdown('SIGINT'))
+}
 
 export { app, AppDataSource, clientRedis }

@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import Joi, { ObjectSchema } from 'joi';
 import multer, { FileFilterCallback } from 'multer';
 import app from '../../../../config/app';
+import { THEME_NAMES } from '../../../../config/themes';
 
 const fileSchema = Joi.object({
     fieldname: Joi.string().optional(),
@@ -20,6 +21,7 @@ const SettingServiceSchema: ObjectSchema = Joi.object({
     address: Joi.string().allow('').optional(),
     email: Joi.string().allow('').optional(),
     copyright: Joi.string().allow('').optional(),
+    theme: Joi.string().valid(...THEME_NAMES).optional(),
 });
 
 const SettingValidator = (req: Request, res: Response, next: NextFunction): void => {
@@ -36,13 +38,15 @@ const SettingValidator = (req: Request, res: Response, next: NextFunction): void
         delete req.body.picture
     }
 
-    const { error } = SettingServiceSchema.validate(req.body, { abortEarly: false });
+    const { error, value } = SettingServiceSchema.validate(req.body, { abortEarly: false, stripUnknown: true });
     if (error) {
         const errors = error.details.map(detail => ({
             path: detail.context?.key,
             msg: detail.message,
         }));
         errorTotal = errors
+    } else {
+        req.body = value
     }
 
     if (fileArray.length > 0) {

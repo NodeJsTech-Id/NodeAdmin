@@ -1,12 +1,20 @@
-import { Not } from 'typeorm'
-import { AppDataSource } from '../../../../../index'
+import { Not, Repository } from 'typeorm'
+import { injectable, inject } from 'tsyringe'
+import AppDataSource from '../../../../../config/ormconfig'
 import { Permission } from '../../../models/permission.entity'
-import functions, { removePrefix } from '../../../../../helpers/functions'
+import functions, { removePrefix, ciLike, paginate } from '../../../../../helpers/functions'
 import { Application } from 'express'
 import named from '../../../../../utils/namedRoutes'
+import { IPermissionService } from './IPermissionService'
+import { TOKENS } from '../../../../../tokens'
+import { AppError, NotFoundError, ConflictError } from '../../../../../errors/AppError'
 
-export default class PermissionService {
-    private permissionRepository = AppDataSource.getRepository(Permission)
+@injectable()
+export default class PermissionService implements IPermissionService {
+    // Dual-mode: prod inject token; test `new PermissionService()` pakai default param.
+    constructor(
+        @inject(TOKENS.PermissionRepository) private permissionRepository: Repository<Permission> = AppDataSource.getRepository(Permission),
+    ) {}
 
 	public async getAllRegisteredRoute(app: Application) {
         const routes: { method: string, path: string }[] = []
@@ -42,7 +50,7 @@ export default class PermissionService {
 
 		// filter
 		if (cleanConditions.name) {
-            query = query.andWhere(`permissions.name LIKE :name`, { name: `%${cleanConditions.name}%` })
+            query = query.andWhere(...ciLike('permissions.name', 'name', cleanConditions.name))
 		}
 		if (cleanConditions.method) {
             query = query.andWhere(`permissions.method = :method`, { method: cleanConditions.method })
@@ -51,39 +59,24 @@ export default class PermissionService {
             query = query.andWhere(`permissions.status = :status`, { status: cleanConditions.status })
 		}
 		if (cleanConditions.desc) {
-            query = query.andWhere(`permissions.desc LIKE :desc`, { desc: `%${cleanConditions.desc}%` })
+            query = query.andWhere(...ciLike('permissions.desc', 'desc', cleanConditions.desc))
 		}
 
-		query = query.skip(!cleanConditions.page?0:(parseInt(cleanConditions.page)-1)*parseInt(cleanConditions.page_size??10))
-			.take(cleanConditions.page_size??10)
-
-		// get data
-		const datas = await query.getManyAndCount()
-		const paginate_data = {
-			total_data: datas[1],
-			page_size: parseInt(cleanConditions.page_size??10),
-			current_page: parseInt(cleanConditions.page??1),
-			total_page: Math.ceil(datas[1] / parseInt(cleanConditions.page_size??10)),
-		}
-		return { datas:datas[0], paginate_data }
+		return paginate(query, cleanConditions)
 	}
 
 	public async store(request: any) {
-		try {
-			const find = await this.permissionRepository.findOne({ where: { name: request.name } })
-			if (find) {
-				throw new Error("Permission Already Exists")
-			}
-			request = functions.removeEmptyFields(request)
-			const data = this.permissionRepository.create({ ...request })
-			const result = await this.permissionRepository.save(data)
-			if (!result) {
-				throw new Error("Store Permission Fail")
-			}
-			return result
-		} catch (error: any) {
-		return error
+		const find = await this.permissionRepository.findOne({ where: { name: request.name } })
+		if (find) {
+			throw new ConflictError("Permission Already Exists")
 		}
+		request = functions.removeEmptyFields(request)
+		const data = this.permissionRepository.create({ ...request })
+		const result = await this.permissionRepository.save(data)
+		if (!result) {
+			throw new AppError("Store Permission Fail", 500)
+		}
+		return result
 	}
 
 	public async edit(id: string) {
@@ -92,36 +85,29 @@ export default class PermissionService {
 	}
 
 	public async update(id: string, request: any) {
-		try {
-			const find = await this.permissionRepository.findOne({ where: { id: Not(id), name: request.name } })
-			if (find) {
-				throw new Error("Permission Already Exists")
-			}
-			const permission = await this.permissionRepository.findOne({ where: { id } })
-			if (!permission) {
-				throw new Error('Permission not found')
-			}
-			request = functions.removeEmptyFields(request)
-			const data = this.permissionRepository.merge(permission, { ...request })
-			const result = await this.permissionRepository.save(data)
-			if (!result) {
-				throw new Error("Update Permission Fail")
-			}
-			return result
-		} catch (error: any) {
-		return error
+		const find = await this.permissionRepository.findOne({ where: { id: Not(id), name: request.name } })
+		if (find) {
+			throw new ConflictError("Permission Already Exists")
 		}
+		const permission = await this.permissionRepository.findOne({ where: { id } })
+		if (!permission) {
+			throw new NotFoundError('Permission not found')
+		}
+		request = functions.removeEmptyFields(request)
+		const data = this.permissionRepository.merge(permission, { ...request })
+		const result = await this.permissionRepository.save(data)
+		if (!result) {
+			throw new AppError("Update Permission Fail", 500)
+		}
+		return result
 	}
 
 	public async delete(id: string) {
 		const data = await this.permissionRepository.findOne({ where: { id } })
 		if (!data) {
-			return false
+			throw new NotFoundError('Permission not found')
 		}
 		const result = await this.permissionRepository.remove(data)
-		if (!result) {
-			return false
-		}
 		return result
 	}
 }

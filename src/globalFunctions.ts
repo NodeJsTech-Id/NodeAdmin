@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from 'express'
 import fileService from './services/fileService'
 import { User } from './modules/access/models/user.entity'
-import { Setting } from './modules/setting/models/setting.entity'
-import AppDataSource from './config/ormconfig'
+import { getTheme, DEFAULT_THEME, THEMES } from './config/themes'
+import { getSetting } from './services/settingCache'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
 import tz from 'dayjs/plugin/timezone'
@@ -49,8 +49,13 @@ export const globalFunctions = async (req: Request, res: Response, next: NextFun
 	}
 	res.locals.now = (format = 'YYYY-MM-DD HH:mm:ss') => dayjs.utc().tz(userTz).format(format)
 
-	const setting = await AppDataSource.getRepository(Setting).find()
-	res.locals.setting = setting[0]
+	const setting = await getSetting() // cached (TTL 60s) — bukan query tiap request
+	res.locals.setting = setting
+
+	// Tema aktif (template switcher) — tersedia di semua view via res.locals
+	res.locals.themeName = setting?.theme || DEFAULT_THEME
+	res.locals.theme = getTheme(setting?.theme)
+	res.locals.themes = THEMES // seluruh palet untuk UI switcher
 
 	res.locals.addOrUpdateQueryParam = (fullUrl: string | URL, key: string, value: string) => {
 		const parsedUrl = new URL(fullUrl)

@@ -1,79 +1,234 @@
-
 # Node Admin
 
-Node Admin is a starter pack for developing NodeJs application. This application contain minimum spesification for an application.
+Node Admin adalah **starter pack / bootstrap** untuk membangun aplikasi admin panel berbasis Node.js (TypeScript + Express + TypeORM). Dirancang sebagai fondasi yang scalable dengan menerapkan prinsip rekayasa perangkat lunak yang solid, keamanan berlapis, dan suite pengujian lengkap.
 
-## Features
+---
 
-1. User Management
-2. Profile Management
-3. Access Management Based on Route
-4. User Role Management with Multiple Role
-5. Build on NodeJs Modules
-6. Build on Service Layer
+## ✨ Fitur
 
-## Installation
-#### Clone the file to your local by typing below command:
-```cmd
+- **User Management** — CRUD pengguna, multi-role, foto profil.
+- **Role & Permission (RBAC)** — kontrol akses berbasis route + permission per-aksi.
+- **Profile Management** — pengguna mengelola profil & password sendiri.
+- **Authentication** — sesi (Passport local + Redis) untuk web & **JWT** untuk API.
+- **Password Reset** — OTP via email (hashed + expiry).
+- **Template Switcher** — 9 tema warna (Blue, Black, Brown, Green, Grey, Orange, Purple, Red, Yellow) yang dapat diganti dari halaman Setting; seluruh UI admin berubah tanpa rebuild.
+- **Multi-Database** — dialect-agnostic via TypeORM (MySQL, MariaDB, PostgreSQL, SQLite, MSSQL, Oracle) cukup dengan mengganti `DB_TYPE`.
+- **Multi-Timezone** — tampilan tanggal mengikuti timezone pengguna (dayjs).
+- **File Storage** — upload ke Alibaba Cloud OSS (re-encode gambar via sharp).
+- **Stateless** — session di Redis, file di OSS → siap horizontal scaling.
+
+---
+
+## 🏗️ Arsitektur & Prinsip
+
+Aplikasi disusun **modular per fitur** (`src/modules/<modul>`), tiap modul punya lapisan: `routes → middleware → controller → service → entity → views`.
+
+Prinsip yang diterapkan (detail di [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)):
+
+| Prinsip | Penerapan |
+|---------|-----------|
+| **SOLID** | Dependency Injection via [tsyringe](https://github.com/microsoft/tsyringe) — controller & service di-inject lewat container (`src/container.ts`), service mengimplementasikan interface (`I*Service`). |
+| **DRY** | Helper terpusat: `paginate()`, `ciLike()`, `renderView()`, `removeEmptyFields()`. |
+| **Separation of Concerns** | Controller (HTTP) ≠ Service (bisnis) ≠ Repository (data) ≠ View (presentasi). |
+| **Clean Code** | Error handling terpusat (`AppError` + `errorHandler` middleware); service `throw`, bukan `return error`. |
+| **Low Coupling** | Komponen bergantung pada abstraksi (interface + token DI), bukan implementasi konkret. |
+| **Twelve-Factor** | Config via env terpusat & tervalidasi (`src/config/env.ts`), stateless, logs ke stdout, graceful shutdown. |
+| **TDD / BDD** | Suite test menyeluruh (lihat bagian Testing). |
+
+---
+
+## 📁 Struktur Direktori
+
+```
+src/
+├── config/          # env (terpusat & tervalidasi), ormconfig, app, themes
+├── container.ts     # registrasi DI (tsyringe)
+├── tokens.ts        # token DI
+├── errors/          # AppError + turunannya
+├── middleware/      # errorHandler, csrf, rateLimiter
+├── utils/           # routeBinding (handler), view (renderView), date, dll
+├── helpers/         # functions (paginate, ciLike), otp
+├── services/        # fileService (OSS), mailer, settingCache
+├── resources/       # layout & partial EJS (be/tw = tema Tailwind aktif)
+└── modules/
+    ├── access/      # user, role, permission (RBAC)
+    ├── auth/        # login, register, JWT, reset password
+    ├── dashboard/
+    ├── profile/
+    └── setting/     # setting + template switcher
+tests/               # unit, integration, api, security, smoke, e2e, bdd
+docs/                # ARCHITECTURE.md, TESTING.md, API.md
+```
+
+---
+
+## 🚀 Instalasi
+
+```bash
 git clone https://github.com/NodeJsTech-Id/NodeAdmin.git
-```
-#### Change directory to NodeAdmin:
-```cmd
 cd NodeAdmin
-```
-
-#### Open Code Editor (Visual Studio Code):
-```cmd
-code .
-```
-
-#### Install NPM Dependencies:
-```cmd
 npm install
 ```
 
-#### Login to your Mysql Database:
-```cmd
-mysql -u root -p
-```
+### 1. Siapkan database
 
-#### Create New Database:
-```cmd
+Default MySQL — buat database kosong:
+```sql
 CREATE DATABASE nodeadmin;
 ```
+(Untuk DB lain, lihat bagian **Multi-Database** di bawah.)
 
-#### Exit from Mysql Database Terminal:
-```cmd
-exit;
+### 2. Konfigurasi `.env`
+
+Salin `.env.example` ke `.env`, lalu isi. **Wajib** di production: `SESSION_SECRET` & `JWT_SECRET` (app berhenti jika kosong saat `NODE_ENV=production`).
+
+```bash
+cp .env.example .env
+# generate secret:
+node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-#### Put the config on .env file like below:
+Variabel penting:
 ```
-DB_TYPE=mysql
+APP_PORT=3000
+NODE_ENV=development
+
+DB_TYPE=mysql            # mysql | mariadb | postgres | sqlite | mssql | oracle
 DB_HOST=localhost
 DB_PORT=3306
 DB_USERNAME=root
-DB_PASSWORD=12345678
+DB_PASSWORD=
 DB_DATABASE=nodeadmin
-DB_SYNCHRONIZE=false
-DB_LOGGING=true
+
+REDIS_URL=redis://127.0.0.1:6379
+
+SESSION_SECRET=          # WAJIB di production
+JWT_SECRET=              # WAJIB di production
+JWT_EXPIRES_IN=1h
+BCRYPT_ROUNDS=10
+OTP_EXPIRY_MINUTES=10
+
+# Alibaba OSS (penyimpanan file)
+OSS_ACCESS_ID=
+OSS_ACCESS_KEY=
+OSS_ENDPOINT=oss-ap-southeast-5.aliyuncs.com
+OSS_BUCKET=
+OSS_SSL=true
 ```
 
-#### Hit command below:
-```cmd
-$ npm run migration:run
+### 3. Migrasi + seed
+
+```bash
+npm run migration:run
+```
+Membuat skema + seed admin default & data setting awal.
+
+### 4. Jalankan
+
+```bash
+npm run start:dev      # mode dev (nodemon + ts-node)
+# atau
+npm start              # mode produksi (build + pm2 dari dist)
 ```
 
-#### Start your application development by typing:
-```cmd
-$ npm run start:dev
+Buka **http://localhost:3000**. Login default:
 ```
-
-#### Login to Application by below credential:
-```cmd
-Username: admin@admin.com
+Email   : admin@admin.com
 Password: 12345678
 ```
+> ⚠️ Ganti password admin sebelum production.
+
+---
+
+## 🗄️ Multi-Database
+
+Aplikasi dialect-agnostic. Ganti `DB_TYPE` + install driver yang sesuai:
+
+| DB | DB_TYPE | Driver |
+|----|---------|--------|
+| MySQL | `mysql` | `mysql2` (terpasang) |
+| MariaDB | `mariadb` | `mysql2` |
+| PostgreSQL | `postgres` | `pg` (terpasang) |
+| SQLite | `better-sqlite3` | `better-sqlite3` (dev) |
+| SQL Server | `mssql` | `mssql` |
+| Oracle | `oracle` | `oracledb` |
+
+SQLite: isi `DB_DATABASE` dengan path file (mis. `./dev.sqlite`). Lalu `npm run migration:run`.
+
+---
+
+## 🎨 Template Switcher
+
+Login → menu **Setting** → pilih salah satu dari 9 swatch warna → **Save**. Seluruh UI admin & halaman login berganti warna seketika (disimpan di `settings.theme`, dibaca lewat CSS variable). Palet didefinisikan di `src/config/themes.ts`.
+
+---
+
+## 🔒 Keamanan
+
+- **Helmet** — security headers (HSTS, X-Frame-Options, nosniff).
+- **CSRF protection** — token sinkron untuk semua form web (`src/middleware/csrf.ts`).
+- **Rate limiting** — login / register / OTP dibatasi per-IP.
+- **Session cookie** — `httpOnly`, `sameSite`, `secure` (otomatis di production).
+- **Password** — bcrypt; OTP reset di-hash + expiry + rate-limit.
+- **JWT** — algoritma di-pin (HS256), blacklist saat logout (TTL).
+- **RBAC** — `ensureAuthenticated` → `AccessMiddleware` di setiap route admin.
+- **Mass-assignment guard** — Joi `stripUnknown` pada input.
+- **Validasi upload** — magic-byte (sharp), whitelist ekstensi.
+- **Secrets** — fail-fast jika `SESSION_SECRET`/`JWT_SECRET` kosong di production.
+
+---
+
+## 🧪 Testing
+
+Suite lengkap — detail di [`docs/TESTING.md`](docs/TESTING.md).
+
+| Perintah | Cakupan |
+|----------|---------|
+| `npm test` | Semua Jest (unit + integration + api + security + smoke) |
+| `npm run test:unit` | Helper murni |
+| `npm run test:integration` | Service ↔ DB (SQLite in-memory) |
+| `npm run test:api` | Endpoint via supertest |
+| `npm run test:security` | RBAC, CSRF, rate-limit, JWT, mass-assign |
+| `npm run test:smoke` | Health, login, DB connect |
+| `npm run test:coverage` | Jest + laporan coverage |
+| `npm run test:e2e` | Playwright (browser, 3 engine) |
+| `npm run test:bdd` | Cucumber (skenario Gherkin) |
+
+CI (GitHub Actions, `.github/workflows/ci.yml`): typecheck + Jest + audit + matrix DB (MySQL/Postgres) + Playwright tiap push/PR.
+
+---
+
+## 🔌 API
+
+Endpoint REST `/api/v1/*` (auth via JWT Bearer). Daftar lengkap + contoh request/response di [`docs/API.md`](docs/API.md).
+
+Ringkas:
+- `POST /api/v1/auth/login` → dapatkan `access_token`
+- `/api/v1/access/user|role|permission` → CRUD (butuh `Authorization: Bearer <token>`)
+- `/api/v1/profile` → profil sendiri
+
+---
+
+## 📜 Scripts
+
+```
+npm run build            # compile TS + copy views ke dist
+npm run start:dev        # dev (nodemon + ts-node)
+npm start                # build + pm2
+npm run migration:run    # jalankan migrasi
+npm run migration:revert # rollback migrasi terakhir
+npm run migration:create # buat file migrasi baru
+npm test / test:*        # lihat bagian Testing
+```
+
+---
+
+## 🧩 Tech Stack
+
+TypeScript · Express · TypeORM · MySQL/PostgreSQL/dll · Redis (session) · EJS + Tailwind · tsyringe (DI) · Passport (local + JWT) · Joi · Jest + supertest · Playwright · Cucumber · Alibaba OSS · Helmet.
+
+---
 
 ## License
+
 The Node Admin is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).

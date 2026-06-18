@@ -20,8 +20,9 @@ export class CreateRoleTable1721110573828 implements MigrationInterface {
                     },
                     {
                         name: "status",
-                        type: "enum",
-                        enum: ["Active", "Inactive"]
+                        type: "varchar",
+                        length: "20",
+                        default: "'Active'"
                     },
                     {
                         name: "desc",
@@ -49,8 +50,7 @@ export class CreateRoleTable1721110573828 implements MigrationInterface {
                     {
                         name: "updated_at",
                         type: "timestamp",
-                        default: "CURRENT_TIMESTAMP",
-                        onUpdate: "CURRENT_TIMESTAMP"
+                        default: "CURRENT_TIMESTAMP"
                     },
                 ],
             }),

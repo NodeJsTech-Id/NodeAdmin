@@ -45,13 +45,16 @@ const UserCreateValidator = (req: Request, res: Response, next: NextFunction): v
         delete req.body.picture
     }
 
-    const { error } = userSchema.validate(req.body, { abortEarly: false });
+    const { error, value } = userSchema.validate(req.body, { abortEarly: false, stripUnknown: true });
     if (error) {
         const errors = error.details.map(detail => ({
             path: detail.context?.key,
             msg: detail.message,
         }));
         errorTotal = errors
+    } else {
+        // Cegah mass-assignment: hanya field tervalidasi yang diteruskan ke service
+        req.body = value
     }
 
     if (typeof files != 'undefined') {

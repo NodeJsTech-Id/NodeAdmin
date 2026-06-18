@@ -52,8 +52,9 @@ export class CreateUserTable1719569566358 implements MigrationInterface {
                     },
                     {
                         name: "status",
-                        type: "enum",
-                        enum: ["Active", "Inactive"]
+                        type: "varchar",
+                        length: "20",
+                        default: "'Active'"
                     },
                     {
                         name: "picture",
@@ -66,7 +67,7 @@ export class CreateUserTable1719569566358 implements MigrationInterface {
                         type: "varchar",
                         length: "255",
                         isNullable: true,
-                        default: `"UTC"`
+                        default: "'UTC'"
                     },
                     {
                         name: "blocked",
@@ -99,8 +100,7 @@ export class CreateUserTable1719569566358 implements MigrationInterface {
                     {
                         name: "updated_at",
                         type: "timestamp",
-                        default: "CURRENT_TIMESTAMP",
-                        onUpdate: "CURRENT_TIMESTAMP"
+                        default: "CURRENT_TIMESTAMP"
                     },
                 ],
             }),

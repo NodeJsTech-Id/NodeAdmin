@@ -41,13 +41,15 @@ export const ProfileUpdateValidator = (req: Request, res: Response, next: NextFu
     delete (req.body as any).picture
   }
 
-  const { error } = profileSchema.validate(req.body, { abortEarly: false })
+  const { error, value } = profileSchema.validate(req.body, { abortEarly: false, stripUnknown: true })
   if (error) {
     const errors = error.details.map(detail => ({
       path: detail.context?.key,
       msg: detail.message,
     }))
     errorTotal = errors
+  } else {
+    req.body = value
   }
 
   if (fileArray.length > 0) {

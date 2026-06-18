@@ -7,8 +7,19 @@ class FileService {
         try {
             const ext = path.extname(fileName).toLowerCase().replace('.', '') // contoh: 'jpg'
             const basename = path.basename(fileName, path.extname(fileName))
-            const isConvertible = ['jpg', 'jpeg', 'png', 'tiff', 'bmp'].includes(ext)
 
+            // Validasi magic-byte: pastikan konten benar-benar gambar (bukan hanya MIME
+            // dari klien yang bisa dipalsukan). sharp akan throw bila bukan gambar valid.
+            const ALLOWED = ['jpg', 'jpeg', 'png', 'tiff', 'bmp', 'webp', 'gif']
+            if (!ALLOWED.includes(ext)) {
+                throw new Error('Ekstensi file tidak diizinkan')
+            }
+            const meta = await sharp(fileContent).metadata()
+            if (!meta.format) {
+                throw new Error('File bukan gambar yang valid')
+            }
+
+            const isConvertible = ['jpg', 'jpeg', 'png', 'tiff', 'bmp'].includes(ext)
             let finalBuffer = fileContent
             let finalName = fileName
 
@@ -31,17 +42,14 @@ class FileService {
     }
 
     getFile(fileName: string, is_public: boolean = false): any {
-        const version = Date.now()
         if (is_public) {
             const { bucket, endpoint, secure } = ossConfig
             const protocol = secure ? 'https' : 'http'
             return `${protocol}://${bucket}.${endpoint}/${fileName}`
         }
-        let url = oss.signatureUrl(fileName, {
-            expires: 3600 * 6,
-        })
-        const separator = url.includes('?') ? '&' : '?'
-        return `${url}${separator}v=${version}`
+        // Tanpa cache-bust Date.now(): signed URL sudah punya expiry,
+        // browser boleh meng-cache gambar identik antar-render.
+        return oss.signatureUrl(fileName, { expires: 3600 * 6 })
     }
 
     async deleteFile(fileName: string): Promise<any> {

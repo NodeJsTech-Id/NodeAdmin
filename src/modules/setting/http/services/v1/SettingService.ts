@@ -1,8 +1,14 @@
-import { AppDataSource } from '../../../../../index'
+import { Repository } from 'typeorm'
+import { injectable, inject } from 'tsyringe'
+import AppDataSource from '../../../../../config/ormconfig'
 import functions from '../../../../../helpers/functions'
 import { Setting } from '../../../models/setting.entity'
 import fileService from '../../../../../services/fileService'
 import Module from '../../../Module'
+import { invalidateSetting } from '../../../../../services/settingCache'
+import { ISettingService } from './ISettingService'
+import { TOKENS } from '../../../../../tokens'
+import { AppError } from '../../../../../errors/AppError'
 
 function generateUniqueFileName(): string {
     const currentDate = new Date();
@@ -31,8 +37,12 @@ function generateUniqueFileName(): string {
     return filename;
 }
 
-export default class SettingService {
-	private settingRepository = AppDataSource.getRepository(Setting)
+@injectable()
+export default class SettingService implements ISettingService {
+	// Dual-mode: prod inject token; test `new SettingService()` pakai default param.
+	constructor(
+		@inject(TOKENS.SettingRepository) private settingRepository: Repository<Setting> = AppDataSource.getRepository(Setting),
+	) {}
 
 	public async index() {
 		const data = await this.settingRepository.find()
@@ -40,7 +50,6 @@ export default class SettingService {
 	}
 
 	public async update(request: any, files: any = null) {
-		try {
 			const setting = await this.settingRepository.find()
 			request = functions.removeEmptyFields(request)
             if (Array.isArray(files) && files.length > 0) {
@@ -63,11 +72,9 @@ export default class SettingService {
 			const data = this.settingRepository.merge(setting[0], { ...request })
 			const result = await this.settingRepository.save(data)
 			if (!result) {
-				throw new Error("Update Setting Fail")
+				throw new AppError("Update Setting Fail", 500)
 			}
+			invalidateSetting() // refresh cache agar perubahan langsung tampil
 			return result
-		} catch (error: any) {
-		return error
-		}
 	}
 }

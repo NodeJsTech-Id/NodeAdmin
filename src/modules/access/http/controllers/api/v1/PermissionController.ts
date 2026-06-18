@@ -1,11 +1,14 @@
 import { Request, Response } from 'express'
-import PermissionService from '../../../services/v1/PermissionService'
+import { injectable, inject } from 'tsyringe'
+import { IPermissionService } from '../../../services/v1/IPermissionService'
+import { TOKENS } from '../../../../../../tokens'
 import { validationResult } from 'express-validator'
 import { app } from '../../../../../../index'
 import ResponseHandler from '../../../../../../ResponseHandler'
 
+@injectable()
 export default class PermissionController {
-    private permissionService = new PermissionService
+    constructor(@inject(TOKENS.IPermissionService) private permissionService: IPermissionService) {}
 
     public async index(req: Request, res: Response) {
 		this.permissionService.getAllRegisteredRoute(app)
@@ -15,22 +18,15 @@ export default class PermissionController {
     }
 
     public async store(req: Request, res: Response) {
-        try {
-            if (!req.body.blocked) {
-                req.body.blocked = false
-            }
-            const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                return ResponseHandler.validationError(res, errors.array())
-            }
-            const result = await this.permissionService.store(req.body)
-            if (result instanceof Error) {
-                throw new Error(result.message)
-            }
-            return ResponseHandler.success(res, 'Success', result)
-        } catch (err: any) {
-            return ResponseHandler.error(res, err.message)
+        if (!req.body.blocked) {
+            req.body.blocked = false
         }
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return ResponseHandler.validationError(res, errors.array())
+        }
+        const result = await this.permissionService.store(req.body)
+        return ResponseHandler.success(res, 'Success', result)
     }
 
     public async edit(req: Request, res: Response) {
@@ -40,33 +36,21 @@ export default class PermissionController {
     }
 
     public async update(req: Request, res: Response) {
-        try {
-            const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                return ResponseHandler.validationError(res, errors.array())
-            }
-            const result = await this.permissionService.update(req.params.id, req.body)
-            if (result instanceof Error) {
-                throw new Error(result.message)
-            }
-            return ResponseHandler.success(res, 'Success')
-        } catch (err: any) {
-            return ResponseHandler.error(res, err.message)
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return ResponseHandler.validationError(res, errors.array())
         }
+        await this.permissionService.update(req.params.id, req.body)
+        return ResponseHandler.success(res, 'Success')
     }
 
     public async delete(req: Request, res: Response) {
-        const result = await this.permissionService.delete(req.params.id)
-        if (!result) {
-        return ResponseHandler.error(res, 'Delete Permission Fail')
-        }
+        await this.permissionService.delete(req.params.id)
         return ResponseHandler.success(res, 'Success')
     }
 
     public async delete_selected(req: Request, res: Response) {
-        req.body.selected.forEach(async (id: string) => {
-            await this.permissionService.delete(id)
-        });
+        await Promise.all(req.body.selected.map((id: string) => this.permissionService.delete(id)))
         return ResponseHandler.success(res, 'Success')
     }
 }

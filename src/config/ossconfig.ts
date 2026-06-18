@@ -1,15 +1,12 @@
-
-import * as dotenv from 'dotenv';
 import OSS from 'ali-oss';
-
-dotenv.config();
+import env from './env';
 
 const config = {
-    accessKeyId: process.env.OSS_ACCESS_ID as string,
-    accessKeySecret: process.env.OSS_ACCESS_KEY as string,
-    endpoint: process.env.OSS_ENDPOINT,
-    bucket: process.env.OSS_BUCKET,
-    secure: process.env.OSS_SSL === 'true'
+    accessKeyId: env.oss.accessId,
+    accessKeySecret: env.oss.accessKey,
+    endpoint: env.oss.endpoint,
+    bucket: env.oss.bucket,
+    secure: env.oss.secure
 };
 
 const oss = new OSS(config)

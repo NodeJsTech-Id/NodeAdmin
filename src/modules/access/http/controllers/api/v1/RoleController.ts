@@ -1,10 +1,13 @@
 import { Request, Response } from 'express'
+import { injectable, inject } from 'tsyringe'
 import { validationResult } from 'express-validator'
-import RoleService from '../../../services/v1/RoleService'
+import { IRoleService } from '../../../services/v1/IRoleService'
+import { TOKENS } from '../../../../../../tokens'
 import ResponseHandler from '../../../../../../ResponseHandler'
 
+@injectable()
 export default class RoleController {
-	private roleService = new RoleService
+	constructor(@inject(TOKENS.IRoleService) private roleService: IRoleService) {}
 
     public async index(req: Request, res: Response) {
         const filter = req.query
@@ -13,22 +16,15 @@ export default class RoleController {
     }
 
     public async store(req: Request, res: Response) {
-        try {
-            if (!req.body.blocked) {
-                req.body.blocked = false
-            }
-            const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                return ResponseHandler.validationError(res, errors.array())
-            }
-            const result = await this.roleService.store(req.body)
-            if (result instanceof Error) {
-                throw new Error(result.message)
-            }
-            return ResponseHandler.success(res, 'Success', result)
-        } catch (err: any) {
-            return ResponseHandler.error(res, err.message)
+        if (!req.body.blocked) {
+            req.body.blocked = false
         }
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return ResponseHandler.validationError(res, errors.array())
+        }
+        const result = await this.roleService.store(req.body)
+        return ResponseHandler.success(res, 'Success', result)
     }
 
     public async edit(req: Request, res: Response) {
@@ -38,33 +34,21 @@ export default class RoleController {
     }
 
     public async update(req: Request, res: Response) {
-        try {
-            const errors = validationResult(req)
-            if (!errors.isEmpty()) {
-                return ResponseHandler.validationError(res, errors.array())
-            }
-            const result = await this.roleService.update(req.params.id, req.body)
-            if (result instanceof Error) {
-                throw new Error(result.message)
-            }
-            return ResponseHandler.success(res, 'Success')
-        } catch (err: any) {
-            return ResponseHandler.error(res, err.message)
+        const errors = validationResult(req)
+        if (!errors.isEmpty()) {
+            return ResponseHandler.validationError(res, errors.array())
         }
+        await this.roleService.update(req.params.id, req.body)
+        return ResponseHandler.success(res, 'Success')
     }
 
     public async delete(req: Request, res: Response) {
-        const result = await this.roleService.delete(req.params.id)
-        if (!result) {
-            return ResponseHandler.error(res, 'Delete Role Fail')
-        }
+        await this.roleService.delete(req.params.id)
         return ResponseHandler.success(res, 'Success')
     }
 
     public async delete_selected(req: Request, res: Response) {
-        req.body.selected.forEach(async (id: string) => {
-            await this.roleService.delete(id)
-        });
+        await Promise.all(req.body.selected.map((id: string) => this.roleService.delete(id)))
         return ResponseHandler.success(res, 'Success')
     }
 
@@ -75,50 +59,22 @@ export default class RoleController {
     }
 
     public async permission_assign(req: Request, res: Response) {
-        try {
-            const result = await this.roleService.permission_assign(req.params.id, req.params.permission_id)
-            if (result instanceof Error) {
-                throw new Error(result.message)
-            }
-            return ResponseHandler.success(res, 'Success')
-        } catch (err: any) {
-            return ResponseHandler.error(res, err.message)
-        }
+        await this.roleService.permission_assign(req.params.id, req.params.permission_id)
+        return ResponseHandler.success(res, 'Success')
     }
 
     public async permission_assign_selected(req: Request, res: Response) {
-        try {
-            const result = await this.roleService.permission_assign_selected(req.params.id, req.body.selected)
-            if (result instanceof Error) {
-                throw new Error(result.message)
-            }
-            return ResponseHandler.success(res, 'Success')
-        } catch (err: any) {
-            return ResponseHandler.error(res, err.message)
-        }
+        await this.roleService.permission_assign_selected(req.params.id, req.body.selected)
+        return ResponseHandler.success(res, 'Success')
     }
 
     public async permission_unassign(req: Request, res: Response) {
-        try {
-            const result = await this.roleService.permission_unassign(req.params.id, req.params.permission_id)
-            if (result instanceof Error) {
-                throw new Error(result.message)
-            }
-            return ResponseHandler.success(res, 'Success')
-        } catch (err: any) {
-            return ResponseHandler.error(res, err.message)
-        }
+        await this.roleService.permission_unassign(req.params.id, req.params.permission_id)
+        return ResponseHandler.success(res, 'Success')
     }
 
     public async permission_unassign_selected(req: Request, res: Response) {
-        try {
-            const result = await this.roleService.permission_unassign_selected(req.params.id, req.body.selected)
-            if (result instanceof Error) {
-                throw new Error(result.message)
-            }
-            return ResponseHandler.success(res, 'Success')
-        } catch (err: any) {
-            return ResponseHandler.error(res, err.message)
-        }
+        await this.roleService.permission_unassign_selected(req.params.id, req.body.selected)
+        return ResponseHandler.success(res, 'Success')
     }
 }

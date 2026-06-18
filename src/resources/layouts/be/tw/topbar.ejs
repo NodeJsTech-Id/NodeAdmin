@@ -1,0 +1,38 @@
+<!-- Topbar (Tailwind, themeable) -->
+<header class="tw-card !rounded-none md:!rounded-xl bg-white px-4 md:px-6 py-3 mb-6 flex items-center justify-between sticky top-0 z-20 shadow-sm">
+    <div class="flex items-center gap-3">
+        <button id="tw-sidebar-toggle" class="md:hidden text-2xl text-primary-tw" aria-label="Menu">
+            <i class="fas fa-bars"></i>
+        </button>
+        <a href="<%= route('admin.v1.dashboard.index') %>" class="text-primary-tw text-xl">
+            <i class="fas fa-home"></i>
+        </a>
+    </div>
+
+    <!-- User dropdown (Bootstrap dropdown — JS sudah dimuat di head) -->
+    <div class="dropdown">
+        <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" role="button"
+           id="twUserDropdown" data-toggle-dd aria-expanded="false">
+            <span class="d-none d-lg-inline me-2 text-secondary">Welcome, <%= auth.name %></span>
+            <img class="rounded-circle" style="width:38px;height:38px;object-fit:cover"
+                 src="<%= getFile(auth.picture??'modules/access/user/user.png') %>">
+            <i class="bi bi-gear ms-2 text-primary-tw"></i>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="twUserDropdown">
+            <li>
+                <a class="dropdown-item" href="<%= route('admin.v1.profile.index') %>">
+                    <i class="fas fa-user fa-sm fa-fw me-2 text-secondary"></i> Profile
+                </a>
+            </li>
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <a class="dropdown-item" href="/"
+                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
+                    <i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-secondary"></i> Logout
+                </a>
+                <form id="logout-form" action="<%= route('web.auth.logout') %>" method="POST" style="display:none;"></form>
+            </li>
+        </ul>
+    </div>
+</header>
+<!-- End Topbar -->

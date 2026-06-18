@@ -2,56 +2,60 @@ import { Entity, Column, PrimaryColumn, Index, CreateDateColumn, UpdateDateColum
 
 @Entity('settings')
 export class Setting {
-    @PrimaryColumn({ type: 'char', length: 36, collation: 'utf8mb4_unicode_ci' })
+    @PrimaryColumn({ type: 'varchar', length: 36 })
     id?: string;
 
-    @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
+    @Column({ type: 'varchar', length: 255, nullable: true })
     @Index()
     initial?: string;
 
-    @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
+    @Column({ type: 'varchar', length: 255, nullable: true })
     @Index()
     name?: string;
 
-    @Column({ type: 'longtext', nullable: true, collation: 'utf8mb4_unicode_ci' })
+    @Column({ type: 'text', nullable: true })
     description?: string;
 
-    @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
+    @Column({ type: 'varchar', length: 255, nullable: true })
     @Index()
     icon?: string;
 
-    @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
+    @Column({ type: 'varchar', length: 255, nullable: true })
     @Index()
     logo?: string;
 
-    @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
+    @Column({ type: 'varchar', length: 255, nullable: true })
     @Index()
     login_image?: string;
 
-    @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
+    @Column({ type: 'varchar', length: 255, nullable: true })
     @Index()
     phone?: string;
 
-    @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
+    @Column({ type: 'varchar', length: 255, nullable: true })
     address?: string;
 
-    @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
+    @Column({ type: 'varchar', length: 255, nullable: true })
     @Index('settings__setting_email')
     email?: string;
 
-    @Column({ type: 'varchar', length: 255, nullable: true, collation: 'utf8mb4_unicode_ci' })
+    @Column({ type: 'varchar', length: 255, nullable: true })
     @Index()
     copyright?: string;
 
-    @Column({ type: 'char', length: 36, nullable: true, collation: 'utf8mb4_unicode_ci' })
+    @Column({ type: 'varchar', length: 36, nullable: true })
     created_by?: string;
 
-    @Column({ type: 'char', length: 36, nullable: true, collation: 'utf8mb4_unicode_ci' })
+    @Column({ type: 'varchar', length: 36, nullable: true })
     updated_by?: string;
 
-    @CreateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP' })
+    // Template/tema aktif (template switcher) — nama palet di src/config/themes.ts
+    @Column({ type: 'varchar', length: 20, nullable: true, default: 'Blue' })
+    theme?: string;
+
+    @CreateDateColumn()
     created_at?: Date;
 
-    @UpdateDateColumn({ type: 'timestamp', default: () => 'CURRENT_TIMESTAMP', onUpdate: 'CURRENT_TIMESTAMP' })
+    @UpdateDateColumn()
     updated_at?: Date;
 }

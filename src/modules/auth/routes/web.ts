@@ -4,26 +4,27 @@ import passport from 'passport'
 import AuthController from '../http/controllers/web/v1/AuthController'
 import { UserCreateValidator } from '../../access/http/validators/UserCreateValidator'
 import { ResetPasswordProcessValidator } from '../http/validators/ResetPasswordProcessValidator'
+import { authLimiter, otpLimiter } from '../../../middleware/rateLimiter'
+import { handler } from '../../../utils/routeBinding'
 
 const router = Router()
 
 const authRoute = named.extendRouter(Router())
-const authController = new AuthController
-authRoute.get('web.auth.login', '/auth/login', authController.getLogin.bind(authController))
-authRoute.post('web.auth.login.post', '/auth/login', passport.authenticate('local', {
+authRoute.get('web.auth.login', '/auth/login', handler(AuthController, 'getLogin'))
+authRoute.post('web.auth.login.post', '/auth/login', authLimiter, passport.authenticate('local', {
     successRedirect: '/admin/v1/dashboard',
     failureRedirect: '/auth/login',
     failureFlash: true
 }))
-authRoute.get('web.auth.register', '/auth/register', authController.getRegister.bind(authController))
-authRoute.post('web.auth.register.post', '/auth/register', UserCreateValidator, authController.postRegister.bind(authController))
-authRoute.post('web.auth.logout', '/auth/logout', authController.logout.bind(authController))
+authRoute.get('web.auth.register', '/auth/register', handler(AuthController, 'getRegister'))
+authRoute.post('web.auth.register.post', '/auth/register', authLimiter, UserCreateValidator, handler(AuthController, 'postRegister'))
+authRoute.post('web.auth.logout', '/auth/logout', handler(AuthController, 'logout'))
 
-authRoute.get('admin.v1.auth.reset.req', '/admin/v1/auth/reset/req', authController.request_view.bind(authController))
-authRoute.get('admin.v1.auth.reset.proc', '/admin/v1/auth/reset/proc', authController.process_view.bind(authController))
+authRoute.get('admin.v1.auth.reset.req', '/admin/v1/auth/reset/req', handler(AuthController, 'request_view'))
+authRoute.get('admin.v1.auth.reset.proc', '/admin/v1/auth/reset/proc', handler(AuthController, 'process_view'))
 
-authRoute.post('admin.v1.auth.reset.request', '/admin/v1/auth/reset/request', authController.request.bind(authController))
-authRoute.post('admin.v1.auth.reset.process', '/admin/v1/auth/reset/process', ResetPasswordProcessValidator, authController.process.bind(authController))
+authRoute.post('admin.v1.auth.reset.request', '/admin/v1/auth/reset/request', authLimiter, handler(AuthController, 'request'))
+authRoute.post('admin.v1.auth.reset.process', '/admin/v1/auth/reset/process', otpLimiter, ResetPasswordProcessValidator, handler(AuthController, 'process'))
 
 router.use(authRoute)
 

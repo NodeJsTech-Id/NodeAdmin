@@ -8,15 +8,8 @@ import ResponseHandler from '../../../../../../ResponseHandler'
 import path from 'path'
 import Module from '../../../../Module'
 import { sendMail } from '../../../../../../services/mailer'
-
-const generateOTP = (length: number = 6): string => {
-	let otp = ''
-	const characters = '0123456789'
-	for (let i = 0; i < length; i++) {
-	  otp += characters.charAt(Math.floor(Math.random() * characters.length))
-	}
-	return otp
-}
+import env from '../../../../../../config/env'
+import { generateOTP, hashOTP, verifyOTP, otpExpiry } from '../../../../../../helpers/otp'
 
 export default class AuthController {
 	private userRepository = AppDataSource.getRepository(User)
@@ -33,7 +26,11 @@ export default class AuthController {
 			return ResponseHandler.error(res, "Invalid email or password", null, 401)
 		}
 
-		const token = jwt.sign({ id: user.id, email: user.email } as JwtPayload, process.env.JWT_SECRET || 'secret', { expiresIn: '1h' })
+		const token = jwt.sign(
+			{ id: user.id, email: user.email } as JwtPayload,
+			env.jwt.secret,
+			{ expiresIn: env.jwt.expiresIn as any, algorithm: env.jwt.algorithm }
+		)
 		return ResponseHandler.success(res, "Ok", {
 			access_token: token,
 			token_type: "Bearer",
@@ -63,7 +60,13 @@ export default class AuthController {
 		if (!token) {
 			return ResponseHandler.error(res, "No token provided", null, 400)
 		}
-		await clientRedis.set(token, 'blacklisted')
+		// Blacklist dengan TTL = sisa masa berlaku token (hindari key menumpuk selamanya)
+		let ttlSec = 3600
+		try {
+			const decoded: any = jwt.decode(token)
+			if (decoded?.exp) ttlSec = Math.max(1, decoded.exp - Math.floor(Date.now() / 1000))
+		} catch { /* pakai default */ }
+		await clientRedis.set(token, 'blacklisted', { EX: ttlSec })
 		return ResponseHandler.success(res, "Success")
 	}
 
@@ -75,7 +78,10 @@ export default class AuthController {
 				return ResponseHandler.error(res, "Invalid email", null, 401)
 			}
 			const otp = generateOTP()
-			const data = this.userRepository.merge(user, { password_otp:otp })
+			const data = this.userRepository.merge(user, {
+				password_otp: await hashOTP(otp),
+				password_otp_expires: String(otpExpiry())
+			})
 			await this.userRepository.save(data)
 
 			const html = await new Promise<string>((resolve, reject) => {
@@ -90,22 +96,30 @@ export default class AuthController {
 			await sendMail(user.email, 'Request Reset Password', `Your OTP is ${otp}`, html)
 			return ResponseHandler.success(res, "Success")
 		} catch (error: any) {
-			return ResponseHandler.error(res, error.message)
+			console.error('api reset request error:', error)
+			return ResponseHandler.error(res, "Could not process request", null, 500)
 		}
 	}
 
 	public async process(req: Request, res: Response) {
 		try {
 			const { email, otp, password } = req.body
-			const user = await this.userRepository.findOne({ where: { email, password_otp: otp } })
-			if (!user) {
-				return ResponseHandler.error(res, "Invalid email & OTP", null, 401)
+			const user = await this.userRepository.findOne({ where: { email } })
+			const notExpired = user?.password_otp_expires && Number(user.password_otp_expires) > Date.now()
+			const otpOk = user && notExpired && await verifyOTP(otp, user.password_otp)
+			if (!user || !otpOk) {
+				return ResponseHandler.error(res, "Invalid or expired OTP", null, 401)
 			}
-			const data = this.userRepository.merge(user, { password_otp:'', password: await bcrypt.hash(password, 10) })
+			const data = this.userRepository.merge(user, {
+				password_otp: '',
+				password_otp_expires: null,
+				password: await bcrypt.hash(password, env.security.bcryptRounds)
+			})
 			await this.userRepository.save(data)
 			return ResponseHandler.success(res, "Success")
 		} catch (error: any) {
-			return ResponseHandler.error(res, error.message)
+			console.error('api reset process error:', error)
+			return ResponseHandler.error(res, "Could not process request", null, 500)
 		}
 	}
 }

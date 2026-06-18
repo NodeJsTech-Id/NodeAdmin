@@ -17,11 +17,8 @@ export class Role {
   @Index('roles__name', { unique: true })
   name!: string
 
-  @Column({
-    type: 'enum',
-    enum: StatusEnum,
-    default: StatusEnum.ACTIVE
-  })
+  // varchar + enum TS (bukan native ENUM) agar seragam di semua dialek TypeORM
+  @Column({ type: 'varchar', length: 20, default: StatusEnum.ACTIVE })
   @Index('roles__status')
   status!: StatusEnum
 
@@ -35,10 +32,10 @@ export class Role {
   @Column({ nullable: true })
   updated_by!: string
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn()
   created_at!: Date
 
-  @UpdateDateColumn({ type: 'timestamp' })
+  @UpdateDateColumn()
   updated_at!: Date
 
   @ManyToMany(() => User, user => user.roles)

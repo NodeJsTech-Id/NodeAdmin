@@ -1,91 +1,56 @@
 import { Request, Response } from 'express'
-import path from 'path'
+import { injectable, inject } from 'tsyringe'
 import Module from '../../../../Module'
 import { getTimezones } from '../../../../../../utils/timezones'
-import UserService from '../../../services/v1/UserService'
-import appConfig from '../../../../../../config/app'
+import { IUserService } from '../../../services/v1/IUserService'
+import { TOKENS } from '../../../../../../tokens'
+import { renderView } from '../../../../../../utils/view'
 
+@injectable()
 export default class UserController {
-    private userService = new UserService
+    constructor(@inject(TOKENS.IUserService) private userService: IUserService) {}
 
     public async index(req: Request, res: Response) {
         const filter = req.query
         const { datas, roles, paginate_data } = await this.userService.index(filter)
-        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/users/index'), {
-            datas,
-            filter,
-            roles,
-            paginate_data,
-            layout: './layouts'+appConfig.be_layout+'/main'
-        })
+        renderView(res, Module.path, 'users/index', { datas, filter, roles, paginate_data })
     }
 
     public async create(req: Request, res: Response) {
         const roles = await this.userService.create()
         const timezones = getTimezones()
-        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/users/create'), {
-            roles,
-            timezones,
-            layout: './layouts'+appConfig.be_layout+'/main'
-        })
+        renderView(res, Module.path, 'users/create', { roles, timezones })
     }
 
     public async store(req: Request, res: Response) {
-        try {
-            req.body.blocked = (!req.body.blocked) ? false : true
-            const result = await this.userService.store(req.body,req.files)
-            if (result instanceof Error) {
-                throw new Error(result.message)
-            }
-            req.session.flashMessage = { key: 'success', message: 'Store User Success.' }
-            res.redirect('/admin/v1/access/user')
-        } catch (err: any) {
-            req.session.flashMessage = { key: 'error', message: err.message }
-            return res.redirect('/admin/v1/access/user/create')
-        }
+        req.body.blocked = (!req.body.blocked) ? false : true
+        await this.userService.store(req.body, req.files)
+        req.session.flashMessage = { key: 'success', message: 'Store User Success.' }
+        res.redirect('/admin/v1/access/user')
     }
 
     public async edit(req: Request, res: Response) {
         const result = await this.userService.edit(req.params.id)
         const { data, roles } = result
         const timezones = getTimezones()
-        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/users/edit'), {
-            data,
-            roles,
-            timezones,
-            layout: './layouts'+appConfig.be_layout+'/main'
-        })
+        renderView(res, Module.path, 'users/edit', { data, roles, timezones })
     }
 
     public async update(req: Request, res: Response) {
-        try {
-            req.body.blocked = (!req.body.blocked) ? false : true
-            const result = await this.userService.update(req.params.id, req.body, req.files)
-            if (result instanceof Error) {
-                throw new Error(result.message)
-            }
-            req.session.flashMessage = { key: 'success', message: 'Update User Success.' }
-            res.redirect('/admin/v1/access/user')
-        } catch (err: any) {
-            req.session.flashMessage = { key: 'error', message: err.message }
-            return res.redirect('/admin/v1/access/user/'+req.params.id+'/edit')
-        }
+        req.body.blocked = (!req.body.blocked) ? false : true
+        await this.userService.update(req.params.id, req.body, req.files)
+        req.session.flashMessage = { key: 'success', message: 'Update User Success.' }
+        res.redirect('/admin/v1/access/user')
     }
 
     public async delete(req: Request, res: Response) {
-        const result = await this.userService.delete(req.params.id)
-        if (!result) {
-            req.session.flashMessage = { key: 'error', message: 'Delete User Fail.' }
-            return res.redirect('/admin/v1/access/user')
-        }
+        await this.userService.delete(req.params.id)
         req.session.flashMessage = { key: 'success', message: 'Delete User Success.' }
         res.redirect('/admin/v1/access/user')
     }
 
     public async delete_selected(req: Request, res: Response) {
-        req.body.selected.forEach(async (id: string) => {
-            await this.userService.delete(id)
-        });
+        await Promise.all(req.body.selected.map((id: string) => this.userService.delete(id)))
         req.session.flashMessage = { key: 'success', message: 'Delete User Success.' }
         res.redirect('/admin/v1/access/user')
     }

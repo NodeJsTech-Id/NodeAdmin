@@ -1,9 +1,9 @@
 import { Request, Response, NextFunction } from 'express'
-import { AppDataSource } from '../../../../index'
+import AppDataSource from '../../../../config/ormconfig'
 import { Permission } from '../../models/permission.entity'
 import { User } from '../../models/user.entity'
-import { Like } from 'typeorm'
 import named from '../../../../utils/namedRoutes'
+import env from '../../../../config/env'
 
 const AccessMiddleware = async (req: Request, res: Response, next: NextFunction) => {
     const permissionRepository = AppDataSource.getRepository(Permission)
@@ -28,7 +28,7 @@ const AccessMiddleware = async (req: Request, res: Response, next: NextFunction)
     const currentPath = routeName ? named.getPathByName(routeName) || '' : ''
     const isApi = currentPath.includes('/api/')
 
-    if (!roles?.roles.some(role => role.name == 'Administrator')) {
+    if (!roles?.roles.some(role => role.name == env.roles.administrator)) {
         if (!hasAccess) {
             if (!isApi) {
                 req.session.flashMessage = { key: 'error', message: 'Unauthorized.' }
@@ -37,7 +37,7 @@ const AccessMiddleware = async (req: Request, res: Response, next: NextFunction)
                 }
                 return res.redirect('back')
             } else {
-                return res.status(402).json({ message: 'Unauthorized' })
+                return res.status(403).json({ message: 'Forbidden' })
             }
         }
     }

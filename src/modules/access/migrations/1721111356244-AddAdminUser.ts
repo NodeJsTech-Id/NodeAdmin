@@ -33,9 +33,14 @@ export class AddAdminUser1721111356244 implements MigrationInterface {
             status: StatusEnum.ACTIVE,
             desc: "",
         })
-        await queryRunner.query(`
-            INSERT INTO users_roles VALUES ('${idUser}', '${idRole}');
-        `)
+        // Pakai query builder portabel + kolom eksplisit (hindari INSERT positional
+        // yang bergantung urutan kolom & quoting identifier spesifik-dialek).
+        await queryRunner.manager
+            .createQueryBuilder()
+            .insert()
+            .into("users_roles", ["user_id", "role_id"])
+            .values({ user_id: idUser, role_id: idRole })
+            .execute()
     }
 
     public async down(queryRunner: QueryRunner): Promise<void> {

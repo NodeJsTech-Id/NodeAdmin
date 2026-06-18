@@ -1,0 +1,158 @@
+name: CI
+
+on:
+  push:
+    branches: [main, mulyawan]
+  pull_request:
+
+jobs:
+  # Typecheck + Jest (unit/integration/api/security/smoke) di SQLite in-memory
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - name: Convention check (pola modul & prinsip)
+        run: npm run lint:conventions
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Jest (coverage)
+        run: npm run test:coverage
+      - name: BDD (Cucumber)
+        run: npm run test:bdd
+      - name: Upload coverage
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: coverage
+          path: coverage/
+
+  # Security: audit dependency
+  audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci
+      - name: npm audit (high+)
+        run: npm audit --audit-level=high || true
+
+  # DB Compatibility: migration jalan di MySQL & Postgres (service containers)
+  db-compat:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - db: mysql
+            type: mysql
+          - db: postgres
+            type: postgres
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: nodeadmin_test
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -proot" --health-interval=10s
+          --health-timeout=5s --health-retries=10
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: root
+          POSTGRES_DB: nodeadmin_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd="pg_isready -U postgres" --health-interval=10s
+          --health-timeout=5s --health-retries=10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci
+      - name: Run migrations (${{ matrix.db }})
+        env:
+          NODE_ENV: test
+          DB_TYPE: ${{ matrix.type }}
+          DB_HOST: 127.0.0.1
+          DB_PORT: ${{ matrix.db == 'mysql' && '3306' || '5432' }}
+          DB_USERNAME: ${{ matrix.db == 'mysql' && 'root' || 'postgres' }}
+          DB_PASSWORD: root
+          DB_DATABASE: nodeadmin_test
+          SESSION_SECRET: ci-session-secret
+          JWT_SECRET: ci-jwt-secret
+          OSS_ACCESS_ID: ci
+          OSS_ACCESS_KEY: ci
+          OSS_BUCKET: ci
+          OSS_ENDPOINT: oss-ci.aliyuncs.com
+        run: npm run migration:run
+
+  # E2E + Browser compatibility (Playwright, 3 browser)
+  e2e:
+    runs-on: ubuntu-latest
+    services:
+      mysql:
+        image: mysql:8
+        env:
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_DATABASE: nodeadmin
+        ports: ['3306:3306']
+        options: >-
+          --health-cmd="mysqladmin ping -proot" --health-interval=10s
+          --health-timeout=5s --health-retries=10
+      redis:
+        image: redis:7
+        ports: ['6379:6379']
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: npm }
+      - run: npm ci
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps
+      - name: Prepare DB (migrate + seed)
+        env:
+          NODE_ENV: development
+          DB_TYPE: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: '3306'
+          DB_USERNAME: root
+          DB_PASSWORD: root
+          DB_DATABASE: nodeadmin
+          REDIS_URL: redis://127.0.0.1:6379
+          SESSION_SECRET: ci-session-secret
+          JWT_SECRET: ci-jwt-secret
+          OSS_ACCESS_ID: ci
+          OSS_ACCESS_KEY: ci
+          OSS_BUCKET: ci
+          OSS_ENDPOINT: oss-ci.aliyuncs.com
+        run: npm run migration:run
+      - name: Playwright (chromium+firefox+webkit)
+        env:
+          NODE_ENV: development
+          DB_TYPE: mysql
+          DB_HOST: 127.0.0.1
+          DB_PORT: '3306'
+          DB_USERNAME: root
+          DB_PASSWORD: root
+          DB_DATABASE: nodeadmin
+          REDIS_URL: redis://127.0.0.1:6379
+          SESSION_SECRET: ci-session-secret
+          JWT_SECRET: ci-jwt-secret
+          OSS_ACCESS_ID: ci
+          OSS_ACCESS_KEY: ci
+          OSS_BUCKET: ci
+          OSS_ENDPOINT: oss-ci.aliyuncs.com
+        run: npm run test:e2e
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: playwright-report
+          path: playwright-report/

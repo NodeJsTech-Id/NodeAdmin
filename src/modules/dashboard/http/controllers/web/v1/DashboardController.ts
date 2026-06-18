@@ -1,12 +1,11 @@
 import { Request, Response } from 'express'
-import path from 'path'
+import { injectable } from 'tsyringe'
 import Module from '../../../../Module'
-import appConfig from '../../../../../../config/app'
+import { renderView } from '../../../../../../utils/view'
 
-export default class UserController {
+@injectable()
+export default class DashboardController {
     public async index(req: Request, res: Response) {
-        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/index'), {
-            layout: './layouts'+appConfig.be_layout+'/main'
-        })
+        renderView(res, Module.path, 'index')
     }
 }

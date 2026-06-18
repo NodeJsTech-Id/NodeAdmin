@@ -1,41 +1,39 @@
 import path from 'path'
 import Module from '../../../../Module'
 import { Request, Response } from 'express'
+import { injectable, inject } from 'tsyringe'
+import { Repository } from 'typeorm'
 import { validationResult } from 'express-validator'
+import { IUserService } from '../../../../../access/http/services/v1/IUserService'
 import UserService from '../../../../../access/http/services/v1/UserService'
+import { TOKENS } from '../../../../../../tokens'
 import AppDataSource from '../../../../../../config/ormconfig'
 import { User } from '../../../../../access/models/user.entity'
 import { app } from '../../../../../..'
 import { sendMail } from '../../../../../../services/mailer'
 import bcrypt from 'bcryptjs'
 import appConfig from '../../../../../../config/app'
+import env from '../../../../../../config/env'
+import { generateOTP, hashOTP, verifyOTP, otpExpiry } from '../../../../../../helpers/otp'
+import { renderView } from '../../../../../../utils/view'
 
-const generateOTP = (length: number = 6): string => {
-	let otp = ''
-	const characters = '0123456789'
-	for (let i = 0; i < length; i++) {
-	  otp += characters.charAt(Math.floor(Math.random() * characters.length))
-	}
-	return otp
-}
-
+@injectable()
 export default class AuthController {
-	private userService = new UserService
-    private userRepository = AppDataSource.getRepository(User)
+	// Dual-mode: prod inject token; fallback default param agar tetap aman.
+	constructor(
+		@inject(TOKENS.IUserService) private userService: IUserService = new UserService(),
+		@inject(TOKENS.UserRepository) private userRepository: Repository<User> = AppDataSource.getRepository(User),
+	) {}
 
 	public async getLogin(req: Request, res: Response) {
 		if (req.isAuthenticated()) {
             res.redirect('/admin/v1/dashboard')
         }
-        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/login'), {
-            layout: './layouts'+appConfig.be_layout+'/full-width'
-        })
+        renderView(res, Module.path, 'login', {}, 'full-width')
     }
 
 	public async getRegister(req: Request, res: Response) {
-        res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/register'), {
-            layout: './layouts'+appConfig.be_layout+'/full-width'
-        })
+        renderView(res, Module.path, 'register', {}, 'full-width')
     }
 
 	public async postRegister(req: Request, res: Response) {
@@ -45,10 +43,10 @@ export default class AuthController {
                 req.session.errors = errors.array()
                 return res.redirect('/auth/register')
             }
-            const result = await this.userService.store(req.body)
-            if (result instanceof Error) {
-                throw new Error(result.message)
-            }
+            // Registrasi publik: JANGAN percaya role dari klien — paksa role default
+            // dan buang field roles agar tidak bisa self-assign Administrator.
+            const { roles, ...safeBody } = req.body
+            await this.userService.store(safeBody, null, true)
             req.session.flashMessage = { key: 'success', message: 'Register Success. Please Login.' }
             res.redirect('/auth/login')
         } catch (err: any) {
@@ -64,9 +62,7 @@ export default class AuthController {
 	}
 
     public request_view(req: Request, res: Response) {
-		res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/reset_req'), {
-            layout: './layouts'+appConfig.be_layout+'/full-width'
-        })
+		renderView(res, Module.path, 'reset_req', {}, 'full-width')
 	}
 
     public async request(req: Request, res: Response) {
@@ -77,7 +73,10 @@ export default class AuthController {
                 throw new Error('Invalid email')
 			}
 			const otp = generateOTP()
-			const data = this.userRepository.merge(user, { password_otp:otp })
+			const data = this.userRepository.merge(user, {
+				password_otp: await hashOTP(otp),
+				password_otp_expires: String(otpExpiry())
+			})
 			await this.userRepository.save(data)
 
 			const html = await new Promise<string>((resolve, reject) => {
@@ -99,24 +98,30 @@ export default class AuthController {
 	}
 
     public process_view(req: Request, res: Response) {
-		res.render(path.resolve(Module.path, 'views'+appConfig.be_view+'/reset_proc'), {
-            layout: './layouts'+appConfig.be_layout+'/full-width'
-        })
+		renderView(res, Module.path, 'reset_proc', {}, 'full-width')
 	}
 
 	public async process(req: Request, res: Response) {
 		try {
 			const { email, otp, password } = req.body
-			const user = await this.userRepository.findOne({ where: { email, password_otp: otp } })
-			if (!user) {
-                throw new Error('Invalid email & OTP')
+			const user = await this.userRepository.findOne({ where: { email } })
+			const notExpired = user?.password_otp_expires && Number(user.password_otp_expires) > Date.now()
+			const otpOk = user && notExpired && await verifyOTP(otp, user.password_otp)
+			if (!user || !otpOk) {
+                throw new Error('Invalid or expired OTP')
 			}
-			const data = this.userRepository.merge(user, { password_otp:'', password: await bcrypt.hash(password, 10) })
+			const data = this.userRepository.merge(user, {
+				password_otp: '',
+				password_otp_expires: null,
+				password: await bcrypt.hash(password, env.security.bcryptRounds)
+			})
 			await this.userRepository.save(data)
 			req.session.flashMessage = { key: 'success', message: 'Reset Password Success.' }
             res.redirect('/auth/login')
 		} catch (err: any) {
-			req.session.flashMessage = { key: 'error', message: err.message }
+			// Pesan generik ke user; detail di log server
+			console.error('reset process error:', err)
+			req.session.flashMessage = { key: 'error', message: 'Invalid or expired OTP' }
             return res.redirect('/admin/v1/auth/reset/proc')
 		}
 	}
