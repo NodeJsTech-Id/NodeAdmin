@@ -2,6 +2,30 @@
 
 Node Admin adalah **starter pack / bootstrap** untuk membangun aplikasi admin panel berbasis Node.js (TypeScript + Express + TypeORM). Dirancang sebagai fondasi yang scalable dengan menerapkan prinsip rekayasa perangkat lunak yang solid, keamanan berlapis, dan suite pengujian lengkap.
 
+Runtime generik & tooling diekstrak ke **paket terbitan** (`@flazhost-nodeadmin/*`) sehingga app turunan dapat menarik update via versi tanpa menyalin ulang kode. Lihat [Paket Pabrik](#-paket-pabrik).
+
+---
+
+## 📦 Paket Pabrik
+
+Bagian generik dipublikasikan ke npm sebagai paket berversi (changesets). App turunan meng-`install`-nya, bukan menyalin file.
+
+| Paket | Fungsi |
+|-------|--------|
+| [`@flazhost-nodeadmin/core`](https://www.npmjs.com/package/@flazhost-nodeadmin/core) | Runtime generik: DI/container, `AppError` + error handling, `renderView`, helpers (`paginate`, `ciLike`), `namedRoutes`/`handler`, themes, csrf, rate limiter, `createApp`, `createDataSource`. |
+| [`@flazhost-nodeadmin/cli`](https://www.npmjs.com/package/@flazhost-nodeadmin/cli) | Tooling: `nodeadmin check` (convention checker / CI gate), `nodeadmin make-migration`, `nodeadmin copy-views`. |
+
+```bash
+npm install @flazhost-nodeadmin/core
+npm install -D @flazhost-nodeadmin/cli
+```
+
+```ts
+import { createApp, AppError, renderView, handler } from '@flazhost-nodeadmin/core'
+```
+
+Repo ini sendiri adalah **monorepo** (npm workspaces): app referensi di `src/`, paket terbitan di `packages/`. Rilis dikelola via [changesets](https://github.com/changesets/changesets) (`npx changeset` → `version` → `publish`).
+
 ---
 
 ## ✨ Fitur
@@ -40,24 +64,26 @@ Prinsip yang diterapkan (detail di [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md
 ## 📁 Struktur Direktori
 
 ```
-src/
-├── config/          # env (terpusat & tervalidasi), ormconfig, app, themes
+packages/                # paket terbitan (npm workspaces)
+├── core/                # @flazhost-nodeadmin/core — runtime generik (dist dari src TS)
+└── cli/                 # @flazhost-nodeadmin/cli  — tooling (nodeadmin check|make-migration|copy-views)
+
+src/                     # app referensi (mengonsumsi @flazhost-nodeadmin/core)
+├── config/          # env (terpusat & tervalidasi), ormconfig, app
 ├── container.ts     # registrasi DI (tsyringe)
 ├── tokens.ts        # token DI
-├── errors/          # AppError + turunannya
-├── middleware/      # errorHandler, csrf, rateLimiter
-├── utils/           # routeBinding (handler), view (renderView), date, dll
-├── helpers/         # functions (paginate, ciLike), otp
 ├── services/        # fileService (OSS), mailer, settingCache
 ├── resources/       # layout & partial EJS (be/tw = tema Tailwind aktif)
 └── modules/
     ├── access/      # user, role, permission (RBAC)
     ├── auth/        # login, register, JWT, reset password
+    ├── components/  # showcase komponen UI
     ├── dashboard/
     ├── profile/
     └── setting/     # setting + template switcher
 tests/               # unit, integration, api, security, smoke, e2e, bdd
 docs/                # ARCHITECTURE.md, TESTING.md, API.md
+.changeset/          # entri rilis (changesets)
 ```
 
 ---
@@ -219,6 +245,12 @@ npm run migration:run    # jalankan migrasi
 npm run migration:revert # rollback migrasi terakhir
 npm run migration:create # buat file migrasi baru
 npm test / test:*        # lihat bagian Testing
+
+# Paket pabrik (packages/*)
+npm run build:core       # compile @flazhost-nodeadmin/core ke dist
+npx changeset            # catat perubahan rilis
+npx changeset version    # bump versi + tulis CHANGELOG
+npx changeset publish    # publish ke npm + buat git tag
 ```
 
 ---
