@@ -1,6 +1,6 @@
 # NodeAdmin Spec — Prinsip Berversi (jalur multi-bahasa)
 
-Spec adalah **kontrak deklaratif** prinsip, konvensi, dan kapabilitas NodeAdmin, **berversi semver dan immutable**. Ia jalur distribusi untuk app porting **bahasa lain** (Laravel/Go/Spring/Django/.NET/Rust) yang tak bisa menarik paket npm `@nodeadmin/core`/`@nodeadmin/cli`.
+Spec adalah **kontrak deklaratif** prinsip, konvensi, dan kapabilitas NodeAdmin, **berversi semver dan immutable**. Ia jalur distribusi untuk app porting **bahasa lain** (Laravel/Go/Spring/Django/.NET/Rust) yang tak bisa menarik paket npm `@flazhost-nodeadmin/core`/`@flazhost-nodeadmin/cli`.
 
 ## Cara pakai (app turunan)
 1. Pin satu versi spec, mis. `spec/v1.0.0`.
@@ -13,8 +13,8 @@ Saat pabrik rilis `spec/vX.Y.Z` baru: baca `CHANGELOG.md` untuk **delta**, lalu 
 ## Hubungan dengan jalur Node
 | | Node app | App bahasa lain |
 |---|---|---|
-| Runtime | `@nodeadmin/core` (npm) | core bahasa sendiri, ikut spec |
-| Tooling/checker | `@nodeadmin/cli` (npm) | port checker per spec |
+| Runtime | `@flazhost-nodeadmin/core` (npm) | core bahasa sendiri, ikut spec |
+| Tooling/checker | `@flazhost-nodeadmin/cli` (npm) | port checker per spec |
 | Prinsip | spec + checker | spec + checker (port) |
 | "Ubah prinsip → menyesuaikan" | otomatis (`npm update cli` → CI gagal di pelanggaran) | semi-manual (bump spec → port ulang checker) |
 

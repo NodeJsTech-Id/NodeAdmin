@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import Joi, { ObjectSchema } from 'joi';
 import multer, { FileFilterCallback } from 'multer';
 import app from '../../../../config/app';
-import { ResponseHandler } from '@nodeadmin/core';
+import { ResponseHandler } from '@flazhost-nodeadmin/core';
 
 const fileSchema = Joi.object({
     fieldname: Joi.string().optional(),

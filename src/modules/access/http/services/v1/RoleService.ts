@@ -3,10 +3,10 @@ import { injectable, inject } from 'tsyringe'
 import AppDataSource from '../../../../../config/ormconfig'
 import { Role } from '../../../models/role.entity'
 import { Permission } from '../../../models/permission.entity'
-import { Functions as functions, removePrefix, ciLike, paginate } from '@nodeadmin/core'
+import { Functions as functions, removePrefix, ciLike, paginate } from '@flazhost-nodeadmin/core'
 import { IRoleService } from './IRoleService'
 import { TOKENS } from '../../../../../tokens'
-import { AppError, NotFoundError, ConflictError } from '@nodeadmin/core'
+import { AppError, NotFoundError, ConflictError } from '@flazhost-nodeadmin/core'
 
 @injectable()
 export default class RoleService implements IRoleService {

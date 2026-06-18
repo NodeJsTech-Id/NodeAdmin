@@ -1,4 +1,4 @@
-import { THEMES, THEME_NAMES, DEFAULT_THEME, getTheme } from '@nodeadmin/core'
+import { THEMES, THEME_NAMES, DEFAULT_THEME, getTheme } from '@flazhost-nodeadmin/core'
 
 describe('config/themes', () => {
     it('punya 9 tema warna (Flutter dikecualikan)', () => {

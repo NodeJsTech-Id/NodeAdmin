@@ -1,4 +1,4 @@
-import { Functions as Function, removePrefix, ciLike } from '@nodeadmin/core'
+import { Functions as Function, removePrefix, ciLike } from '@flazhost-nodeadmin/core'
 
 describe('helpers/functions', () => {
     describe('removePrefix', () => {

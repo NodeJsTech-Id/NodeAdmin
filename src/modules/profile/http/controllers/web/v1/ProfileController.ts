@@ -1,11 +1,11 @@
 import { Request, Response } from 'express'
 import { injectable, inject } from 'tsyringe'
 import Module from '../../../../Module'
-import { getTimezones } from '@nodeadmin/core'
+import { getTimezones } from '@flazhost-nodeadmin/core'
 import { IUserService } from '../../../../../access/http/services/v1/IUserService'
 import { TOKENS } from '../../../../../../tokens'
 import { User } from '../../../../../access/models/user.entity'
-import { renderView } from '@nodeadmin/core'
+import { renderView } from '@flazhost-nodeadmin/core'
 
 @injectable()
 export default class ProfileController {

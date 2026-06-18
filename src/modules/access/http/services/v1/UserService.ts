@@ -4,13 +4,13 @@ import AppDataSource from '../../../../../config/ormconfig'
 import { Role } from '../../../models/role.entity'
 import { User } from '../../../models/user.entity'
 import bcrypt from 'bcryptjs'
-import { Functions as functions, removePrefix, ciLike, paginate } from '@nodeadmin/core'
+import { Functions as functions, removePrefix, ciLike, paginate } from '@flazhost-nodeadmin/core'
 import fileService from '../../../../../services/fileService'
 import { v6 as uuidv6 } from 'uuid'
 import Module from '../../../Module'
 import { IUserService } from './IUserService'
 import { TOKENS } from '../../../../../tokens'
-import { AppError, NotFoundError } from '@nodeadmin/core'
+import { AppError, NotFoundError } from '@flazhost-nodeadmin/core'
 
 @injectable()
 export default class UserService implements IUserService {

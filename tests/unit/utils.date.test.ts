@@ -1,4 +1,4 @@
-import { convertDatesDeep } from '@nodeadmin/core'
+import { convertDatesDeep } from '@flazhost-nodeadmin/core'
 
 describe('utils/date convertDatesDeep', () => {
     it('mengonversi Date ke string timezone', () => {

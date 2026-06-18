@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import AppDataSource from '../../../../config/ormconfig'
 import { Permission } from '../../models/permission.entity'
 import { User } from '../../models/user.entity'
-import { namedRoutes as named } from '@nodeadmin/core'
+import { namedRoutes as named } from '@flazhost-nodeadmin/core'
 import env from '../../../../config/env'
 
 const AccessMiddleware = async (req: Request, res: Response, next: NextFunction) => {

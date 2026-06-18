@@ -5,7 +5,7 @@ import { env } from '../config/env'
 
 // Klien Redis terpusat — dipisah dari entrypoint (index.ts) agar modul lain
 // (authMiddleware, AuthController) tak mengimpor balik ke entrypoint.
-// Ini memutus kopling balik dan jadi prasyarat ekstraksi @nodeadmin/core.
+// Ini memutus kopling balik dan jadi prasyarat ekstraksi @flazhost-nodeadmin/core.
 
 export const RedisStore = connectRedis(session)
 

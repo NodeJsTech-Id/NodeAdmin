@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Entry CLI @nodeadmin/cli — dispatch subcommand ke tool di lib/.
+ * Entry CLI @flazhost-nodeadmin/cli — dispatch subcommand ke tool di lib/.
  * Semua tool mengasumsikan cwd = root app turunan (process.cwd()).
  *
  *   nodeadmin check           → convention checker (gate, exit 1 bila langgar)
@@ -23,7 +23,7 @@ switch (cmd) {
         require(path.join(LIB, 'generateMigration.js'))
         break
     default:
-        console.error(`@nodeadmin/cli — subcommand tidak dikenal: ${cmd || '(kosong)'}`)
+        console.error(`@flazhost-nodeadmin/cli — subcommand tidak dikenal: ${cmd || '(kosong)'}`)
         console.error('Tersedia: check | copy-views | make-migration')
         process.exit(1)
 }

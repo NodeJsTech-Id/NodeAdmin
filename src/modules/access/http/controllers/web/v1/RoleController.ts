@@ -4,7 +4,7 @@ import Module from '../../../../Module'
 import { validationResult } from 'express-validator'
 import { IRoleService } from '../../../services/v1/IRoleService'
 import { TOKENS } from '../../../../../../tokens'
-import { renderView } from '@nodeadmin/core'
+import { renderView } from '@flazhost-nodeadmin/core'
 
 @injectable()
 export default class RoleController {

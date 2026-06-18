@@ -2,7 +2,7 @@
 
 Katalog **deklaratif** aturan yang menegakkan prinsip NodeAdmin. Inilah kontrak yang harus direplikasi app turunan (Node maupun bahasa lain) agar fungsional & arsitektural setara.
 
-- **Enforced** = ada rule otomatis di checker (`@nodeadmin/cli` → `checkConventions`). Pelanggaran = gate gagal (exit 1).
+- **Enforced** = ada rule otomatis di checker (`@flazhost-nodeadmin/cli` → `checkConventions`). Pelanggaran = gate gagal (exit 1).
 - **Prosa-only** = dinyatakan di AGENTS.md tapi belum ada penegak mesin → manual-review. Kandidat rule versi berikutnya (lihat `backlog-rules.md`).
 
 Snapshot dibekukan dari `tools/checkConventions.js` + `AGENTS.md` pada rilis v1.0.0. Sumber kebenaran enforcement = checker; dokumen ini adalah pernyataan deklaratifnya untuk porting lintas-bahasa.

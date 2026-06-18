@@ -3,7 +3,7 @@ import { injectable, inject } from 'tsyringe'
 import Module from '../../../../Module'
 import { ISettingService } from '../../../services/v1/ISettingService'
 import { TOKENS } from '../../../../../../tokens'
-import { renderView } from '@nodeadmin/core'
+import { renderView } from '@flazhost-nodeadmin/core'
 
 @injectable()
 export default class SettingController {

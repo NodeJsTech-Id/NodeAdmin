@@ -1,5 +1,5 @@
 import * as dotenv from 'dotenv'
-import { makeEnvHelpers } from '@nodeadmin/core'
+import { makeEnvHelpers } from '@flazhost-nodeadmin/core'
 dotenv.config()
 
 /**
@@ -7,7 +7,7 @@ dotenv.config()
  * - Secret wajib (SESSION_SECRET, JWT_SECRET) → fail-fast bila kosong di production,
  *   sehingga aplikasi tidak pernah jalan dengan secret default yang bisa ditebak.
  * - Tipe sudah dikonversi (number/boolean), tidak lagi string mentah.
- * - Helper baca/validasi env generik diambil dari @nodeadmin/core (makeEnvHelpers);
+ * - Helper baca/validasi env generik diambil dari @flazhost-nodeadmin/core (makeEnvHelpers);
  *   objek `env` + bagian app-spesifik (roles) tetap di sini.
  */
 

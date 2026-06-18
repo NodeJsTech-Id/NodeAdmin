@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
 import { clientRedis } from '../../../../services/redisClient'
-import { ResponseHandler } from '@nodeadmin/core'
+import { ResponseHandler } from '@flazhost-nodeadmin/core'
 import env from '../../../../config/env'
 
 export const ensureAuthenticated = (req: Request, res: Response, next: NextFunction) => {

@@ -1,6 +1,6 @@
 # Changesets
 
-Manajemen versi & rilis paket workspace (`@nodeadmin/core`, `@nodeadmin/cli`) via [changesets](https://github.com/changesets/changesets) → npm publik.
+Manajemen versi & rilis paket workspace (`@flazhost-nodeadmin/core`, `@flazhost-nodeadmin/cli`) via [changesets](https://github.com/changesets/changesets) → npm publik.
 
 ## Status (Phase 0)
 Kerangka. **Belum aktif** — `@changesets/cli` belum diinstal & paket `packages/*` belum berisi (lihat roadmap). Publish nyata dimulai Phase 4.

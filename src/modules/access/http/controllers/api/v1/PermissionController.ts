@@ -3,7 +3,7 @@ import { injectable, inject } from 'tsyringe'
 import { IPermissionService } from '../../../services/v1/IPermissionService'
 import { TOKENS } from '../../../../../../tokens'
 import { validationResult } from 'express-validator'
-import { ResponseHandler } from '@nodeadmin/core'
+import { ResponseHandler } from '@flazhost-nodeadmin/core'
 
 @injectable()
 export default class PermissionController {

@@ -1,6 +1,6 @@
 import { DataSourceOptions } from 'typeorm';
 import path from 'path';
-import { createDataSource } from '@nodeadmin/core';
+import { createDataSource } from '@flazhost-nodeadmin/core';
 import env from './env';
 import { Permission } from '../modules/access/models/permission.entity';
 import { Role } from '../modules/access/models/role.entity';

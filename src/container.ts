@@ -1,6 +1,6 @@
 import 'reflect-metadata'
 import { container } from 'tsyringe'
-import { registerRepository } from '@nodeadmin/core'
+import { registerRepository } from '@flazhost-nodeadmin/core'
 import AppDataSource from './config/ormconfig'
 import { User } from './modules/access/models/user.entity'
 import { Role } from './modules/access/models/role.entity'

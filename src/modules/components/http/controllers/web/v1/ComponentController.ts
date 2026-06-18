@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { injectable } from 'tsyringe'
 import Module from '../../../../Module'
-import { renderView } from '@nodeadmin/core'
+import { renderView } from '@flazhost-nodeadmin/core'
 
 /**
  * Halaman showcase komponen UI — acuan visual + markup untuk membuat elemen

@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import { namedRoutes as named } from '@nodeadmin/core'
+import { namedRoutes as named } from '@flazhost-nodeadmin/core'
 import UserController from '../http/controllers/web/v1/UserController'
 import PermissionController from '../http/controllers/web/v1/PermissionController'
 import AccessMiddleware from '../http/middleware/AccessMiddleware'
@@ -9,7 +9,7 @@ import { roleValidationRules } from '../http/validators/RoleValidator'
 import { permissionValidationRules } from '../http/validators/PermissionValidator'
 import { upload, UserCreateValidator } from '../http/validators/UserCreateValidator'
 import { UserUpdateValidator } from '../http/validators/UserUpdateValidator'
-import { handler } from '@nodeadmin/core'
+import { handler } from '@flazhost-nodeadmin/core'
 
 const router = Router()
 

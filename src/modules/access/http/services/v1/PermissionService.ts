@@ -2,12 +2,12 @@ import { Not, Repository } from 'typeorm'
 import { injectable, inject } from 'tsyringe'
 import AppDataSource from '../../../../../config/ormconfig'
 import { Permission } from '../../../models/permission.entity'
-import { Functions as functions, removePrefix, ciLike, paginate } from '@nodeadmin/core'
+import { Functions as functions, removePrefix, ciLike, paginate } from '@flazhost-nodeadmin/core'
 import { Application } from 'express'
-import { namedRoutes as named } from '@nodeadmin/core'
+import { namedRoutes as named } from '@flazhost-nodeadmin/core'
 import { IPermissionService } from './IPermissionService'
 import { TOKENS } from '../../../../../tokens'
-import { AppError, NotFoundError, ConflictError } from '@nodeadmin/core'
+import { AppError, NotFoundError, ConflictError } from '@flazhost-nodeadmin/core'
 
 @injectable()
 export default class PermissionService implements IPermissionService {

@@ -1,6 +1,6 @@
 # Backlog Enforcement v1.0.0
 
-Prinsip yang kini **prosa-only** (lihat `conventions.md` §C). Tiap rule baru yang menutup celah ini → bump **minor spec** + entri `../CHANGELOG.md` + rilis `@nodeadmin/cli` minor. App Node `npm update` → CI menangkap pelanggaran; app bahasa lain mengikuti delta spec.
+Prinsip yang kini **prosa-only** (lihat `conventions.md` §C). Tiap rule baru yang menutup celah ini → bump **minor spec** + entri `../CHANGELOG.md` + rilis `@flazhost-nodeadmin/cli` minor. App Node `npm update` → CI menangkap pelanggaran; app bahasa lain mengikuti delta spec.
 
 Prioritas (paling berdampak keamanan/portabilitas dulu):
 

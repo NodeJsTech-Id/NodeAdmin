@@ -1,4 +1,4 @@
-// Barrel publik @nodeadmin/core — permukaan API runtime generik.
+// Barrel publik @flazhost-nodeadmin/core — permukaan API runtime generik.
 // Phase 1: Tier 0 (zero-dep). Bertambah seiring ekstraksi.
 
 // Errors

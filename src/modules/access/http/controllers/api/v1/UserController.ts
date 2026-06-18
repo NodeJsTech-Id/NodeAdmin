@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { injectable, inject } from 'tsyringe'
 import { IUserService } from '../../../services/v1/IUserService'
 import { TOKENS } from '../../../../../../tokens'
-import { ResponseHandler } from '@nodeadmin/core'
+import { ResponseHandler } from '@flazhost-nodeadmin/core'
 
 @injectable()
 export default class UserController {

@@ -4,7 +4,7 @@ import Module from '../../../../Module'
 import { IPermissionService } from '../../../services/v1/IPermissionService'
 import { TOKENS } from '../../../../../../tokens'
 import { validationResult } from 'express-validator'
-import { renderView } from '@nodeadmin/core'
+import { renderView } from '@flazhost-nodeadmin/core'
 
 @injectable()
 export default class PermissionController {

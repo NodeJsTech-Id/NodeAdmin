@@ -1,11 +1,11 @@
 import { Router } from 'express'
-import { namedRoutes as named } from '@nodeadmin/core'
+import { namedRoutes as named } from '@flazhost-nodeadmin/core'
 import passport from 'passport'
 import AuthController from '../http/controllers/web/v1/AuthController'
 import { UserCreateValidator } from '../../access/http/validators/UserCreateValidator'
 import { ResetPasswordProcessValidator } from '../http/validators/ResetPasswordProcessValidator'
-import { authLimiter, otpLimiter } from '@nodeadmin/core'
-import { handler } from '@nodeadmin/core'
+import { authLimiter, otpLimiter } from '@flazhost-nodeadmin/core'
+import { handler } from '@flazhost-nodeadmin/core'
 
 const router = Router()
 

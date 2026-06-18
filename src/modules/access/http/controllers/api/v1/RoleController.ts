@@ -3,7 +3,7 @@ import { injectable, inject } from 'tsyringe'
 import { validationResult } from 'express-validator'
 import { IRoleService } from '../../../services/v1/IRoleService'
 import { TOKENS } from '../../../../../../tokens'
-import { ResponseHandler } from '@nodeadmin/core'
+import { ResponseHandler } from '@flazhost-nodeadmin/core'
 
 @injectable()
 export default class RoleController {

@@ -1,14 +1,14 @@
 import { Repository } from 'typeorm'
 import { injectable, inject } from 'tsyringe'
 import AppDataSource from '../../../../../config/ormconfig'
-import { Functions as functions } from '@nodeadmin/core'
+import { Functions as functions } from '@flazhost-nodeadmin/core'
 import { Setting } from '../../../models/setting.entity'
 import fileService from '../../../../../services/fileService'
 import Module from '../../../Module'
 import { invalidateSetting } from '../../../../../services/settingCache'
 import { ISettingService } from './ISettingService'
 import { TOKENS } from '../../../../../tokens'
-import { AppError } from '@nodeadmin/core'
+import { AppError } from '@flazhost-nodeadmin/core'
 
 function generateUniqueFileName(): string {
     const currentDate = new Date();

@@ -1,10 +1,10 @@
 import { Router } from 'express'
-import { namedRoutes as named } from '@nodeadmin/core'
+import { namedRoutes as named } from '@flazhost-nodeadmin/core'
 import AccessMiddleware from '../../access/http/middleware/AccessMiddleware'
 import { ensureAuthenticatedApi } from '../../auth/http/middleware/authMiddleware'
 import { upload, ProfileUpdateValidator } from '../http/validators/ProfileUpdateValidator'
 import ProfileController from '../http/controllers/api/v1/ProfileController'
-import { handler } from '@nodeadmin/core'
+import { handler } from '@flazhost-nodeadmin/core'
 const router = Router()
 
 // define route & set middleware user
