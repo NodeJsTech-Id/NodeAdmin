@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/core
 
+## 1.1.2
+
+### Patch Changes
+
+- Tambah section Quick Start di README core (contoh app Express+TypeORM end-to-end, catatan wajib `reflect-metadata`, dan perilaku errorHandler API vs web).
+
 ## 1.1.1
 
 ### Patch Changes
