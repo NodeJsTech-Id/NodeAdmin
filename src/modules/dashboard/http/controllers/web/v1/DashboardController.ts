@@ -1,7 +1,7 @@
 import { Request, Response } from 'express'
 import { injectable, inject } from 'tsyringe'
 import Module from '../../../../Module'
-import { renderView } from '../../../../../../utils/view'
+import { renderView } from '@nodeadmin/core'
 import { IDashboardService } from '../../../services/v1/IDashboardService'
 import { TOKENS } from '../../../../../../tokens'
 

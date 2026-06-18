@@ -133,7 +133,7 @@ NodeAdmin memakai TypeORM karena **multi-database** + **migration fleksibel**. V
 
 1. **Multi-database (dialect-agnostic)** — ganti DB cukup lewat config/env (`DB_TYPE` setara), tanpa ubah kode model. Minimal dukung MySQL/MariaDB + PostgreSQL + SQLite (SQLite penting untuk test in-memory yang cepat).
 2. **Migration berbasis kode & portabel** — pakai API migration ORM (buat/ubah tabel lewat objek/builder), **bukan** SQL mentah spesifik-vendor. Mendukung up/down (reversible) + versioning.
-3. **Tipe kolom portabel** — gunakan tipe abstrak ORM (`string`/`text`/`integer`/`boolean`/`timestamp`) yang dipetakan otomatis per dialek. **Hindari tipe vendor** (mis. `longtext`/`datetime` MySQL) — ini pelajaran nyata dari NodeAdmin: TypeORM multi-DB hanya berfungsi bila kode dijaga portabel. Checker target sebaiknya menolak tipe vendor (seperti `tools/checkConventions.js` di sini).
+3. **Tipe kolom portabel** — gunakan tipe abstrak ORM (`string`/`text`/`integer`/`boolean`/`timestamp`) yang dipetakan otomatis per dialek. **Hindari tipe vendor** (mis. `longtext`/`datetime` MySQL) — ini pelajaran nyata dari NodeAdmin: TypeORM multi-DB hanya berfungsi bila kode dijaga portabel. Checker target sebaiknya menolak tipe vendor (seperti `packages/cli/lib/checkConventions.js` di sini).
 4. **Test pakai SQLite in-memory** — karena ORM agnostik, suite test jalan di SQLite cepat tanpa server DB; CI bisa jalankan matrix MySQL+Postgres untuk uji kompatibilitas.
 
 **Dukungan multi-DB per ORM (cek saat memilih):**

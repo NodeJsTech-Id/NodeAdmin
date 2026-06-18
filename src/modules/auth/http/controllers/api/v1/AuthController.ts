@@ -1,10 +1,11 @@
 import { Request, Response } from 'express'
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
-import { app, AppDataSource, clientRedis } from '../../../../../../index'
+import AppDataSource from '../../../../../../config/ormconfig'
+import { clientRedis } from '../../../../../../services/redisClient'
 import { User } from '../../../../../access/models/user.entity'
 import { JwtPayload } from '../../../../../../types/JwtPayload'
-import ResponseHandler from '../../../../../../ResponseHandler'
+import { ResponseHandler } from '@nodeadmin/core'
 import path from 'path'
 import Module from '../../../../Module'
 import { sendMail } from '../../../../../../services/mailer'
@@ -85,7 +86,7 @@ export default class AuthController {
 			await this.userRepository.save(data)
 
 			const html = await new Promise<string>((resolve, reject) => {
-				app.render(path.resolve(Module.path, 'views/mail/otp'), {
+				req.app.render(path.resolve(Module.path, 'views/mail/otp'), {
 					otp,
 					layout: './mails/main'
 				}, (err, html) => {

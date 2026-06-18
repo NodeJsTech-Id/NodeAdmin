@@ -1,4 +1,4 @@
-import { convertDatesDeep } from '../../src/utils/date'
+import { convertDatesDeep } from '@nodeadmin/core'
 
 describe('utils/date convertDatesDeep', () => {
     it('mengonversi Date ke string timezone', () => {

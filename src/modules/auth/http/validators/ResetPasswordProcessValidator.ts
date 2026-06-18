@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import Joi, { ObjectSchema } from 'joi';
-import ResponseHandler from '../../../../ResponseHandler';
+import { ResponseHandler } from '@nodeadmin/core';
 
 const userSchema: ObjectSchema = Joi.object({
     otp: Joi.string().required(),

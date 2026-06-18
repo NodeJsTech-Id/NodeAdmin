@@ -2,7 +2,7 @@ import { Request, Response } from 'express'
 import { injectable, inject } from 'tsyringe'
 import { ISettingService } from '../../../services/v1/ISettingService'
 import { TOKENS } from '../../../../../../tokens'
-import ResponseHandler from '../../../../../../ResponseHandler'
+import { ResponseHandler } from '@nodeadmin/core'
 
 @injectable()
 export default class SettingController {

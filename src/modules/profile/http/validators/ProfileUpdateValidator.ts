@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import Joi, { ObjectSchema } from 'joi'
-import ResponseHandler from '../../../../ResponseHandler'
+import { ResponseHandler } from '@nodeadmin/core'
 
 // Reuse the same multer upload config from user update validator
 export { upload } from '../../../access/http/validators/UserUpdateValidator'

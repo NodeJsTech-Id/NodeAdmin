@@ -1,10 +1,10 @@
 import { Router } from 'express'
-import named from '../../../utils/namedRoutes'
+import { namedRoutes as named } from '@nodeadmin/core'
 import AccessMiddleware from '../../access/http/middleware/AccessMiddleware'
 import { ensureAuthenticated } from '../../auth/http/middleware/authMiddleware'
 import { upload, ProfileUpdateValidator } from '../http/validators/ProfileUpdateValidator'
 import ProfileController from '../http/controllers/web/v1/ProfileController'
-import { handler } from '../../../utils/routeBinding'
+import { handler } from '@nodeadmin/core'
 const router = Router()
 
 // define route & set middleware user

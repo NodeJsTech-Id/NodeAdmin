@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from 'express'
 import { AppError } from '../errors/AppError'
 import ResponseHandler from '../ResponseHandler'
-import env from '../config/env'
 
 /**
  * Error handler terpusat (4-arg, didaftarkan TERAKHIR di index.ts).

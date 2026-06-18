@@ -2,12 +2,12 @@ import { Not, Repository } from 'typeorm'
 import { injectable, inject } from 'tsyringe'
 import AppDataSource from '../../../../../config/ormconfig'
 import { Permission } from '../../../models/permission.entity'
-import functions, { removePrefix, ciLike, paginate } from '../../../../../helpers/functions'
+import { Functions as functions, removePrefix, ciLike, paginate } from '@nodeadmin/core'
 import { Application } from 'express'
-import named from '../../../../../utils/namedRoutes'
+import { namedRoutes as named } from '@nodeadmin/core'
 import { IPermissionService } from './IPermissionService'
 import { TOKENS } from '../../../../../tokens'
-import { AppError, NotFoundError, ConflictError } from '../../../../../errors/AppError'
+import { AppError, NotFoundError, ConflictError } from '@nodeadmin/core'
 
 @injectable()
 export default class PermissionService implements IPermissionService {

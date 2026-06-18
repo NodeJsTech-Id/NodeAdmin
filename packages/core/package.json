@@ -1,0 +1,57 @@
+{
+  "name": "@nodeadmin/core",
+  "version": "1.0.0",
+  "description": "Runtime generik NodeAdmin (DI, error, render, helpers) untuk app turunan.",
+  "license": "ISC",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "rimraf dist tsconfig.tsbuildinfo && tsc -b",
+    "clean": "rimraf dist tsconfig.tsbuildinfo"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.11",
+    "express-rate-limit": "^8.5.2"
+  },
+  "peerDependencies": {
+    "compression": "^1.8.1",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "express-ejs-layouts": "^2.5.1",
+    "express-session": "^1.18.0",
+    "helmet": "^8.2.0",
+    "method-override": "^3.0.0",
+    "passport": "^0.7.0",
+    "tsyringe": "^4.10.0",
+    "typeorm": "^0.3.20"
+  },
+  "devDependencies": {
+    "@types/compression": "^1.8.1",
+    "@types/connect-flash": "^0.0.40",
+    "@types/cookie-parser": "^1.4.7",
+    "@types/cors": "^2.8.17",
+    "@types/express": "^4.17.21",
+    "@types/express-ejs-layouts": "^2.5.4",
+    "@types/express-session": "^1.18.0",
+    "@types/method-override": "^0.0.35",
+    "@types/passport": "^1.0.16",
+    "compression": "^1.8.1",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.6",
+    "cors": "^2.8.5",
+    "express-ejs-layouts": "^2.5.1",
+    "express-session": "^1.18.0",
+    "helmet": "^8.2.0",
+    "method-override": "^3.0.0",
+    "passport": "^0.7.0",
+    "rimraf": "^5.0.7",
+    "tsyringe": "^4.10.0",
+    "typeorm": "^0.3.20",
+    "typescript": "^5.4.5"
+  }
+}

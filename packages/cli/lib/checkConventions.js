@@ -9,7 +9,7 @@
 const fs = require('fs')
 const path = require('path')
 
-const ROOT = path.resolve(__dirname, '..')
+const ROOT = process.cwd()
 const SRC = path.join(ROOT, 'src')
 
 const violations = []

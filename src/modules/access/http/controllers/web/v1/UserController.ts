@@ -1,10 +1,10 @@
 import { Request, Response } from 'express'
 import { injectable, inject } from 'tsyringe'
 import Module from '../../../../Module'
-import { getTimezones } from '../../../../../../utils/timezones'
+import { getTimezones } from '@nodeadmin/core'
 import { IUserService } from '../../../services/v1/IUserService'
 import { TOKENS } from '../../../../../../tokens'
-import { renderView } from '../../../../../../utils/view'
+import { renderView } from '@nodeadmin/core'
 
 @injectable()
 export default class UserController {

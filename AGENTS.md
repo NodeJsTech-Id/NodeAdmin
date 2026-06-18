@@ -2,7 +2,7 @@
 
 > **Sumber kebenaran tunggal.** Setiap AI (Claude Code, Cursor, Copilot, Codex) dan developer WAJIB mengikuti dokumen ini saat menambah/mengubah kode. `CLAUDE.md`, `.cursorrules`, `.github/copilot-instructions.md` hanya mirror tipis yang menunjuk ke sini.
 
-Node Admin adalah **bootstrap** yang dikembangkan menjadi aplikasi apa pun. Konsistensi dijaga oleh: dokumen ini + `tools/checkConventions.js` (CI gate). Penyimpangan **ditolak CI**.
+Node Admin adalah **bootstrap** yang dikembangkan menjadi aplikasi apa pun. Konsistensi dijaga oleh: dokumen ini + convention checker `@nodeadmin/cli` (`nodeadmin check` via `npm run lint:conventions`; sumber: `packages/cli/lib/checkConventions.js`) sebagai CI gate. Penyimpangan **ditolak CI**.
 
 Sebelum coding, baca juga: [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md), [`docs/MODULE_GUIDE.md`](docs/MODULE_GUIDE.md), [`docs/TESTING.md`](docs/TESTING.md).
 

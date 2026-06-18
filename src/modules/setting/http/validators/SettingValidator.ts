@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from 'express';
 import Joi, { ObjectSchema } from 'joi';
 import multer, { FileFilterCallback } from 'multer';
 import app from '../../../../config/app';
-import { THEME_NAMES } from '../../../../config/themes';
+import { THEME_NAMES } from '@nodeadmin/core';
 
 const fileSchema = Joi.object({
     fieldname: Joi.string().optional(),

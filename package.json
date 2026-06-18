@@ -1,15 +1,22 @@
 {
-  "name": "Node Admin",
+  "name": "nodeadmin-monorepo",
   "version": "1.0.0",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "examples/*"
+  ],
   "main": "dist/index.js",
   "scripts": {
-    "build": "rimraf dist && tsc && node tools/copyViews.js",
+    "build:core": "npm --workspace @nodeadmin/core run build",
+    "build": "npm run build:core && rimraf dist && tsc && nodeadmin copy-views",
     "start": "npm run build && pm2 start dist/index.js --watch",
     "start:dev": "nodemon --exec ts-node ./src/index.ts",
     "typeorm": "ts-node ./node_modules/typeorm/cli.js",
-    "migration:create": "node ./tools/generateMigration.js",
+    "migration:create": "nodeadmin make-migration",
     "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run -d ./src/config/ormconfig.ts",
     "migration:revert": "ts-node ./node_modules/typeorm/cli.js migration:revert -d ./src/config/ormconfig.ts",
+    "pretest": "npm run build:core",
     "test": "jest",
     "test:unit": "jest tests/unit",
     "test:integration": "jest tests/integration",
@@ -19,7 +26,7 @@
     "test:coverage": "jest --coverage",
     "test:e2e": "playwright test",
     "test:bdd": "cucumber-js",
-    "lint:conventions": "node tools/checkConventions.js"
+    "lint:conventions": "nodeadmin check"
   },
   "keywords": [],
   "author": "",
@@ -63,6 +70,7 @@
     "uuid": "^10.0.0"
   },
   "devDependencies": {
+    "@changesets/cli": "^2.31.0",
     "@cucumber/cucumber": "^13.0.0",
     "@playwright/test": "^1.61.0",
     "@types/ali-oss": "^6.16.11",

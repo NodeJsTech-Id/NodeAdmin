@@ -1,10 +1,10 @@
 import { Router } from 'express'
-import named from '../../../utils/namedRoutes'
+import { namedRoutes as named } from '@nodeadmin/core'
 import AccessMiddleware from '../../access/http/middleware/AccessMiddleware'
 import { ensureAuthenticatedApi } from '../../auth/http/middleware/authMiddleware'
 import { SettingValidator, upload } from '../http/validators/SettingValidator'
 import SettingController from '../http/controllers/api/v1/SettingController'
-import { handler } from '../../../utils/routeBinding'
+import { handler } from '@nodeadmin/core'
 
 const router = Router()
 const settingRoute = named.extendRouter(Router())

@@ -16,6 +16,8 @@ jobs:
           node-version: 20
           cache: npm
       - run: npm ci
+      - name: Build core (@nodeadmin/core dist untuk tsc/jest/bdd)
+        run: npm run build:core
       - name: Convention check (pola modul & prinsip)
         run: npm run lint:conventions
       - name: Typecheck
@@ -77,6 +79,8 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 20, cache: npm }
       - run: npm ci
+      - name: Build core (@nodeadmin/core dist)
+        run: npm run build:core
       - name: Run migrations (${{ matrix.db }})
         env:
           NODE_ENV: test
@@ -115,6 +119,8 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 20, cache: npm }
       - run: npm ci
+      - name: Build core (@nodeadmin/core dist)
+        run: npm run build:core
       - name: Install Playwright browsers
         run: npx playwright install --with-deps
       - name: Prepare DB (migrate + seed)

@@ -1,4 +1,4 @@
-import Function, { removePrefix, ciLike } from '../../src/helpers/functions'
+import { Functions as Function, removePrefix, ciLike } from '@nodeadmin/core'
 
 describe('helpers/functions', () => {
     describe('removePrefix', () => {

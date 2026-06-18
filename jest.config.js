@@ -5,6 +5,10 @@ module.exports = {
     setupFiles: ['<rootDir>/tests/setup/loadEnv.ts'],
     setupFilesAfterEnv: ['<rootDir>/tests/setup/jest.setup.ts'],
     testMatch: ['<rootDir>/tests/**/*.test.ts'],
+    // Phase 0: alias batas runtime generik (selaras tsconfig paths @core/*)
+    moduleNameMapper: {
+        '^@core/(.*)$': '<rootDir>/src/$1',
+    },
     // E2E (Playwright) punya runner sendiri — jangan dijalankan Jest
     testPathIgnorePatterns: ['/node_modules/', '/tests/e2e/'],
     collectCoverageFrom: [

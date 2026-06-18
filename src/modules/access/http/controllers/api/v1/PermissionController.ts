@@ -3,15 +3,14 @@ import { injectable, inject } from 'tsyringe'
 import { IPermissionService } from '../../../services/v1/IPermissionService'
 import { TOKENS } from '../../../../../../tokens'
 import { validationResult } from 'express-validator'
-import { app } from '../../../../../../index'
-import ResponseHandler from '../../../../../../ResponseHandler'
+import { ResponseHandler } from '@nodeadmin/core'
 
 @injectable()
 export default class PermissionController {
     constructor(@inject(TOKENS.IPermissionService) private permissionService: IPermissionService) {}
 
     public async index(req: Request, res: Response) {
-		this.permissionService.getAllRegisteredRoute(app)
+		this.permissionService.getAllRegisteredRoute(req.app)
         const filter = req.query
         const {datas,paginate_data} = await this.permissionService.index(filter)
         return ResponseHandler.success(res, 'Success', {datas,paginate_data})

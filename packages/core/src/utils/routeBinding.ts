@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from 'express'
-import { container } from '../container'
+import { container } from 'tsyringe'
 
 type Ctor<T> = new (...args: any[]) => T
 

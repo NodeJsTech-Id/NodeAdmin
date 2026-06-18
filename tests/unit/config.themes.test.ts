@@ -1,4 +1,4 @@
-import { THEMES, THEME_NAMES, DEFAULT_THEME, getTheme } from '../../src/config/themes'
+import { THEMES, THEME_NAMES, DEFAULT_THEME, getTheme } from '@nodeadmin/core'
 
 describe('config/themes', () => {
     it('punya 9 tema warna (Flutter dikecualikan)', () => {

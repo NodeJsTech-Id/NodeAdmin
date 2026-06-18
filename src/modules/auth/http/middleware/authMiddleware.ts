@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import jwt from 'jsonwebtoken'
-import { clientRedis } from '../../../..'
-import ResponseHandler from '../../../../ResponseHandler'
+import { clientRedis } from '../../../../services/redisClient'
+import { ResponseHandler } from '@nodeadmin/core'
 import env from '../../../../config/env'
 
 export const ensureAuthenticated = (req: Request, res: Response, next: NextFunction) => {

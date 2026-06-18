@@ -9,7 +9,7 @@ const rl = readline.createInterface({
 
 rl.question('Enter migration name: ', (migrationName) => {
   rl.question('Enter module name: ', (moduleName) => {
-    const migrationsDir = path.resolve(__dirname, `../src/modules/${moduleName}/migrations`).replace(/\\/g, '/');
+    const migrationsDir = path.resolve(process.cwd(), `src/modules/${moduleName}/migrations`).replace(/\\/g, '/');
     const command = `npx typeorm migration:create ${migrationsDir}/${migrationName}`;
 
     console.log(`Executing command: ${command}`);

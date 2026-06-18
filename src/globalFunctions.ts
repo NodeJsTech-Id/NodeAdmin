@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express'
 import fileService from './services/fileService'
 import { User } from './modules/access/models/user.entity'
-import { getTheme, DEFAULT_THEME, THEMES } from './config/themes'
+import { getTheme, DEFAULT_THEME, THEMES } from '@nodeadmin/core'
 import { getSetting } from './services/settingCache'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'

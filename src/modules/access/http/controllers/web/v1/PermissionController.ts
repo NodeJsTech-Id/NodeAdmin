@@ -4,15 +4,14 @@ import Module from '../../../../Module'
 import { IPermissionService } from '../../../services/v1/IPermissionService'
 import { TOKENS } from '../../../../../../tokens'
 import { validationResult } from 'express-validator'
-import { app } from '../../../../../../index'
-import { renderView } from '../../../../../../utils/view'
+import { renderView } from '@nodeadmin/core'
 
 @injectable()
 export default class PermissionController {
     constructor(@inject(TOKENS.IPermissionService) private permissionService: IPermissionService) {}
 
     public async index(req: Request, res: Response) {
-		await this.permissionService.getAllRegisteredRoute(app)
+		await this.permissionService.getAllRegisteredRoute(req.app)
         const filter = req.query
         const {datas,paginate_data} = await this.permissionService.index(filter)
         renderView(res, Module.path, 'permission/index', { datas, filter, paginate_data })

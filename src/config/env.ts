@@ -1,4 +1,5 @@
 import * as dotenv from 'dotenv'
+import { makeEnvHelpers } from '@nodeadmin/core'
 dotenv.config()
 
 /**
@@ -6,34 +7,14 @@ dotenv.config()
  * - Secret wajib (SESSION_SECRET, JWT_SECRET) → fail-fast bila kosong di production,
  *   sehingga aplikasi tidak pernah jalan dengan secret default yang bisa ditebak.
  * - Tipe sudah dikonversi (number/boolean), tidak lagi string mentah.
+ * - Helper baca/validasi env generik diambil dari @nodeadmin/core (makeEnvHelpers);
+ *   objek `env` + bagian app-spesifik (roles) tetap di sini.
  */
 
 const NODE_ENV = process.env.NODE_ENV || 'development'
 const isProd = NODE_ENV === 'production'
 
-function required(name: string, fallbackDev?: string): string {
-    const val = process.env[name]
-    if (val && val.trim() !== '') return val
-    if (isProd) {
-        throw new Error(`[env] ${name} wajib di-set di production`)
-    }
-    // Di non-production boleh pakai fallback dev agar mudah dijalankan lokal,
-    // tetapi tetap beri peringatan.
-    console.warn(`[env] ${name} tidak di-set — memakai nilai dev sementara`)
-    return fallbackDev ?? `dev-${name.toLowerCase()}`
-}
-
-function num(name: string, def: number): number {
-    const v = process.env[name]
-    const n = v ? parseInt(v, 10) : NaN
-    return Number.isFinite(n) ? n : def
-}
-
-function bool(name: string, def = false): boolean {
-    const v = process.env[name]
-    if (v === undefined) return def
-    return v === 'true' || v === '1'
-}
+const { required, num, bool } = makeEnvHelpers({ isProd })
 
 export const env = {
     nodeEnv: NODE_ENV,

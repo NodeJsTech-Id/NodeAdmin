@@ -1,11 +1,11 @@
 import { Router } from 'express'
-import named from '../../../utils/namedRoutes'
+import { namedRoutes as named } from '@nodeadmin/core'
 import passport from 'passport'
 import AuthController from '../http/controllers/web/v1/AuthController'
 import { UserCreateValidator } from '../../access/http/validators/UserCreateValidator'
 import { ResetPasswordProcessValidator } from '../http/validators/ResetPasswordProcessValidator'
-import { authLimiter, otpLimiter } from '../../../middleware/rateLimiter'
-import { handler } from '../../../utils/routeBinding'
+import { authLimiter, otpLimiter } from '@nodeadmin/core'
+import { handler } from '@nodeadmin/core'
 
 const router = Router()
 

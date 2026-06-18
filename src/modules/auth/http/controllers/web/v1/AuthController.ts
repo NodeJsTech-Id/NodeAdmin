@@ -15,7 +15,7 @@ import bcrypt from 'bcryptjs'
 import appConfig from '../../../../../../config/app'
 import env from '../../../../../../config/env'
 import { generateOTP, hashOTP, verifyOTP, otpExpiry } from '../../../../../../helpers/otp'
-import { renderView } from '../../../../../../utils/view'
+import { renderView } from '@nodeadmin/core'
 
 @injectable()
 export default class AuthController {

@@ -1,10 +1,10 @@
 import { Router } from 'express'
-import named from '../../../utils/namedRoutes'
+import { namedRoutes as named } from '@nodeadmin/core'
 import AuthController from '../http/controllers/api/v1/AuthController'
 import { ensureAuthenticatedApi } from '../../auth/http/middleware/authMiddleware'
 import { UserCreateValidator } from '../../access/http/validators/UserCreateValidator'
 import { ResetPasswordProcessValidator } from '../http/validators/ResetPasswordProcessValidator'
-import { authLimiter, otpLimiter } from '../../../middleware/rateLimiter'
+import { authLimiter, otpLimiter } from '@nodeadmin/core'
 
 const router = named.extendRouter(Router())
 

@@ -1,9 +1,9 @@
 import { Router } from 'express'
-import named from '../../../utils/namedRoutes'
+import { namedRoutes as named } from '@nodeadmin/core'
 import DashboardController from '../http/controllers/web/v1/DashboardController'
 import { ensureAuthenticated } from '../../auth/http/middleware/authMiddleware'
 import AccessMiddleware from '../../access/http/middleware/AccessMiddleware'
-import { handler } from '../../../utils/routeBinding'
+import { handler } from '@nodeadmin/core'
 
 const router = Router()
 

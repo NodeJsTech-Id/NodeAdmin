@@ -4,7 +4,7 @@ import Module from '../../../../Module'
 import { validationResult } from 'express-validator'
 import { IRoleService } from '../../../services/v1/IRoleService'
 import { TOKENS } from '../../../../../../tokens'
-import { renderView } from '../../../../../../utils/view'
+import { renderView } from '@nodeadmin/core'
 
 @injectable()
 export default class RoleController {
