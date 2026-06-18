@@ -28,7 +28,11 @@ Route (named-routes)
 3. **Error handling.** Service **`throw`** `AppError`/`NotFoundError`/`ConflictError`/`ValidationError`/`UnauthorizedError` (`src/errors/AppError.ts`). Controller TIDAK menangani error manual — `errorHandler` middleware yang menangani. **Dilarang** `return error` & `instanceof Error`.
 4. **Separation of Concerns.** Controller≠Service≠Repository≠View. Logika bisnis hanya di service.
 5. **Config terpusat.** Akses env HANYA via `env` dari `src/config/env.ts`. **Dilarang** `process.env.*` di dalam `src/modules/`.
-6. **Portabilitas DB.** Entity pakai tipe abstrak (`text`, `varchar`, `timestamp`, `boolean`). **Dilarang** `longtext`/`mediumtext`/`datetime` dan `@Create/UpdateDateColumn({ type: ... })`.
+6. **Portabilitas DB (kode HARUS multi-DB, bukan cuma ORM-nya).** ORM mendukung banyak dialek, tapi aplikasi tetap portabel hanya bila kode dijaga:
+   - Entity: tipe abstrak (`text`/`varchar`/`int`/`timestamp`/`boolean`). **Dilarang** `longtext`/`mediumtext`/`datetime`, `@Create/UpdateDateColumn({ type })`, dan **`collation` hardcoded** (mis. `utf8mb4_unicode_ci` — beda antar-dialek).
+   - Migration: TypeORM Table API, **bukan** raw SQL vendor (no `ENGINE=`, backtick, `AUTO_INCREMENT`).
+   - Query: **dilarang raw `.query()` / createQueryRunner** di modul (rawan sintaks DB) & **`LIKE :param` manual** (case-sensitivity beda MySQL vs PG/SQLite) — pakai helper **`ciLike()`** (`LOWER(..) LIKE LOWER(..)`).
+   - Test jalan di SQLite in-memory → membuktikan portabilitas. Checker menolak pelanggaran di atas.
 
 ## Sebelum Coding: Sajikan Rencana Artefak + Konfirmasi
 
@@ -101,7 +105,8 @@ Ikuti `docs/MODULE_GUIDE.md` (ada template lengkap). Urutan & file wajib:
 - ❌ `new XService()` / `new XController()` di `routes/` → pakai `handler()` + DI.
 - ❌ `return error` / `instanceof Error` → pakai `throw AppError`.
 - ❌ `res.render(path.resolve(...))` → pakai `renderView()`.
-- ❌ `type: 'longtext'|'datetime'|...` atau `@CreateDateColumn({ type })` di entity.
+- ❌ `type: 'longtext'|'datetime'|...`, `collation: ...`, atau `@CreateDateColumn({ type })` di entity (tak portabel).
+- ❌ raw `.query()`/createQueryRunner di modul, atau `LIKE :param` manual → pakai repository/QueryBuilder + `ciLike()`.
 - ❌ `process.env.*` di `src/modules/` → pakai `env`.
 - ❌ Service tanpa `@injectable` / tanpa interface `I*Service`.
 - ❌ Menambah modul tanpa test & tanpa update docs.

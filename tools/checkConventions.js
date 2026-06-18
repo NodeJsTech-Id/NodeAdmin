@@ -84,15 +84,27 @@ walk(SRC, (file) => {
             violate(file, ln, 'Gunakan helper `renderView(res, Module.path, view, locals)` — bukan res.render(path.resolve...).'))
     }
 
-    // 5. Entity: tipe kolom portabel (hindari vendor-spesifik + timestamp eksplisit)
+    // 5. Entity: tipe kolom portabel + tanpa collation vendor (hindari vendor-spesifik)
     if (isEntity) {
         eachMatch(content, /type:\s*['"](longtext|mediumtext|tinytext|datetime)['"]/, (m, ln) =>
             violate(file, ln, `Tipe kolom '${m[1]}' tidak portabel — pakai 'text'/'varchar'/'timestamp' abstrak.`))
         eachMatch(content, /@(Create|Update)DateColumn\(\{\s*type:/, (_m, ln) =>
             violate(file, ln, 'Jangan set `type` di @Create/UpdateDateColumn — biarkan TypeORM memilih per dialek (portabilitas SQLite/PG/MySQL).'))
+        eachMatch(content, /\bcollation:/, (_m, ln) =>
+            violate(file, ln, 'Jangan hardcode `collation` (mis. utf8mb4_unicode_ci) — collation berbeda antar-dialek; biarkan default DB.'))
     }
 
-    // 6. Modul tak boleh akses process.env langsung — lewat config/env
+    // 6. Portabilitas DB di service/modul: hindari raw SQL vendor & LIKE manual
+    if (inModules) {
+        // raw query mentah → rawan sintaks vendor; pakai QueryBuilder/repository
+        eachMatch(content, /\.(query|createQueryRunner)\s*\(/, (_m, ln) =>
+            violate(file, ln, 'Hindari raw `.query()`/createQueryRunner di modul — rawan sintaks spesifik-DB. Pakai repository/QueryBuilder TypeORM.'))
+        // LIKE manual → case-sensitivity beda (MySQL vs PG/SQLite). Pakai helper ciLike().
+        eachMatch(content, /\bLIKE\s+:/i, (_m, ln) =>
+            violate(file, ln, 'Jangan tulis `LIKE :param` manual — case-sensitivity berbeda antar-dialek. Pakai helper `ciLike()` (LOWER(..) LIKE LOWER(..)).'))
+    }
+
+    // 7. Modul tak boleh akses process.env langsung — lewat config/env
     if (inModules) {
         eachMatch(content, /process\.env\./, (_m, ln) =>
             violate(file, ln, 'Jangan akses `process.env` di modul — gunakan `env` dari src/config/env.ts.'))
