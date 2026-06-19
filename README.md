@@ -6,6 +6,25 @@ Runtime generik & tooling diekstrak ke **paket terbitan** (`@flazhost-nodeadmin/
 
 ---
 
+## ⚡ Buat Aplikasi Baru (Scaffold)
+
+Cara tercepat — satu perintah menghasilkan aplikasi NodeAdmin utuh di folder tujuan:
+
+```bash
+npm create @flazhost-nodeadmin/app myapp
+cd myapp
+npm install
+cp .env.example .env          # default: SQLite (tanpa server DB)
+npm run migration:run         # buat tabel + seed admin & setting
+npm run start:dev             # http://localhost:3000
+```
+
+Login default: `admin@admin.com` / `12345678`. Aplikasi hasil scaffold adalah project **standalone** yang menarik runtime dari `@flazhost-nodeadmin/core` + `cli` (npm) — update cukup `npm update`. Lihat [`@flazhost-nodeadmin/create-app`](https://www.npmjs.com/package/@flazhost-nodeadmin/create-app).
+
+> Perbedaan penting: `npm install @flazhost-nodeadmin/core` hanya memasang **library** ke `node_modules/` (untuk dipakai app yang sudah ada). Untuk **men-scaffold aplikasi utuh** ke folder kosong, pakai `npm create @flazhost-nodeadmin/app`.
+
+---
+
 ## 📦 Paket Pabrik
 
 Bagian generik dipublikasikan ke npm sebagai paket berversi (changesets). App turunan meng-`install`-nya, bukan menyalin file.
@@ -14,6 +33,7 @@ Bagian generik dipublikasikan ke npm sebagai paket berversi (changesets). App tu
 |-------|--------|
 | [`@flazhost-nodeadmin/core`](https://www.npmjs.com/package/@flazhost-nodeadmin/core) | Runtime generik: DI/container, `AppError` + error handling, `renderView`, helpers (`paginate`, `ciLike`), `namedRoutes`/`handler`, themes, csrf, rate limiter, `createApp`, `createDataSource`. |
 | [`@flazhost-nodeadmin/cli`](https://www.npmjs.com/package/@flazhost-nodeadmin/cli) | Tooling: `nodeadmin check` (convention checker / CI gate), `nodeadmin make-migration`, `nodeadmin copy-views`. |
+| [`@flazhost-nodeadmin/create-app`](https://www.npmjs.com/package/@flazhost-nodeadmin/create-app) | Scaffolder: `npm create @flazhost-nodeadmin/app myapp` → aplikasi utuh ter-generate (template ditarik dari GitHub via giget). |
 
 ```bash
 npm install @flazhost-nodeadmin/core
