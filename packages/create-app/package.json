@@ -1,0 +1,19 @@
+{
+  "name": "@flazhost-nodeadmin/create-app",
+  "version": "1.0.0",
+  "description": "Scaffolder aplikasi NodeAdmin — `npm create @flazhost-nodeadmin/app myapp`.",
+  "license": "ISC",
+  "type": "commonjs",
+  "bin": {
+    "create-app": "index.js"
+  },
+  "main": "index.js",
+  "files": [
+    "index.js"
+  ],
+  "dependencies": {
+    "giget": "^1.2.3",
+    "prompts": "^2.4.2",
+    "picocolors": "^1.1.0"
+  }
+}

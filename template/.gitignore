@@ -1,0 +1,10 @@
+node_modules
+dist
+*.tsbuildinfo
+.env
+# Runtime logs
+dev.log
+*.log
+
+# Test coverage reports
+coverage/
