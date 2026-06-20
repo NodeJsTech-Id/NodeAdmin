@@ -34,13 +34,20 @@ const COPY = [
     'playwright.config.ts',
     '.env.test',
     '.gitignore',
+    // Panduan AI & skill (agar /make-module + konvensi ikut di app turunan).
+    'AGENTS.md',
+    'CLAUDE.md',
+    '.cursorrules',
+    '.claude',
 ]
 
-// Yang TIDAK pernah disalin (monorepo-only / artefak / rahasia).
+// Yang TIDAK pernah disalin (monorepo-only / artefak / rahasia / env-specific).
 const EXCLUDE = new Set([
     'node_modules', 'dist', 'coverage', 'test-results',
     'packages', '.changeset', '.github', '.git',
     '.env', 'package-lock.json', 'template',
+    // Setting Claude Code lokal mesin — jangan ikut ke app turunan.
+    'settings.local.json',
 ])
 
 function rmrf(p) { fs.rmSync(p, { recursive: true, force: true }) }
