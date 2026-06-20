@@ -1,6 +1,6 @@
 # @flazhost-nodeadmin/create-app
 
-Scaffolder untuk membuat aplikasi [NodeAdmin](https://github.com/NodeJsTech-Id/NodeAdmin) lengkap dalam satu perintah.
+Scaffolder untuk membuat aplikasi [NodeAdmin](https://github.com/FlazHost-Com/NodeAdmin) lengkap dalam satu perintah.
 
 ## Penggunaan
 

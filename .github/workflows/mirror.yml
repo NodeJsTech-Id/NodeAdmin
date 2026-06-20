@@ -1,0 +1,72 @@
+name: Mirror to clean repo
+
+# Sinkronkan snapshot BERSIH (tanpa materi porting/spec bahasa lain) dari repo
+# maintain (NodeJsTech-Id/NodeAdmin) ke repo rilis publik (FlazHost-Com/NodeAdmin).
+# Repo bersih = sumber tunggal giget create-app + publish npm.
+#
+# Prasyarat: secret MIRROR_TOKEN = PAT (fine-grained, Contents: write ke
+# FlazHost-Com/NodeAdmin) di Settings → Secrets repo ini.
+
+on:
+  push:
+    branches: [main]
+    tags:
+      - 'template-v*'
+      - '@flazhost-nodeadmin/*'
+  workflow_dispatch:
+
+concurrency:
+  group: mirror
+  cancel-in-progress: false
+
+jobs:
+  mirror:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout maintain (full history not needed)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Regenerate template agar snapshot selalu sinkron dgn src/ terbaru.
+      - name: Rebuild template
+        run: node tools/buildTemplate.js
+
+      - name: Build clean snapshot
+        run: node tools/buildCleanMirror.js "$RUNNER_TEMP/clean"
+
+      - name: Push snapshot to clean repo
+        env:
+          MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
+        run: |
+          set -e
+          DEST="FlazHost-Com/NodeAdmin"
+          cd "$RUNNER_TEMP/clean"
+          git init -q
+          git config user.name "nodeadmin-mirror-bot"
+          git config user.email "mirror-bot@users.noreply.github.com"
+          git add -A
+          git commit -q -m "mirror: snapshot dari NodeJsTech-Id@${GITHUB_SHA::7}"
+          git branch -M main
+          git remote add origin "https://x-access-token:${MIRROR_TOKEN}@github.com/${DEST}.git"
+          # Snapshot tunggal — timpa history repo bersih (tanpa membawa history maintain).
+          git push -f origin main
+
+      # Teruskan tag ke repo bersih:
+      #  - template-v* → dibutuhkan giget create-app.
+      #  - @flazhost-nodeadmin/*@* → memicu release.yml (publish npm) di repo bersih.
+      - name: Forward tag to clean repo
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
+        run: |
+          set -e
+          TAG="${GITHUB_REF_NAME}"
+          DEST="FlazHost-Com/NodeAdmin"
+          cd "$RUNNER_TEMP/clean"
+          git tag -f "$TAG"
+          git push -f "https://x-access-token:${MIRROR_TOKEN}@github.com/${DEST}.git" "refs/tags/${TAG}"

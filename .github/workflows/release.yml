@@ -1,0 +1,41 @@
+name: Publish to npm
+
+# Publish paket @flazhost-nodeadmin/* ke npm dari repo BERSIH (FlazHost-Com).
+# File ini ikut ter-mirror ke repo bersih dan berjalan DI SANA saat tag paket di-push
+# (tag diteruskan oleh workflow mirror dari repo maintain).
+#
+# Prasyarat (di repo bersih FlazHost-Com/NodeAdmin):
+#   secret NPM_TOKEN = token npm Automation/granular (bypass 2FA, write @flazhost-nodeadmin).
+#
+# Tidak berjalan di repo maintain: di-skip kecuali repository == FlazHost-Com/NodeAdmin.
+
+on:
+  push:
+    tags:
+      - '@flazhost-nodeadmin/*@*'
+  workflow_dispatch:
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    if: github.repository == 'FlazHost-Com/NodeAdmin'
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Install deps
+        run: npm ci
+
+      - name: Build core (dist) before publish
+        run: npm run build:core
+
+      - name: Publish via changesets
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npx changeset publish

@@ -14,8 +14,8 @@ const { downloadTemplate } = require('giget')
 
 // Sumber template di GitHub. Di-pin ke tag agar versi CLI ↔ template deterministik.
 // Format giget: github:<owner>/<repo>/<subdir>#<ref>
-const TEMPLATE_TAG = 'template-v1.0.1'
-const TEMPLATE_SRC = `github:NodeJsTech-Id/NodeAdmin/template#${TEMPLATE_TAG}`
+const TEMPLATE_TAG = 'template-v1.0.2'
+const TEMPLATE_SRC = `github:FlazHost-Com/NodeAdmin/template#${TEMPLATE_TAG}`
 
 async function main() {
     const argDir = process.argv.slice(2).find((a) => !a.startsWith('-'))

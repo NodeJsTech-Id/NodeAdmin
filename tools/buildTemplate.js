@@ -22,11 +22,12 @@ const CORE_RANGE = '^1.1'
 const CLI_RANGE = '^1.1'
 
 // Entri root yang DISALIN apa adanya ke template.
+// CATATAN: `spec/` & materi porting TIDAK disalin — itu materi "pabrik" untuk
+// mem-porting NodeAdmin ke bahasa lain, tak relevan untuk app turunan Node.
 const COPY = [
     'src',
     'public',
     'tests',
-    'spec',
     'docs',
     'tsconfig.json',
     'jest.config.js',
@@ -50,9 +51,17 @@ const EXCLUDE = new Set([
     'settings.local.json',
 ])
 
+// Path spesifik (relatif ROOT) yang dikecualikan — materi porting bahasa lain.
+const EXCLUDE_PATHS = new Set([
+    'docs/PORTING_GUIDE.md',
+    'docs/examples',
+].map((p) => path.normalize(p)))
+
 function rmrf(p) { fs.rmSync(p, { recursive: true, force: true }) }
 
 function copyRecursive(src, dst) {
+    const rel = path.relative(ROOT, src)
+    if (EXCLUDE_PATHS.has(path.normalize(rel))) return
     const st = fs.statSync(src)
     if (st.isDirectory()) {
         if (EXCLUDE.has(path.basename(src))) return
