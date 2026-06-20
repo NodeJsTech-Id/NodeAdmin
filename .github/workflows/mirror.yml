@@ -39,22 +39,32 @@ jobs:
       - name: Build clean snapshot
         run: node tools/buildCleanMirror.js "$RUNNER_TEMP/clean"
 
-      - name: Push snapshot to clean repo
+      - name: Sync snapshot to clean repo (incremental)
         env:
           MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
         run: |
           set -e
           DEST="FlazHost-Com/NodeAdmin"
-          cd "$RUNNER_TEMP/clean"
-          git init -q
+          REMOTE="https://x-access-token:${MIRROR_TOKEN}@github.com/${DEST}.git"
+
+          # Clone repo bersih (shallow) agar commit incremental — hanya diff yang
+          # di-push, bukan 163MB penuh tiap run (penyebab push gagal sebelumnya).
+          git clone --depth 1 "$REMOTE" "$RUNNER_TEMP/dest"
+          cd "$RUNNER_TEMP/dest"
           git config user.name "nodeadmin-mirror-bot"
           git config user.email "mirror-bot@users.noreply.github.com"
+
+          # Ganti seluruh isi kerja dengan snapshot bersih (kecuali .git).
+          find . -mindepth 1 -maxdepth 1 -not -name '.git' -exec rm -rf {} +
+          cp -a "$RUNNER_TEMP/clean/." .
+
           git add -A
-          git commit -q -m "mirror: snapshot dari NodeJsTech-Id@${GITHUB_SHA::7}"
-          git branch -M main
-          git remote add origin "https://x-access-token:${MIRROR_TOKEN}@github.com/${DEST}.git"
-          # Snapshot tunggal — timpa history repo bersih (tanpa membawa history maintain).
-          git push -f origin main
+          if git diff --cached --quiet; then
+            echo "Tidak ada perubahan untuk di-mirror."
+          else
+            git commit -q -m "mirror: snapshot dari NodeJsTech-Id@${GITHUB_SHA::7}"
+            git push origin HEAD:main
+          fi
 
       # Teruskan tag ke repo bersih:
       #  - template-v* → dibutuhkan giget create-app.
@@ -67,6 +77,6 @@ jobs:
           set -e
           TAG="${GITHUB_REF_NAME}"
           DEST="FlazHost-Com/NodeAdmin"
-          cd "$RUNNER_TEMP/clean"
+          cd "$RUNNER_TEMP/dest"
           git tag -f "$TAG"
           git push -f "https://x-access-token:${MIRROR_TOKEN}@github.com/${DEST}.git" "refs/tags/${TAG}"
