@@ -69,14 +69,12 @@ function main() {
         copyRecursive(path.join(ROOT, name), path.join(OUT, name))
     }
 
-    // Swap ci.yml → varian ramping (tanpa e2e/BDD) untuk repo rilis.
-    // E2E (Playwright) & BDD cukup dijalankan di repo maintain; repo bersih
-    // hanya men-gate test inti agar CI selalu hijau jujur.
-    const ciClean = path.join(ROOT, 'tools/templates/ci.clean.yml')
-    if (fs.existsSync(ciClean)) {
-        fs.copyFileSync(ciClean, path.join(OUT, '.github/workflows/ci.yml'))
-        console.log('[mirror] ci.yml → varian ramping (tanpa e2e/BDD)')
-    }
+    // Repo rilis TIDAK menjalankan CI: kode masuk ke sini hanya setelah CI di repo
+    // maintain LOLOS (mirror gated via workflow_run). Test ulang = redundan. Repo
+    // bersih cukup punya release.yml (publish npm). Hapus ci.yml dari snapshot.
+    fs.rmSync(path.join(OUT, '.github/workflows/ci.yml'), { force: true })
+    console.log('[mirror] ci.yml dihapus (CI cukup di repo maintain)')
+
     // File internal generator tak perlu di repo bersih.
     fs.rmSync(path.join(OUT, 'tools/templates'), { recursive: true, force: true })
 

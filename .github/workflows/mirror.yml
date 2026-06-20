@@ -7,9 +7,16 @@ name: Mirror to clean repo
 # Prasyarat: secret MIRROR_TOKEN = PAT (fine-grained, Contents: write ke
 # FlazHost-Com/NodeAdmin) di Settings → Secrets repo ini.
 
+# Flow berurutan (gated): push main → CI → (LOLOS) → mirror → FlazHost-Com → release npm.
+# Mirror untuk main hanya jalan SETELAH workflow CI selesai dengan sukses, jadi
+# repo rilis tak pernah menerima kode yang gagal test. Tag (template-v*, paket)
+# di-mirror langsung karena tag tak melewati CI.
 on:
-  push:
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
     branches: [main]
+  push:
     tags:
       - 'template-v*'
       - '@flazhost-nodeadmin/*'
@@ -22,11 +29,16 @@ concurrency:
 jobs:
   mirror:
     runs-on: ubuntu-latest
+    # Untuk trigger workflow_run: hanya lanjut jika CI sukses.
+    # Untuk push tag / dispatch: event bukan workflow_run → selalu lanjut.
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
     steps:
-      - name: Checkout maintain (full history not needed)
+      - name: Checkout maintain (SHA yang lolos CI / tag)
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          # Pada workflow_run, checkout commit yang DIUJI CI (bukan default branch).
+          ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.ref }}
 
       - uses: actions/setup-node@v4
         with:
