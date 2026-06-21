@@ -283,13 +283,14 @@ Buat bootstrap SETARA pakai IDIOM NATIVE Go/Gin. Pemetaan:
 - ORM                 → GORM (multi-DB via driver)
 - Migration           → golang-migrate / goose (SQL portabel up/down) — bukan AutoMigrate utk produksi
 - View + theme switcher → html/template (atau templ) + Tailwind + kolom theme DB (CSS var)
-- Landing + FE template → view publik (bind Setting) + katalog landing (paginasi/search server-side, thumbnail/preview cache-klien, unduh on-demand)
+- Home + FE template  → modul `home`: root `/` render home LANGSUNG (bukan redirect), `/home` alias, login di `/auth/login`; view publik bind Setting + katalog landing (paginasi/search server-side, thumbnail/preview cache-klien, unduh on-demand). Proxy preview server-side tahan-banting: cache lokal dulu → fetch upstream pakai timeout → fallback ke lokal saat gagal
 - Session/JWT         → gin-contrib/sessions + redis store; golang-jwt (HS256 di-pin) + blacklist via Redis
 - Password/OTP        → bcrypt + OTP crypto/rand (hashed + expiry + rate-limit)
 - Keamanan            → secure (helmet setara) + gin-contrib/cors + rate limit per-IP + gzip + static cache
 - File storage        → aliyun-oss-go-sdk / aws-sdk-go-v2 (signed URL); Email → net/smtp / gomail
 - env                 → viper + struct config + fail-fast (secret kosong di prod → panic)
 - Graceful shutdown   → http.Server.Shutdown(ctx) pada SIGTERM/SIGINT
+- Listen error fail-fast → cek error `srv.ListenAndServe()` (mis. port dipakai/EADDRINUSE) → log jelas + exit non-zero; jangan abaikan error-nya
 - Test                → testing + httptest (integration) + SQLite in-memory (glebarez/sqlite) + godog (BDD)
 - Checker             → custom linter (go/ast) / golangci-lint custom rule + gate CI
 - /make-module        → generator Go (text/template): go run ./cmd/make-module
