@@ -5,18 +5,28 @@ import 'reflect-metadata'
 import express from 'express'
 import path from 'path'
 import passport from 'passport'
+import { Strategy as LocalStrategy } from 'passport-local'
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
+import bcrypt from 'bcryptjs'
 import { createApp, ResponseHandler } from '@flazhost-nodeadmin/core'
 import { User } from './modules/access/models/user.entity'
 import AppDataSource from './config/ormconfig'
-import { clientRedis, cntRedis } from './services/redisClient'
+import { clientRedis, RedisStore, cntRedis } from './services/redisClient'
 import env from './config/env'
+import appConfig from './config/app'
 import './container' // registrasi DI (repository factories + services)
 
 const PORT = env.app.port
 const isTest = env.nodeEnv === 'test'
 
-// redis: middleware penjamin koneksi (dipakai untuk blacklist token JWT)
+// Mode aplikasi: 'full' (UI web + REST API) atau 'api' (REST API saja).
+// Satu entry untuk kedua varian — cabang via env (lihat config/env.ts). Upgrade
+// api→full cukup ubah APP_MODE (lihat `nodeadmin add-ui`), tanpa ganti file ini.
+const mode = env.app.mode
+const isApi = mode === 'api'
+
+// redis: middleware penjamin koneksi (no-op di test — pakai MemoryStore).
+// Di mode api dipakai juga untuk blacklist token JWT.
 const ensureRedisConnected = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     if (isTest) return next()
     if (!clientRedis.isOpen) {
@@ -30,9 +40,25 @@ const ensureRedisConnected = async (req: express.Request, res: express.Response,
     next()
 }
 
-// Mode api: hanya strategi JWT (tanpa LocalStrategy/session/serialize web).
+// Registrasi strategi passport pada singleton yang sama dipakai core middleware.
+// - mode full: LocalStrategy (login web/sesi) + serialize/deserialize + JwtStrategy.
+// - mode api : JwtStrategy saja (stateless, tanpa sesi web).
 const userRepository = AppDataSource.getRepository(User)
 const configurePassport = (p: typeof passport) => {
+    if (!isApi) {
+        p.use(new LocalStrategy({ usernameField: 'email' }, async (email, password, done) => {
+            const user = await userRepository.findOne({ where: { email } })
+            if (!user) {
+                return done(null, false, { message: 'Invalid email or password' })
+            }
+            const isMatch = await bcrypt.compare(password, user.password)
+            if (!isMatch) {
+                return done(null, false, { message: 'Invalid email or password' })
+            }
+            return done(null, user)
+        }))
+    }
+
     p.use(new JwtStrategy({
         jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
         secretOrKey: env.jwt.secret,
@@ -44,30 +70,72 @@ const configurePassport = (p: typeof passport) => {
         }
         return done(null, user)
     }))
+
+    if (!isApi) {
+        p.serializeUser((user: any, done) => {
+            done(null, user.id)
+        })
+
+        p.deserializeUser(async (id: string, done) => {
+            try {
+                const user = await userRepository.findOne({ where: { id }, relations: ['roles', 'roles.permissions'] })
+                done(null, user)
+            } catch (err) {
+                done(err, null)
+            }
+        })
+    }
 }
 
+// globalFunctions (locals UI: theme, setting, hasAccess, dst.) hanya ada di
+// varian full — file-nya dibuang pada varian api. Muat lazy & di-guard agar
+// entry ini tetap kompilasi & jalan di kedua varian.
+const globalLocals = isApi
+    ? undefined
+    : (() => { try { return require('./globalFunctions').globalFunctions } catch { return undefined } })()
+
 const app = createApp({
-    mode: 'api',
+    // mode 'api' → core melewati layout/session web; 'full'/default → UI penuh.
+    ...(isApi ? { mode: 'api' as const } : {}),
     isProd: env.isProd,
     isTest,
     cors: { origin: `${env.app.host}:${PORT}` },
+    // Aset statik & sesi web hanya untuk mode full (api stateless JWT).
+    ...(isApi ? {} : {
+        static: { dir: 'public', maxAge: env.isProd ? '7d' : 0 },
+        session: { secret: env.session.secret, ttlMs: env.session.ttlMs },
+        sessionStore: isTest ? undefined : new RedisStore({ client: clientRedis as any, ttl: env.session.ttlMs }),
+        globalLocals,
+    }),
     ensureRedisConnected,
     configurePassport,
-    // View engine minimal: dipakai render email reset-password (resources/mails).
-    views: {
-        engine: 'ejs',
-        dir: path.resolve(__dirname, 'resources'),
-    },
+    // mode full: root '/' didaftar di module home (routes/web.ts) agar terkena layout.
+    // mode api : view engine minimal — dipakai render email reset-password (resources/mails).
+    views: isApi
+        ? {
+            engine: 'ejs',
+            dir: path.resolve(__dirname, 'resources'),
+        }
+        : {
+            engine: 'ejs',
+            dir: path.resolve(__dirname, 'resources'),
+            layoutPath: path.resolve(__dirname, 'resources/layouts/main'),
+            viewSegment: appConfig.be_view,
+            layoutSegment: appConfig.be_layout,
+        },
     modulesDir: path.join(__dirname, 'modules'),
 })
 
-// Inisialisasi AppDataSource + listen
+// Ekspor aplikasi dan inisialisasi AppDataSource
 const initializeApp = async () => {
     try {
         await AppDataSource.initialize()
         console.log('Data Source has been initialized!')
+        // UTC dijamin lewat process.env.TZ='UTC' (proses) + opsi driver per-dialek
+        // di ormconfig (timezone:'Z' untuk mysql/mariadb). Tidak perlu raw SQL
+        // spesifik-vendor di sini agar tetap dialect-agnostic.
         const server = app.listen(PORT, () => {
-            console.log(`API server is running on ${env.app.host}:${PORT}`)
+            console.log(`${isApi ? 'API server' : 'Server'} is running on ${env.app.host}:${PORT}`)
         })
         // Tangani error listen (mis. EADDRINUSE) — tanpa handler, event 'error'
         // tak tertangkap try/catch (asinkron) → proses mati mendadak.
@@ -86,7 +154,7 @@ const initializeApp = async () => {
     }
 }
 
-// Graceful shutdown
+// Graceful shutdown — tutup koneksi Redis & DataSource agar tidak menggantung
 const shutdown = async (signal: string) => {
     console.log(`\n${signal} diterima, menutup koneksi...`)
     try {
@@ -99,6 +167,8 @@ const shutdown = async (signal: string) => {
     }
 }
 
+// Bootstrap server HANYA saat dijalankan langsung (node dist/index.js / ts-node).
+// Saat di-import (mis. oleh supertest), app diekspor tanpa listen/connect.
 if (require.main === module) {
     cntRedis().then(() => {
         initializeApp()

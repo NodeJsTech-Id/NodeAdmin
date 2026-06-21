@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.16
+
+### Patch Changes
+
+- Tarik `template-v1.0.11`: diff varian **full↔api** kini **purely-additive** (file shared identik byte-for-byte; varian dipilih runtime via env `APP_MODE`). Entry tunggal `src/index.ts` menggantikan `index.api.ts` lama. Membuka jalur upgrade **API-only → +UI** lewat `nodeadmin add-ui` (butuh `@flazhost-nodeadmin/cli` ≥ 1.2.0).
+
 ## 1.0.15
 
 ### Patch Changes

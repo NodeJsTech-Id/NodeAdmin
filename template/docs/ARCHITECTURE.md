@@ -65,6 +65,7 @@ export default class UserService implements IUserService {
 ## Konfigurasi (Twelve-Factor)
 
 - **`src/config/env.ts`** — satu-satunya sumber env, sudah dikonversi tipe (number/boolean) & divalidasi. Secret wajib (`SESSION_SECRET`, `JWT_SECRET`) → fail-fast di production.
+- **`APP_MODE`** (`env.app.mode`) — `full` (UI web + REST API, default) atau `api` (REST API saja). Entry tunggal `src/index.ts` bercabang via env ini: mode `full` memasang LocalStrategy + sesi web + static + layout; mode `api` hanya JWT (stateless). Varian api-only = source full **dikurangi file UI utuh** (diff murni additive — file shared identik di kedua varian), sehingga install api-only bisa di-upgrade ke full kapan saja lewat `npx nodeadmin add-ui` (set `APP_MODE=full` + salin file UI yang absent, tanpa konflik).
 - **`src/config/ormconfig.ts`** — DataSource dialect-agnostic (baca `env.db.type`), pool, timezone kondisional.
 - **`src/config/app.ts`** — `be_view`/`be_layout` (set view aktif = `be/default`).
 - **`src/config/themes.ts`** — palet 9 tema (template switcher).

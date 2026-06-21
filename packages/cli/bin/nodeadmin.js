@@ -6,6 +6,7 @@
  *   nodeadmin check           → convention checker (gate, exit 1 bila langgar)
  *   nodeadmin copy-views      → salin .ejs src → dist saat build
  *   nodeadmin make-migration  → generate file migration TypeORM (interaktif)
+ *   nodeadmin add-ui          → upgrade install API-only → +UI (full)
  */
 const path = require('path')
 
@@ -22,8 +23,11 @@ switch (cmd) {
     case 'make-migration':
         require(path.join(LIB, 'generateMigration.js'))
         break
+    case 'add-ui':
+        require(path.join(LIB, 'addUi.js'))
+        break
     default:
         console.error(`@flazhost-nodeadmin/cli — subcommand tidak dikenal: ${cmd || '(kosong)'}`)
-        console.error('Tersedia: check | copy-views | make-migration')
+        console.error('Tersedia: check | copy-views | make-migration | add-ui')
         process.exit(1)
 }

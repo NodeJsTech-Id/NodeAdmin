@@ -62,9 +62,18 @@ const EXCLUDE_PATHS = new Set([
 
 // Path UI-only yang dibuang HANYA pada varian api-only.
 //  - public/ (80MB aset), layout web, globalFunctions, modul components (murni UI),
-//  - index.ts full (diganti index.api.ts → index.ts), tes UI/e2e/bdd.
+//  - tes UI/e2e/bdd.
 // Per-modul UI (routes/web.ts, controllers/web, views/be|fe) ditangani di
 // isUiOnlyPath() karena polanya berlapis di tiap modul.
+//
+// CATATAN (diff full↔api PURELY ADDITIVE): file shared TIDAK dibuang/diedit.
+//  - src/index.ts    = entry tunggal (cabang via APP_MODE) → disalin apa adanya,
+//                      varian api cukup di-set APP_MODE=api di .env.example.
+//  - src/config/feTemplates.ts = self-contained, dipakai SettingValidator →
+//                      DIPERTAHANKAN agar validator identik (tak perlu strip).
+//  - container.ts / SettingService.ts = guard runtime (lihat src/) → identik.
+// Hasilnya: build api hanya mengecualikan file/dir UI utuh, nol edit konten →
+// upgrade `nodeadmin add-ui` cukup copy file yang absent, bebas-konflik.
 const EXCLUDE_PATHS_API = new Set([
     'public',
     'src/resources/layouts',
@@ -72,8 +81,6 @@ const EXCLUDE_PATHS_API = new Set([
     'src/modules/components',
     'src/modules/media',     // file manager rich text editor = fitur UI (web), tak relevan API-only
     'src/modules/home',      // home/template switcher = fitur UI (web)
-    'src/config/feTemplates.ts',
-    'src/index.ts',
     'playwright.config.ts',
     'cucumber.cjs',
     'src/config/themes.ts', // (tak ada di src; defensif)
@@ -95,6 +102,7 @@ const WEB_TEST_PATHS = new Set([
     'tests/integration/mediaService.test.ts',
     'tests/api/home.test.ts',
     'tests/integration/feTemplateService.test.ts',
+    'tests/integration/feCatalogService.test.ts', // import modules/home → dibuang di api
 ].map((p) => path.normalize(p)))
 
 // Pola UI-only per-modul (relatif ROOT, normalized) untuk varian api.
@@ -121,9 +129,6 @@ function rmrf(p) { fs.rmSync(p, { recursive: true, force: true }) }
 function copyRecursive(src, dst, variant) {
     const rel = path.normalize(path.relative(ROOT, src))
     if (EXCLUDE_PATHS.has(rel)) return
-    // index.api.ts = entry khusus varian api (di-rename jadi index.ts di sana).
-    // Jangan ikut ke template full.
-    if (rel === path.normalize('src/index.api.ts')) return
     if (variant === 'api') {
         if (EXCLUDE_PATHS_API.has(rel)) return
         if (isUiOnlyApiPath(rel)) return
@@ -216,12 +221,17 @@ function sortKeys(o) {
     return Object.fromEntries(Object.keys(o).sort().map((k) => [k, o[k]]))
 }
 
-function buildEnvExample() {
+function buildEnvExample(variant) {
     // Ambil .env.example root sebagai basis, override ke SQLite zero-setup.
     let env = fs.readFileSync(path.join(ROOT, '.env.example'), 'utf8')
     env = env.replace(/^DB_TYPE=.*/m, 'DB_TYPE=better-sqlite3')
     env = env.replace(/^DB_DATABASE=.*/m, 'DB_DATABASE=./dev.sqlite')
     env = env.replace(/^DB_SYNCHRONIZE=.*/m, 'DB_SYNCHRONIZE=false')
+    // Varian api: aktifkan mode api (entry tunggal index.ts bercabang via env).
+    // Upgrade ke UI: jalankan `nodeadmin add-ui` (set APP_MODE=full otomatis).
+    if (variant === 'api') {
+        env = env.replace(/^APP_MODE=.*/m, 'APP_MODE=api')
+    }
     return env
 }
 
@@ -236,15 +246,11 @@ function buildVariant(variant, out) {
         copyRecursive(src, path.join(out, entry), variant)
     }
 
-    // Varian api: entry index.api.ts → index.ts (buang yang full sudah di-exclude).
+    // Varian api: entry index.ts identik (cabang via APP_MODE — di-set di
+    // .env.example). File shared (container/SettingService/SettingValidator)
+    // TIDAK diedit — guard runtime + feTemplates self-contained membuatnya
+    // identik di kedua varian (diff PURELY ADDITIVE → add-ui bebas-konflik).
     if (variant === 'api') {
-        const apiEntry = path.join(ROOT, 'src/index.api.ts')
-        if (fs.existsSync(apiEntry)) {
-            fs.copyFileSync(apiEntry, path.join(out, 'src/index.ts'))
-        }
-        // index.api.ts sumber tak perlu ikut (sudah jadi index.ts).
-        fs.rmSync(path.join(out, 'src/index.api.ts'), { force: true })
-
         // Test api-only pengganti untuk modul yg test-nya campur web (dibuang):
         // access & auth wajib punya api test (checker konvensi). Tulis stub API.
         const apiTestsDir = path.join(ROOT, 'tools/templates/api-tests')
@@ -254,41 +260,6 @@ function buildVariant(variant, out) {
                 fs.copyFileSync(path.join(apiTestsDir, f), path.join(out, 'tests/api', f))
             }
         }
-
-        // Modul UI (media, home) dibuang di api → hapus referensinya di
-        // container.ts agar tak ada import yatim.
-        const containerPath = path.join(out, 'src/container.ts')
-        if (fs.existsSync(containerPath)) {
-            let c = fs.readFileSync(containerPath, 'utf8')
-            c = c.replace(/^.*MediaService.*\n/gm, '')
-            c = c.replace(/^.*FeTemplateService.*\n/gm, '')
-            c = c.replace(/^.*FeCatalogService.*\n/gm, '')
-            fs.writeFileSync(containerPath, c)
-        }
-
-        // SettingService & SettingValidator (ada di api) mengimpor fitur landing
-        // (feTemplates/IFeTemplateService) yang dibuang di api → strip referensinya.
-        // Strip baris (toleran CRLF) + blok bertanda FE_TEMPLATE_BLOCK_START..END.
-        const stripLines = (file, needles, blockStart, blockEnd) => {
-            if (!fs.existsSync(file)) return
-            const raw = fs.readFileSync(file, 'utf8')
-            const eol = raw.includes('\r\n') ? '\r\n' : '\n'
-            let inBlock = false
-            const out = raw.split(/\r?\n/).filter((line) => {
-                if (blockStart && line.includes(blockStart)) { inBlock = true; return false }
-                if (inBlock) { if (blockEnd && line.includes(blockEnd)) inBlock = false; return false }
-                return !needles.some((n) => line.includes(n))
-            })
-            fs.writeFileSync(file, out.join(eol))
-        }
-        stripLines(
-            path.join(out, 'src/modules/setting/http/services/v1/SettingService.ts'),
-            ['IFeTemplateService'], 'FE_TEMPLATE_BLOCK_START', 'FE_TEMPLATE_BLOCK_END',
-        )
-        stripLines(
-            path.join(out, 'src/modules/setting/http/validators/SettingValidator.ts'),
-            ['FE_TEMPLATE_SLUGS', 'fe_template:'],
-        )
     }
 
     fs.writeFileSync(
@@ -296,7 +267,7 @@ function buildVariant(variant, out) {
         JSON.stringify(buildPackageJson(variant), null, 2) + '\n',
     )
 
-    fs.writeFileSync(path.join(out, '.env.example'), buildEnvExample())
+    fs.writeFileSync(path.join(out, '.env.example'), buildEnvExample(variant))
 
     fs.writeFileSync(path.join(out, 'README.md'), buildReadme(variant))
 

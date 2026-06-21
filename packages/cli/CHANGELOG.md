@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/cli
 
+## 1.2.0
+
+### Minor Changes
+
+- Tambah command **`nodeadmin add-ui`** — upgrade install **API-only** → **Full (UI + REST API)** tanpa scaffold ulang. Mengunduh lapisan UI (aset `public/`, layout, modul `home`/`components`/`media`, route/controller/view web, test UI), menyalin **hanya file yang absent** (diff full↔api kini purely-additive — file shared identik, varian dipilih runtime via `APP_MODE`), menimpa stub test (`access.user`/`auth`) ke versi full, merge deps & script UI ke `package.json`, set `APP_MODE=full` di `.env`, lalu verifikasi (`install` → `check` → `tsc` → `test`). Idempotent. Override dev/test via env `NODEADMIN_TEMPLATE_DIR`. Menambah dependency `giget`.
+
 ## 1.1.3
 
 ### Patch Changes

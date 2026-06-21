@@ -24,6 +24,7 @@ const SettingServiceSchema: ObjectSchema = Joi.object({
     copyright: Joi.string().allow('').optional(),
     theme: Joi.string().valid(...THEME_NAMES).optional(),
     // Validasi pola slug opentailwind; keberadaan dicek di service (katalog).
+    fe_template: Joi.string().pattern(FE_TEMPLATE_SLUG_RE).optional(),
 });
 
 const SettingValidator = (req: Request, res: Response, next: NextFunction): void => {

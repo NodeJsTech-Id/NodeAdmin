@@ -24,6 +24,10 @@ export const env = {
         host: process.env.APP_HOST || 'http://localhost',
         port: num('APP_PORT', 3000),
         name: process.env.APP_NAME || 'Node Admin',
+        // Mode aplikasi: 'full' (UI web + REST API) atau 'api' (REST API saja).
+        // Varian api-only di-set APP_MODE=api; default 'full'. Upgrade api→full
+        // cukup ubah env ini (lihat `nodeadmin add-ui`), tanpa ganti entry.
+        mode: (process.env.APP_MODE === 'api' ? 'api' : 'full') as 'full' | 'api',
     },
 
     db: {

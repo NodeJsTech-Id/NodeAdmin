@@ -11,6 +11,11 @@ import { TOKENS } from '../../../../../tokens'
 import { AppError } from '@flazhost-nodeadmin/core'
 import { cleanRichText } from '../../../../../helpers/sanitizeHtml'
 
+// Tipe struktural minimal — sengaja TIDAK import dari modul home agar file ini
+// tetap kompilasi di varian api-only (modul home dibuang). Lihat blok FE di
+// bawah: resolve dilakukan lazy & di-guard try/catch.
+type FeTemplateEnsurer = { ensure(slug: string): Promise<void> }
+
 function generateUniqueFileName(): string {
     const currentDate = new Date();
     const year = currentDate.getFullYear();
@@ -81,6 +86,19 @@ export default class SettingService implements ISettingService {
 			}
 			invalidateSetting() // refresh cache agar perubahan langsung tampil
 
+			// FE_TEMPLATE_BLOCK_START (penanda untuk generator api — jangan hapus)
+			// Template frontend diganti → unduh on-demand (bila belum di-cache).
+			// Gagal unduh tidak menggagalkan simpan setting (landing fallback default).
+			if (typeof request.fe_template === 'string') {
+				try {
+					const { container, TOKENS } = await import('../../../../../container')
+					const fe = container.resolve<FeTemplateEnsurer>(TOKENS.IFeTemplateService)
+					await fe.ensure(request.fe_template)
+				} catch (e) {
+					console.error('Unduh template frontend gagal:', e)
+				}
+			}
+			// FE_TEMPLATE_BLOCK_END
 			return result
 	}
 }
