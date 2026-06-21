@@ -121,7 +121,7 @@ Daftar lengkap kapabilitas NodeAdmin. App hasil porting **harus** punya padanann
 
 #### 🧪 Testing (wajib tiap fitur)
 - [ ] **Unit** (helper murni), **Integration** (service↔DB, SQLite in-memory), **API** (HTTP), **Security** (RBAC/CSRF/rate-limit/JWT/mass-assign), **Smoke**, **E2E** (browser), **BDD** (skenario).
-- [ ] **CI**: lint/checker + test + audit + matrix DB (MySQL/Postgres) + E2E tiap push/PR.
+- [ ] **CI**: lint/checker + test + audit + matrix DB (MySQL/Postgres) tiap push/PR. (E2E dijalankan lokal — lambat/rapuh di CI, non-blocking → tak bernilai sebagai gate.)
 
 #### 🛡️ Guardrail (jaga konsistensi pengembangan AI)
 - [ ] **Dokumen aturan** (AGENTS.md setara) + mirror untuk tiap AI tool.

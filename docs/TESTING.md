@@ -1,6 +1,6 @@
 # Testing — Node Admin
 
-Aplikasi memiliki suite pengujian menyeluruh: **Unit, Integration, API, Security, Smoke, E2E, dan BDD**, plus Regression & DB-Compatibility via CI.
+Aplikasi memiliki suite pengujian menyeluruh: **Unit, Integration, API, Security, Smoke, E2E, dan BDD**, plus Regression & DB-Compatibility. CI menjalankan Jest + audit + matrix DB; **E2E dijalankan lokal** (lihat Catatan E2E).
 
 ## Stack
 
@@ -55,8 +55,9 @@ npm run test:e2e          # Playwright — butuh app + MySQL + Redis hidup
 ```
 
 ### Catatan E2E
+- **E2E dijalankan LOKAL saja, bukan di CI** (lambat + butuh browser engine + MySQL/Redis; dulu non-blocking di CI sehingga tak bernilai sebagai gate). Jalankan terhadap perubahan nyata sebelum push.
 - Lokal default Chromium: `E2E_BROWSERS=chromium npm run test:e2e`.
-- Firefox/WebKit butuh system deps (`sudo npx playwright install-deps`) — jalan otomatis di CI Ubuntu.
+- Firefox/WebKit butuh system deps (`sudo npx playwright install-deps`).
 - Playwright `webServer` menjalankan `npm run start:dev` (pakai DB nyata + admin seed `admin@admin.com` / `12345678`).
 
 ## Pemetaan jenis testing
@@ -70,8 +71,8 @@ npm run test:e2e          # Playwright — butuh app + MySQL + Redis hidup
 | Smoke | `tests/smoke/` |
 | E2E | `tests/e2e/` (Playwright) |
 | BDD | `tests/bdd/` (Cucumber) |
-| Regression | seluruh suite dijalankan CI tiap push |
-| Compatibility | E2E multi-browser + CI matrix MySQL/Postgres |
+| Regression | suite Jest dijalankan CI tiap push |
+| Compatibility | CI matrix MySQL/Postgres (migration); E2E multi-browser lokal |
 
 ## Menulis test baru
 
@@ -86,4 +87,5 @@ npm run test:e2e          # Playwright — butuh app + MySQL + Redis hidup
 - **test** — `tsc --noEmit` + `jest --coverage`.
 - **audit** — `npm audit`.
 - **db-compat** — migrasi di matrix MySQL + Postgres (service containers).
-- **e2e** — Playwright 3 browser (MySQL + Redis container).
+
+> **E2E tidak di CI.** Playwright (3 browser) dijalankan lokal: `npm run test:e2e` (lihat Catatan E2E).
