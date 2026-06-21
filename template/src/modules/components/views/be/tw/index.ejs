@@ -122,6 +122,16 @@
       <label class="form-label fw-semibold">Textarea (biasa)</label>
       <textarea class="form-control" placeholder="Teks polos tanpa format"></textarea>
     </div>
+    <div class="mb-3">
+      <label class="form-label fw-semibold">File Upload (gambar)</label>
+      <div class="d-flex align-items-center gap-3">
+        <img id="filePreview" src="/be/sb/img/placeholder.png" width="90" height="90"
+             class="rounded border p-1" style="object-fit:contain;background:#f8fafc"
+             onerror="this.style.visibility='hidden'">
+        <input id="fileUpload" type="file" name="file" accept="image/*" class="form-control">
+      </div>
+      <small class="text-muted">Form upload pakai <code>enctype="multipart/form-data"</code>. Gambar otomatis dikonversi ke WebP saat disimpan ke OSS.</small>
+    </div>
     <button class="btn btn-primary-tw px-4 py-2"><i class="fas fa-save me-1"></i> Save</button>
   </div>
 </section>
@@ -193,6 +203,16 @@
     var target = parseInt(el.getAttribute('data-target')), dur = 1200, step = target/(dur/16), cur = 0;
     var t = setInterval(function(){ cur += step; if(cur>=target){cur=target; clearInterval(t);} el.textContent = Math.floor(cur).toLocaleString(); }, 16);
   });
+
+  // File upload: preview gambar sebelum submit
+  (function(){
+    var input = document.getElementById('fileUpload'), prev = document.getElementById('filePreview');
+    if (!input || !prev) return;
+    input.addEventListener('change', function(){
+      var f = this.files && this.files[0];
+      if (f && f.type.startsWith('image/')) { prev.src = URL.createObjectURL(f); prev.style.visibility = 'visible'; }
+    });
+  })();
 
   // Chart line (warna ikut tema)
   new Chart(document.getElementById('demoLine').getContext('2d'), {
