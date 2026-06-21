@@ -3,16 +3,32 @@
 [![npm](https://img.shields.io/npm/v/@flazhost-nodeadmin/create-app.svg)](https://www.npmjs.com/package/@flazhost-nodeadmin/create-app)
 [![license](https://img.shields.io/npm/l/@flazhost-nodeadmin/create-app.svg)](https://github.com/FlazHost-Com/NodeAdmin/blob/main/LICENSE)
 
-Scaffold **aplikasi admin panel Node.js yang utuh & siap pakai** dalam satu perintah — auth, RBAC, profile, setting, template switcher, migrasi + seed admin, semuanya sudah tertata.
+Scaffold **aplikasi admin panel Node.js yang utuh & siap pakai** dalam satu perintah — auth, RBAC, profile, setting, theme + frontend template switcher, migrasi + seed admin, semuanya sudah tertata.
 
 ```bash
-npm create @flazhost-nodeadmin/app myapp
+npm create @flazhost-nodeadmin/app@latest myapp
 cd myapp
 npm install
 cp .env.example .env          # default: SQLite — tanpa server DB
 npm run migration:run         # buat tabel + seed admin & setting
 npm run start:dev             # http://localhost:3000
 ```
+
+> Pakai akhiran **`@latest`** agar `npx` tidak memakai versi lama dari cache.
+
+## Pilih varian aplikasi
+
+Scaffolder menanyakan **jenis aplikasi** (menu pilih), atau tentukan via flag tanpa prompt:
+
+```bash
+npm create @flazhost-nodeadmin/app@latest myapp              # interaktif: pilih Full / API only
+npm create @flazhost-nodeadmin/app@latest myapp -- --api     # langsung API only (REST, tanpa UI)
+```
+
+| Varian | Isi | Cocok untuk |
+|--------|-----|-------------|
+| **Full (UI + REST API)** *(default)* | Admin panel lengkap: halaman web (EJS+Tailwind), aset, landing + frontend template, komponen UI, plus REST API. | Admin panel siap pakai. |
+| **API only (REST, tanpa UI)** | Hanya REST API — tanpa `public/`, views, modul UI (landing/components/media). Ringan. | Backend headless / SPA / mobile. |
 
 Juga: `npm init`, `yarn create`, `pnpm create`. Tanpa argumen nama → ditanya interaktif.
 Login default: `admin@admin.com` / `12345678`.
@@ -30,13 +46,17 @@ update cukup `npm update`.
 |-------|-----------|
 | ![Login](https://raw.githubusercontent.com/FlazHost-Com/NodeAdmin/main/docs/screenshots/login.png) | ![Dashboard](https://raw.githubusercontent.com/FlazHost-Com/NodeAdmin/main/docs/screenshots/dashboard.png) |
 
-| User Management (RBAC) | Setting + Template Switcher (9 tema) |
-|------------------------|--------------------------------------|
+| User Management (RBAC) | Setting + Frontend Template (640 katalog) |
+|------------------------|-------------------------------------------|
 | ![Users](https://raw.githubusercontent.com/FlazHost-Com/NodeAdmin/main/docs/screenshots/users.png) | ![Setting](https://raw.githubusercontent.com/FlazHost-Com/NodeAdmin/main/docs/screenshots/setting.png) |
 
 | Role & Permission | UI Components |
 |-------------------|---------------|
 | ![Roles](https://raw.githubusercontent.com/FlazHost-Com/NodeAdmin/main/docs/screenshots/roles.png) | ![Components](https://raw.githubusercontent.com/FlazHost-Com/NodeAdmin/main/docs/screenshots/components.png) |
+
+| Landing Page (template default, bind ke Setting) |
+|--------------------------------------------------|
+| ![Landing](https://raw.githubusercontent.com/FlazHost-Com/NodeAdmin/main/docs/screenshots/landing.png) |
 
 ---
 
@@ -48,6 +68,8 @@ update cukup `npm update`.
 - **Authentication** — sesi (Passport local + Redis) untuk web & **JWT** untuk API.
 - **Password Reset** — OTP via email (hashed + expiry).
 - **Template Switcher** — 9 tema warna (Blue, Black, Brown, Green, Grey, Orange, Purple, Red, Yellow) yang dapat diganti dari halaman Setting; seluruh UI admin berubah tanpa rebuild.
+- **Frontend Template Switcher** — halaman landing publik (`/`) dengan **640 desain** dari [opentailwind](https://github.com/lindoai/opentailwind) (MIT), ditelusuri di Setting via **pencarian + filter kategori + paginasi** (server-side); template aktif disematkan ke halaman pertama. Tiap kartu menampilkan **thumbnail live** (iframe ter-scale) dan klik → **Preview** penuh; HTML preview di-cache di `localStorage` browser agar tak membebani server. Template terpilih di-unduh & di-cache lokal saat **Save** — app tetap ramping (hanya 1 default ter-bundle).
+- **Landing Default sebagai Sample** — template default (EJS) mengikat data **Setting** (nama, logo, deskripsi, kontak, copyright) sebagai contoh hidup; ubah Setting → landing ikut berubah. Jadi pola acuan saat membuat landing kustom.
 - **Multi-Database** — dialect-agnostic via TypeORM (MySQL, MariaDB, PostgreSQL, SQLite, MSSQL, Oracle) cukup dengan mengganti `DB_TYPE`.
 - **Multi-Timezone** — tampilan tanggal mengikuti timezone pengguna (dayjs).
 - **File Storage** — upload ke Alibaba Cloud OSS (re-encode gambar via sharp).

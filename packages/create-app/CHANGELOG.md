@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.11
+
+### Patch Changes
+
+- README npm: dokumentasikan pilihan varian **Full / API only** (prompt + flag `--api`) dan anjuran `@latest` agar npx tak memakai cache lama. (Hanya dokumentasi; fungsionalitas varian sudah ada sejak 1.0.9.)
+
 ## 1.0.10
 
 ### Patch Changes
