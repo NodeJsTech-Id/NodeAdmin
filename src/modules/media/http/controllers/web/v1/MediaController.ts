@@ -39,4 +39,21 @@ export default class MediaController {
             return ResponseHandler.success(res, 'File dihapus', null)
         } catch (e) { return MediaController.handle(res, e) }
     }
+
+    /**
+     * Proxy view: redirect (302) ke presigned URL OSS. Bucket boleh private —
+     * byte mengalir OSS→browser langsung, URL <img> di konten tetap stabil.
+     */
+    public async file(req: Request, res: Response) {
+        try {
+            // nama file = sisa path setelah /file/ (validasi anti-traversal).
+            const name = (req.params[0] || '').replace(/^\/+/, '')
+            if (!/^[A-Za-z0-9._-]+$/.test(name)) {
+                return ResponseHandler.error(res, 'Nama file tidak valid', null, 400)
+            }
+            const url = this.mediaService.signedUrl(name)
+            res.setHeader('Cache-Control', 'private, max-age=0, no-store')
+            return res.redirect(url)
+        } catch (e) { return MediaController.handle(res, e) }
+    }
 }

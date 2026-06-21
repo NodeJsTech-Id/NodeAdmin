@@ -2,6 +2,9 @@ node_modules
 dist
 *.tsbuildinfo
 .env
+.env.*.bak
+# Database lokal (SQLite dev)
+*.sqlite
 # Runtime logs
 dev.log
 *.log

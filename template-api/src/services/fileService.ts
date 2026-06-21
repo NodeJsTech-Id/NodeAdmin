@@ -6,7 +6,12 @@ class FileService {
     async uploadFile(fileName: string, fileContent: Buffer, is_public: boolean = false): Promise<string> {
         try {
             const ext = path.extname(fileName).toLowerCase().replace('.', '') // contoh: 'jpg'
-            const basename = path.basename(fileName, path.extname(fileName))
+            // basename TANPA ekstensi tapi TETAP menyertakan direktori (folder OSS),
+            // mis. 'modules/media/editor/abc' — jangan pakai path.basename yang
+            // membuang direktori (bikin file ter-upload ke root bucket).
+            const dir = path.posix.dirname(fileName)
+            const stem = path.basename(fileName, path.extname(fileName))
+            const basename = dir === '.' ? stem : `${dir}/${stem}`
 
             // Validasi magic-byte: pastikan konten benar-benar gambar (bukan hanya MIME
             // dari klien yang bisa dipalsukan). sharp akan throw bila bukan gambar valid.
@@ -28,12 +33,12 @@ class FileService {
                 finalName = `${basename}.webp`
             }
 
-            const uploadOptions: any = {}
-            if (is_public) {
-                uploadOptions.headers = { 'x-oss-object-acl': 'public-read' }
-            }
-
-            await oss.put(finalName, finalBuffer, uploadOptions)
+            // Catatan: TIDAK menyetel object ACL public-read — banyak bucket OSS
+            // menolaknya ("Put public object acl is not allowed") bila Block Public
+            // Access aktif. Akses publik ditangani via proxy route (presigned URL),
+            // jadi bucket boleh tetap private. Parameter is_public dipertahankan
+            // untuk kompatibilitas tetapi tak lagi mengubah ACL.
+            await oss.put(finalName, finalBuffer)
             return finalName
         } catch (e) {
             console.error('Upload/Convert error:', e)
@@ -59,11 +64,23 @@ class FileService {
     }
 
     /**
-     * Daftar file di bawah `prefix` (mis. folder editor). Dipakai file manager.
-     * Graceful: bila OSS belum dikonfigurasi → kembalikan array kosong (dev tanpa
-     * OSS tak crash, konsisten dengan getFile).
+     * Presigned URL OSS (TTL singkat) untuk satu objek. Dipakai proxy route yang
+     * me-redirect (302) browser langsung ke OSS — bucket boleh tetap private.
+     * Graceful: tanpa OSS → path lokal `public/`.
      */
-    async listFiles(prefix: string, is_public: boolean = true): Promise<{ name: string; url: string }[]> {
+    getSignedUrl(fileName: string, ttlSeconds: number = 600): string {
+        if (!ossConfig.accessKeyId || !ossConfig.accessKeySecret) {
+            return fileName.startsWith('/') ? fileName : `/${fileName}`
+        }
+        return oss.signatureUrl(fileName, { expires: ttlSeconds })
+    }
+
+    /**
+     * Daftar file di bawah `prefix` (mis. folder editor). Dipakai file manager.
+     * `urlFor` memetakan key → URL yang dipakai klien (mis. proxy route stabil).
+     * Graceful: bila OSS belum dikonfigurasi → kembalikan array kosong.
+     */
+    async listFiles(prefix: string, urlFor?: (key: string) => string): Promise<{ name: string; url: string }[]> {
         if (!ossConfig.accessKeyId || !ossConfig.accessKeySecret) {
             return []
         }
@@ -73,7 +90,7 @@ class FileService {
             return objects
                 // Lewati marker folder (key === prefix atau berakhir '/').
                 .filter((o: any) => o.name && o.name !== prefix && !o.name.endsWith('/'))
-                .map((o: any) => ({ name: o.name, url: this.getFile(o.name, is_public) }))
+                .map((o: any) => ({ name: o.name, url: urlFor ? urlFor(o.name) : this.getFile(o.name) }))
         } catch (e) {
             console.error('List files error:', e)
             return []

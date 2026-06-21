@@ -13,6 +13,8 @@ const mediaRoute = named.extendRouter(Router())
 mediaRoute.get('admin.v1.media.list', '/admin/v1/media/list', ensureAuthenticated, AccessMiddleware, handler(MediaController, 'list'))
 mediaRoute.post('admin.v1.media.upload', '/admin/v1/media/upload', ensureAuthenticated, AccessMiddleware, upload.single('file'), handler(MediaController, 'upload'))
 mediaRoute.post('admin.v1.media.delete', '/admin/v1/media/delete', ensureAuthenticated, AccessMiddleware, handler(MediaController, 'destroy'))
+// Proxy view gambar editor → 302 ke presigned URL OSS (bucket private). Wildcard nama file.
+mediaRoute.get('admin.v1.media.file', '/admin/v1/media/file/*', ensureAuthenticated, AccessMiddleware, handler(MediaController, 'file'))
 
 router.use(mediaRoute)
 

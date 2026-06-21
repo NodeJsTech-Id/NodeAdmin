@@ -7,8 +7,14 @@ import { AppError } from '@flazhost-nodeadmin/core'
 
 @injectable()
 export default class MediaService implements IMediaService {
+    /** URL proxy stabil utk sebuah key (route media.file → 302 presigned). */
+    public viewUrl(key: string): string {
+        const name = key.startsWith(Module.editorPrefix) ? key.slice(Module.editorPrefix.length) : key
+        return `/admin/v1/media/file/${name}`
+    }
+
     public async list(): Promise<{ name: string; url: string }[]> {
-        return fileService.listFiles(Module.editorPrefix, true)
+        return fileService.listFiles(Module.editorPrefix, (key) => this.viewUrl(key))
     }
 
     public async upload(file: Express.Multer.File): Promise<{ name: string; url: string; key: string }> {
@@ -20,13 +26,18 @@ export default class MediaService implements IMediaService {
         const uploadPath = `${Module.editorPrefix}${unique}.${ext}`
 
         // uploadFile memvalidasi magic-byte (sharp) & konversi ke webp; SVG tak
-        // di-allowlist sehingga aman dari SVG-XSS. is_public agar URL stabil.
-        const savedName = await fileService.uploadFile(uploadPath, file.buffer, true)
+        // di-allowlist sehingga aman dari SVG-XSS. Tanpa ACL (bucket private).
+        const savedName = await fileService.uploadFile(uploadPath, file.buffer)
         return {
             name: savedName.split('/').pop() || savedName,
-            url: fileService.getFile(savedName, true),
+            url: this.viewUrl(savedName), // URL proxy stabil
             key: savedName,
         }
+    }
+
+    /** Presigned URL OSS untuk objek editor (dipakai proxy route saat redirect). */
+    public signedUrl(name: string): string {
+        return fileService.getSignedUrl(`${Module.editorPrefix}${name}`)
     }
 
     public async delete(key: string): Promise<void> {
