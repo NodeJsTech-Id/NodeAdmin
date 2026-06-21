@@ -20,8 +20,8 @@ const OUT = path.join(ROOT, 'template')
 const OUT_API = path.join(ROOT, 'template-api')
 
 // Versi paket factory yang ditargetkan template (caret range).
-const CORE_RANGE = '^1.2'
-const CLI_RANGE = '^1.1'
+const CORE_RANGE = '^1.3'
+const CLI_RANGE = '^1.2'
 
 // Entri root yang DISALIN apa adanya ke template.
 // CATATAN: `spec/` & materi porting TIDAK disalin — itu materi "pabrik" untuk

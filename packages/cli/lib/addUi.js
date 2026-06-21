@@ -31,7 +31,7 @@ const CWD = process.cwd()
 
 // Tag template selaras dengan @flazhost-nodeadmin/create-app. Satu tag mencakup
 // kedua subdir (template + template-api).
-const TEMPLATE_TAG = 'template-v1.0.12'
+const TEMPLATE_TAG = 'template-v1.0.13'
 const REPO = 'FlazHost-Com/NodeAdmin'
 
 // Test stub yang dikirim varian api (tools/templates/api-tests) — pada upgrade

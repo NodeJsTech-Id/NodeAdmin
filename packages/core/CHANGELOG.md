@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/core
 
+## 1.3.0
+
+### Minor Changes
+
+- Buang dependency `connect-flash@0.1.1` (tak terawat sejak 2014, memicu `DEP0044 util.isArray`). Diganti middleware flash inline (`Array.isArray` + augmentasi tipe `Request.flash`) — API kompatibel, perilaku sama. Menghilangkan deprecation runtime di app turunan tanpa perubahan cara pakai.
+
 ## 1.2.1
 
 ### Patch Changes

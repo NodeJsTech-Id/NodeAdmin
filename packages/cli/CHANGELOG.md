@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/cli
 
+## 1.2.3
+
+### Patch Changes
+
+- `add-ui` menarik `template-v1.0.13` (core 1.3.0 tanpa connect-flash; perbaikan deprecation `res.redirect('back')` & DEP0044). UI_DEPS tak lagi menambah `connect-flash` (flash kini inline di core).
+
 ## 1.2.2
 
 ### Patch Changes

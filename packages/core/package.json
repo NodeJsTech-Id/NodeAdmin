@@ -1,6 +1,6 @@
 {
   "name": "@flazhost-nodeadmin/core",
-  "version": "1.2.1",
+  "version": "1.3.0",
   "description": "Runtime generik NodeAdmin (DI, error, render, helpers) untuk app turunan.",
   "license": "ISC",
   "main": "dist/index.js",

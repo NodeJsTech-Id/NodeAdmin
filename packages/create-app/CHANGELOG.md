@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.20
+
+### Patch Changes
+
+- Tarik `template-v1.0.13` (core ^1.3): hilangkan deprecation runtime — `res.redirect('back')` (Express 4 deprecated) diganti `res.redirect(req.get('Referrer') || '/')`, dan `DEP0044 util.isArray` lenyap karena `connect-flash` dibuang (flash inline di core).
+
 ## 1.0.19
 
 ### Patch Changes
