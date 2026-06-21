@@ -7,6 +7,7 @@ jest.mock('../../src/services/fileService', () => ({
         uploadFile: jest.fn(async (name: string) => name),
         getFile: jest.fn((name: string) => `https://test/${name}`),
         deleteFile: jest.fn(async () => true),
+        listFiles: jest.fn(async () => []),
     },
 }))
 

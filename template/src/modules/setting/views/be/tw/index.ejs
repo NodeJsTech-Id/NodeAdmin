@@ -52,7 +52,7 @@
 
     <div class="mb-3">
       <label for="description" class="form-label fw-semibold">Description [description]</label>
-      <textarea id="description" class="form-control <% if(getError('description')) { %>is-invalid<% } %>" name="description"><%= data.description %></textarea>
+      <textarea id="description" class="trumbowyg-editor form-control <% if(getError('description')) { %>is-invalid<% } %>" name="description"><%- data.description || '' %></textarea>
       <% if(getError('description')) { %><div class="invalid-feedback"><%= getError('description')['msg'] %></div><% } %>
     </div>
 

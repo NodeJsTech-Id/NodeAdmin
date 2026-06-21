@@ -155,6 +155,23 @@ Token CSRF di-inject otomatis (foot.ejs). Untuk form upload pakai `enctype="mult
 ```
 Edit (PUT via method-override): `action="<%= route('admin.v1.x.update', { id: data.id }) %>?_method=PUT"`.
 
+### Rich Text Editor (Trumbowyg + File Manager OSS)
+Textarea biasa jadi rich editor: tambah class **`trumbowyg-editor`** (bukan `.trumbowyg` polos). Otomatis di-init `foot.ejs` dengan toolbar lengkap + tombol **File Manager** (unggah/sisip/hapus gambar ke OSS).
+
+```html
+<!-- Textarea biasa (plain) -->
+<textarea class="form-control" name="note"></textarea>
+
+<!-- Rich editor + file manager -->
+<textarea class="trumbowyg-editor form-control" name="description"><%- data.description || '' %></textarea>
+```
+
+- Render konten tersimpan pakai `<%- %>` (HTML mentah) agar editor ter-init dengan isi.
+- **Wajib sanitasi server-side** sebelum simpan (`helpers/sanitizeHtml.ts` → `cleanRichText()`) — cegah XSS, karena Joi tak mem-filter HTML. Contoh di `SettingService.update`.
+- Saat submit, `foot.ejs` otomatis sync HTML editor → textarea sumber.
+
+**File Manager** (modal): tombol ikon gambar di toolbar → browse gambar (`GET /admin/v1/media/list`), upload (`POST .../upload`), hapus (`POST .../delete`), klik thumbnail = sisip `<img>`. Backend = modul `media` (web, session + CSRF via header `x-csrf-token`). Folder OSS: `modules/media/editor/`. Tanpa OSS dikonfigurasi → list kosong (graceful, tak crash). Aset: `public/be/sb/vendor/trumbowyg/filemanager.js`.
+
 ## 7. Data Table + Pagination
 ```html
 <div class="tw-card p-0 overflow-hidden">

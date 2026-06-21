@@ -27,8 +27,7 @@
   "license": "ISC",
   "description": "Aplikasi admin panel berbasis NodeAdmin (@flazhost-nodeadmin/core).",
   "dependencies": {
-    "@flazhost-nodeadmin/core": "^1.1",
-    "@types/joi": "^17.2.3",
+    "@flazhost-nodeadmin/core": "^1.2",
     "@types/nodemailer": "^6.4.15",
     "ali-oss": "^6.20.0",
     "bcryptjs": "^2.4.3",
@@ -60,10 +59,11 @@
     "pg": "^8.12.0",
     "redis": "^4.6.15",
     "reflect-metadata": "^0.2.2",
+    "sanitize-html": "^2.17.5",
     "sharp": "^0.34.3",
     "ts-node": "^10.9.2",
     "tsyringe": "^4.10.0",
-    "uuid": "^10.0.0"
+    "uuid": "^11.1.1"
   },
   "devDependencies": {
     "@cucumber/cucumber": "^13.0.0",
@@ -88,9 +88,8 @@
     "@types/passport": "^1.0.16",
     "@types/passport-jwt": "^4.0.1",
     "@types/passport-local": "^1.0.38",
-    "@types/redis": "^4.0.11",
+    "@types/sanitize-html": "^2.16.1",
     "@types/supertest": "^7.2.0",
-    "@types/uuid": "^10.0.0",
     "ioredis-mock": "^8.13.1",
     "jest": "^30.4.2",
     "nodemon": "^3.1.3",

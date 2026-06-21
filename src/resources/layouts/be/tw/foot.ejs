@@ -1,6 +1,36 @@
-<!-- Rich text editor untuk elemen .trumbowyg -->
+<!-- Rich text editor untuk elemen .trumbowyg (polos) & .trumbowyg-editor (+ file manager) -->
 <script>
-    if (window.jQuery && jQuery.fn.trumbowyg) { $(".trumbowyg").trumbowyg(); }
+    (function () {
+        if (!(window.jQuery && jQuery.fn.trumbowyg)) return;
+        // Editor polos.
+        $(".trumbowyg").trumbowyg();
+        // Editor lengkap dgn toolbar + tombol file manager (upload gambar ke OSS).
+        $(".trumbowyg-editor").trumbowyg({
+            btns: [
+                ['viewHTML'],
+                ['formatting'],
+                ['strong', 'em', 'del'],
+                ['superscript', 'subscript'],
+                ['link'],
+                ['filemanager'],
+                ['justifyLeft', 'justifyCenter', 'justifyRight', 'justifyFull'],
+                ['unorderedList', 'orderedList'],
+                ['horizontalRule'],
+                ['removeformat'],
+                ['fullscreen']
+            ],
+            semantic: { div: 'div' },
+            removeformatPasted: true,
+            autogrow: true,
+            plugins: { filemanager: true }
+        });
+        // Saat form submit, sinkronkan HTML editor → textarea sumber.
+        $("form").on("submit", function () {
+            $(this).find(".trumbowyg, .trumbowyg-editor").each(function () {
+                if ($(this).data('trumbowyg')) $(this).val($(this).trumbowyg('html'));
+            });
+        });
+    })();
 </script>
 
 <!-- Toggle sidebar (mobile) -->

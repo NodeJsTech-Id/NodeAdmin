@@ -119,16 +119,32 @@
       <select class="form-control"><option>Active</option><option>Inactive</option></select>
     </div>
     <div class="mb-3">
-      <label class="form-label fw-semibold">Textarea</label>
-      <textarea class="form-control"></textarea>
+      <label class="form-label fw-semibold">Textarea (biasa)</label>
+      <textarea class="form-control" placeholder="Teks polos tanpa format"></textarea>
     </div>
     <button class="btn btn-primary-tw px-4 py-2"><i class="fas fa-save me-1"></i> Save</button>
   </div>
 </section>
 
+<!-- ============ RICH TEXT EDITOR ============ -->
+<section class="mb-10">
+  <h2 class="text-lg font-bold mb-3" style="color:var(--primary)">8. Rich Text Editor (Trumbowyg + File Manager)</h2>
+  <div class="tw-card p-6">
+    <p class="text-sm text-gray-500 mb-4">
+      Textarea dengan toolbar format + tombol <em>File Manager</em> untuk unggah/sisip gambar
+      langsung ke OSS. Tambahkan class <code>trumbowyg-editor</code> pada textarea biasa
+      (lihat <strong>nomor 7</strong>) untuk mengaktifkannya.
+    </p>
+    <div class="mb-2">
+      <label class="form-label fw-semibold">Rich Text Editor + File Manager</label>
+      <textarea class="trumbowyg-editor form-control"><p>Tulis konten <strong>kaya format</strong> di sini. Klik ikon gambar pada toolbar untuk membuka <em>File Manager</em>.</p></textarea>
+    </div>
+  </div>
+</section>
+
 <!-- ============ DATA TABLE + PAGINATION ============ -->
 <section class="mb-10">
-  <h2 class="text-lg font-bold mb-3" style="color:var(--primary)">8. Data Table + Pagination</h2>
+  <h2 class="text-lg font-bold mb-3" style="color:var(--primary)">9. Data Table + Pagination</h2>
   <div class="tw-card p-0 overflow-hidden">
     <div class="px-6 py-4 border-b flex items-center justify-between">
       <h3 class="text-lg font-bold" style="color:var(--primary)">List</h3>

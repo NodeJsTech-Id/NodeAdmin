@@ -9,6 +9,7 @@ import { invalidateSetting } from '../../../../../services/settingCache'
 import { ISettingService } from './ISettingService'
 import { TOKENS } from '../../../../../tokens'
 import { AppError } from '@flazhost-nodeadmin/core'
+import { cleanRichText } from '../../../../../helpers/sanitizeHtml'
 
 function generateUniqueFileName(): string {
     const currentDate = new Date();
@@ -52,6 +53,10 @@ export default class SettingService implements ISettingService {
 	public async update(request: any, files: any = null) {
 			const setting = await this.settingRepository.find()
 			request = functions.removeEmptyFields(request)
+			// Sanitasi rich-text (Trumbowyg) sebelum simpan — cegah XSS.
+			if (typeof request.description === 'string') {
+				request.description = cleanRichText(request.description)
+			}
             if (Array.isArray(files) && files.length > 0) {
                 await Promise.all(
                     files.map((file: { fieldname: string, originalname: string; buffer: Buffer }) => {

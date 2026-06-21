@@ -58,6 +58,28 @@ class FileService {
         return oss.signatureUrl(fileName, { expires: 3600 * 6 })
     }
 
+    /**
+     * Daftar file di bawah `prefix` (mis. folder editor). Dipakai file manager.
+     * Graceful: bila OSS belum dikonfigurasi → kembalikan array kosong (dev tanpa
+     * OSS tak crash, konsisten dengan getFile).
+     */
+    async listFiles(prefix: string, is_public: boolean = true): Promise<{ name: string; url: string }[]> {
+        if (!ossConfig.accessKeyId || !ossConfig.accessKeySecret) {
+            return []
+        }
+        try {
+            const res: any = await oss.list({ prefix, 'max-keys': 100 }, {})
+            const objects = res?.objects || []
+            return objects
+                // Lewati marker folder (key === prefix atau berakhir '/').
+                .filter((o: any) => o.name && o.name !== prefix && !o.name.endsWith('/'))
+                .map((o: any) => ({ name: o.name, url: this.getFile(o.name, is_public) }))
+        } catch (e) {
+            console.error('List files error:', e)
+            return []
+        }
+    }
+
     async deleteFile(fileName: string): Promise<any> {
         try {
             const result = await oss.delete(fileName)
