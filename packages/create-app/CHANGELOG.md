@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.14
+
+### Patch Changes
+
+- Tarik `template-v1.0.9`: preview frontend template lebih tahan-banting — cache lokal dilayani lebih dulu, fetch upstream diberi **timeout 8s** (`AbortSignal`), dan fallback ke cache lokal saat GitHub gagal/lambat (perbaiki "Gagal memuat preview" saat koneksi terputus / proxy timeout).
+
 ## 1.0.13
 
 ### Patch Changes
