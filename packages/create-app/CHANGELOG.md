@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.9
+
+### Patch Changes
+
+- Tambah opsi API-only pada scaffolder: `npm create @flazhost-nodeadmin/app myapp --api` (atau prompt pilih) menghasilkan app REST-only tanpa UI. Core `createApp` dukung `mode: 'all' | 'api'` (default 'all', backward-compatible). Plus housekeeping deps (uuid@11, typeorm 0.3.30, better-sqlite3 12, hapus @types stub).
+
 ## 1.0.8
 
 ### Patch Changes

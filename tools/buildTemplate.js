@@ -17,9 +17,10 @@ const { buildCleanReadme } = require('./lib/readme')
 
 const ROOT = path.resolve(__dirname, '..')
 const OUT = path.join(ROOT, 'template')
+const OUT_API = path.join(ROOT, 'template-api')
 
 // Versi paket factory yang ditargetkan template (caret range).
-const CORE_RANGE = '^1.1'
+const CORE_RANGE = '^1.2'
 const CLI_RANGE = '^1.1'
 
 // Entri root yang DISALIN apa adanya ke template.
@@ -58,18 +59,74 @@ const EXCLUDE_PATHS = new Set([
     'docs/examples',
 ].map((p) => path.normalize(p)))
 
+// Path UI-only yang dibuang HANYA pada varian api-only.
+//  - public/ (80MB aset), layout web, globalFunctions, modul components (murni UI),
+//  - index.ts full (diganti index.api.ts → index.ts), tes UI/e2e/bdd.
+// Per-modul UI (routes/web.ts, controllers/web, views/be|fe) ditangani di
+// isUiOnlyPath() karena polanya berlapis di tiap modul.
+const EXCLUDE_PATHS_API = new Set([
+    'public',
+    'src/resources/layouts',
+    'src/globalFunctions.ts',
+    'src/modules/components',
+    'src/modules/media',     // file manager rich text editor = fitur UI (web), tak relevan API-only
+    'src/index.ts',
+    'playwright.config.ts',
+    'cucumber.cjs',
+    'src/config/themes.ts', // (tak ada di src; defensif)
+    'docs/screenshots',     // screenshot UI tak relevan untuk API-only
+].map((p) => path.normalize(p)))
+
+// Test yang menguji UI/web (login web, CSRF, render halaman, redirect, modul
+// components) — dibuang di varian api. File campur web+api ikut dibuang;
+// test API murni (loginApi/Bearer) di dashboard/profile/setting.api dipertahankan.
+const WEB_TEST_PATHS = new Set([
+    'tests/security',
+    'tests/smoke',
+    'tests/api/setting.test.ts',
+    'tests/api/components.test.ts',
+    'tests/api/access.user.test.ts',
+    'tests/api/auth.test.ts',
+].map((p) => path.normalize(p)))
+
+// Pola UI-only per-modul (relatif ROOT, normalized) untuk varian api.
+function isUiOnlyApiPath(rel) {
+    const r = rel.replace(/\\/g, '/')
+    // routes/web.ts di modul mana pun
+    if (/^src\/modules\/[^/]+\/routes\/web\.ts$/.test(r)) return true
+    // controllers web
+    if (/^src\/modules\/[^/]+\/http\/controllers\/web(\/|$)/.test(r)) return true
+    // views backend & frontend (TAPI simpan views/mail untuk email reset-password)
+    if (/^src\/modules\/[^/]+\/views\/(be|fe)(\/|$)/.test(r)) return true
+    // tests UI (e2e/bdd)
+    if (/^tests\/(e2e|bdd)(\/|$)/.test(r)) return true
+    // test web/campur (lihat WEB_TEST_PATHS)
+    for (const w of WEB_TEST_PATHS) {
+        if (r === w.replace(/\\/g, '/') || r.startsWith(w.replace(/\\/g, '/') + '/')) return true
+    }
+    return false
+}
+
 function rmrf(p) { fs.rmSync(p, { recursive: true, force: true }) }
 
-function copyRecursive(src, dst) {
-    const rel = path.relative(ROOT, src)
-    if (EXCLUDE_PATHS.has(path.normalize(rel))) return
+// variant: 'full' | 'api'
+function copyRecursive(src, dst, variant) {
+    const rel = path.normalize(path.relative(ROOT, src))
+    if (EXCLUDE_PATHS.has(rel)) return
+    // index.api.ts = entry khusus varian api (di-rename jadi index.ts di sana).
+    // Jangan ikut ke template full.
+    if (rel === path.normalize('src/index.api.ts')) return
+    if (variant === 'api') {
+        if (EXCLUDE_PATHS_API.has(rel)) return
+        if (isUiOnlyApiPath(rel)) return
+    }
     const st = fs.statSync(src)
     if (st.isDirectory()) {
         if (EXCLUDE.has(path.basename(src))) return
         fs.mkdirSync(dst, { recursive: true })
         for (const name of fs.readdirSync(src)) {
             if (EXCLUDE.has(name)) continue
-            copyRecursive(path.join(src, name), path.join(dst, name))
+            copyRecursive(path.join(src, name), path.join(dst, name), variant)
         }
     } else {
         fs.mkdirSync(path.dirname(dst), { recursive: true })
@@ -77,8 +134,21 @@ function copyRecursive(src, dst) {
     }
 }
 
-function buildPackageJson() {
+// Deps yang HANYA dipakai UI web → dibuang pada varian api.
+// (ejs TETAP — dipakai render email reset-password. express-session/method-override
+//  dibuang karena api stateless JWT; connect-flash & layouts UI-only.)
+const UI_ONLY_DEPS = [
+    'express-ejs-layouts',
+    'connect-flash',
+    'method-override',
+    // CATATAN: express-session & connect-redis TETAP — redisClient.ts (shared,
+    // dipakai blacklist token JWT) meng-import keduanya di module-level. Membuangnya
+    // memecah import. Ukurannya kecil; biarkan agar api entry tetap kompilasi.
+]
+
+function buildPackageJson(variant) {
     const root = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'))
+    const isApi = variant === 'api'
 
     // Scripts: buang yang bergantung workspace core.
     const s = { ...root.scripts }
@@ -89,22 +159,36 @@ function buildPackageJson() {
     delete s['build:create-app-readme']
     s.build = 'rimraf dist && tsc && nodeadmin copy-views'
     s.start = 'npm run build && pm2 start dist/index.js --watch'
+    if (isApi) {
+        // Varian api: tak ada e2e/bdd (UI). copy-views tetap (mail templates).
+        delete s['test:e2e']
+        delete s['test:bdd']
+    }
 
-    // dependencies: tambah core + better-sqlite3 (default DB), buang driver berat
-    // tetap (mysql2/pg tetap ada agar ganti DB mudah). better-sqlite3 dipindah
-    // dari devDependencies → dependencies karena jadi default runtime.
+    // dependencies: tambah core + better-sqlite3 (default DB).
     const deps = { ...root.dependencies }
     deps['@flazhost-nodeadmin/core'] = CORE_RANGE
     deps['better-sqlite3'] = root.devDependencies['better-sqlite3'] || '^9.6.0'
 
-    // devDependencies: tambah cli, buang changesets (rilis monorepo) & better-sqlite3 (sudah dipindah).
+    // devDependencies: tambah cli, buang changesets & better-sqlite3 (sudah dipindah).
     const dev = { ...root.devDependencies }
     delete dev['@changesets/cli']
     delete dev['better-sqlite3']
     dev['@flazhost-nodeadmin/cli'] = CLI_RANGE
 
+    if (isApi) {
+        // Buang deps UI-only dari runtime + @types pasangannya dari dev.
+        for (const d of UI_ONLY_DEPS) {
+            delete deps[d]
+            delete dev['@types/' + d]
+        }
+        // playwright/cucumber (UI test) tak diperlukan.
+        delete dev['@playwright/test']
+        delete dev['@cucumber/cucumber']
+    }
+
     return {
-        name: 'nodeadmin-app',
+        name: isApi ? 'nodeadmin-api' : 'nodeadmin-app',
         version: '1.0.0',
         private: true,
         main: 'dist/index.js',
@@ -112,7 +196,9 @@ function buildPackageJson() {
         keywords: [],
         author: '',
         license: 'ISC',
-        description: 'Aplikasi admin panel berbasis NodeAdmin (@flazhost-nodeadmin/core).',
+        description: isApi
+            ? 'REST API berbasis NodeAdmin (@flazhost-nodeadmin/core), tanpa UI.'
+            : 'Aplikasi admin panel berbasis NodeAdmin (@flazhost-nodeadmin/core).',
         dependencies: sortKeys(deps),
         devDependencies: sortKeys(dev),
     }
@@ -131,38 +217,70 @@ function buildEnvExample() {
     return env
 }
 
-function main() {
-    console.log('[build-template] membersihkan', path.relative(ROOT, OUT))
-    rmrf(OUT)
-    fs.mkdirSync(OUT, { recursive: true })
+function buildVariant(variant, out) {
+    console.log(`[build-template:${variant}] membersihkan`, path.relative(ROOT, out))
+    rmrf(out)
+    fs.mkdirSync(out, { recursive: true })
 
     for (const entry of COPY) {
         const src = path.join(ROOT, entry)
-        if (!fs.existsSync(src)) { console.warn('  (lewati, tak ada)', entry); continue }
-        copyRecursive(src, path.join(OUT, entry))
-        console.log('  copy', entry)
+        if (!fs.existsSync(src)) continue
+        copyRecursive(src, path.join(out, entry), variant)
+    }
+
+    // Varian api: entry index.api.ts → index.ts (buang yang full sudah di-exclude).
+    if (variant === 'api') {
+        const apiEntry = path.join(ROOT, 'src/index.api.ts')
+        if (fs.existsSync(apiEntry)) {
+            fs.copyFileSync(apiEntry, path.join(out, 'src/index.ts'))
+        }
+        // index.api.ts sumber tak perlu ikut (sudah jadi index.ts).
+        fs.rmSync(path.join(out, 'src/index.api.ts'), { force: true })
+
+        // Test api-only pengganti untuk modul yg test-nya campur web (dibuang):
+        // access & auth wajib punya api test (checker konvensi). Tulis stub API.
+        const apiTestsDir = path.join(ROOT, 'tools/templates/api-tests')
+        if (fs.existsSync(apiTestsDir)) {
+            fs.mkdirSync(path.join(out, 'tests/api'), { recursive: true })
+            for (const f of fs.readdirSync(apiTestsDir)) {
+                fs.copyFileSync(path.join(apiTestsDir, f), path.join(out, 'tests/api', f))
+            }
+        }
+
+        // Modul media (file manager editor) dibuang di api → hapus referensinya
+        // di container.ts agar tak ada import yatim.
+        const containerPath = path.join(out, 'src/container.ts')
+        if (fs.existsSync(containerPath)) {
+            let c = fs.readFileSync(containerPath, 'utf8')
+            c = c.replace(/^.*MediaService.*\n/gm, '')
+            fs.writeFileSync(containerPath, c)
+        }
     }
 
     fs.writeFileSync(
-        path.join(OUT, 'package.json'),
-        JSON.stringify(buildPackageJson(), null, 2) + '\n',
+        path.join(out, 'package.json'),
+        JSON.stringify(buildPackageJson(variant), null, 2) + '\n',
     )
-    console.log('  tulis package.json (standalone)')
 
-    fs.writeFileSync(path.join(OUT, '.env.example'), buildEnvExample())
-    console.log('  tulis .env.example (SQLite)')
+    fs.writeFileSync(path.join(out, '.env.example'), buildEnvExample())
 
-    // README lengkap tapi disesuaikan: dari README utama, buang section "pabrik"
-    // (monorepo/rilis/scaffold) yang tak relevan untuk app turunan.
-    fs.writeFileSync(path.join(OUT, 'README.md'), buildReadme())
-    console.log('  tulis README.md (disesuaikan dari README utama)')
-
-    console.log('[build-template] selesai →', path.relative(ROOT, OUT))
+    fs.writeFileSync(path.join(out, 'README.md'), buildReadme(variant))
+    console.log(`[build-template:${variant}] selesai →`, path.relative(ROOT, out))
 }
 
-// README app turunan: dari README utama, strip section pabrik. Path gambar tetap
-// relatif (docs/screenshots/ ikut ter-copy ke template).
-function buildReadme() {
+function main() {
+    buildVariant('full', OUT)
+    buildVariant('api', OUT_API)
+}
+
+// README app turunan: dari README utama, strip section pabrik. Varian api juga
+// buang section UI murni (Template Switcher) + sesuaikan judul.
+function buildReadme(variant) {
+    if (variant === 'api') {
+        // Buang section UI murni: screenshot halaman & template switcher tak relevan
+        // untuk REST API. (docs/screenshots juga tak ikut — lihat EXCLUDE api docs.)
+        return buildCleanReadme({ dropSections: ['🖼️ Tampilan', '🎨 Template Switcher'] })
+    }
     return buildCleanReadme()
 }
 

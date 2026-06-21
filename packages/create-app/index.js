@@ -3,8 +3,12 @@
  * @flazhost-nodeadmin/create-app
  *
  * Scaffolder: `npm create @flazhost-nodeadmin/app myapp`
- * Menarik template aplikasi NodeAdmin standalone dari GitHub (folder template/
- * pada tag tertentu) via giget, lalu menyiapkan project siap jalan.
+ * Menarik template aplikasi NodeAdmin standalone dari GitHub via giget.
+ *
+ * Varian:
+ *   - default → app penuh (UI + REST API)        subdir `template`
+ *   - --api   → REST API saja (tanpa UI)         subdir `template-api`
+ * Tanpa flag & interaktif → ditanya lewat prompt select.
  */
 const fs = require('fs')
 const path = require('path')
@@ -12,13 +16,17 @@ const prompts = require('prompts')
 const pc = require('picocolors')
 const { downloadTemplate } = require('giget')
 
-// Sumber template di GitHub. Di-pin ke tag agar versi CLI ↔ template deterministik.
-// Format giget: github:<owner>/<repo>/<subdir>#<ref>
-const TEMPLATE_TAG = 'template-v1.0.4'
-const TEMPLATE_SRC = `github:FlazHost-Com/NodeAdmin/template#${TEMPLATE_TAG}`
+// Tag tunggal mencakup kedua subdir (template + template-api).
+const TEMPLATE_TAG = 'template-v1.0.5'
+const REPO = 'FlazHost-Com/NodeAdmin'
 
 async function main() {
-    const argDir = process.argv.slice(2).find((a) => !a.startsWith('-'))
+    const args = process.argv.slice(2)
+    const argDir = args.find((a) => !a.startsWith('-'))
+    // Flag varian: --api atau --template api
+    let variant = (args.includes('--api') || args.includes('--template=api')) ? 'api' : null
+    const tIdx = args.indexOf('--template')
+    if (tIdx !== -1 && args[tIdx + 1] === 'api') variant = 'api'
 
     let targetName = argDir
     if (!targetName) {
@@ -35,19 +43,38 @@ async function main() {
         process.exit(1)
     }
 
-    const targetDir = path.resolve(process.cwd(), targetName)
+    // Bila varian belum ditentukan via flag → tanya (interaktif).
+    if (!variant) {
+        const res = await prompts({
+            type: 'select',
+            name: 'variant',
+            message: 'Jenis aplikasi',
+            choices: [
+                { title: 'Full (UI + REST API)', value: 'full', description: 'Admin panel lengkap dengan halaman web' },
+                { title: 'API only (REST, tanpa UI)', value: 'api', description: 'Hanya REST API — ringan, tanpa views/aset' },
+            ],
+            initial: 0,
+        })
+        // Jika user batal (Ctrl+C) → default full.
+        variant = res.variant || 'full'
+    }
 
+    const subdir = variant === 'api' ? 'template-api' : 'template'
+    const src = `github:${REPO}/${subdir}#${TEMPLATE_TAG}`
+
+    const targetDir = path.resolve(process.cwd(), targetName)
     if (fs.existsSync(targetDir) && fs.readdirSync(targetDir).length > 0) {
         console.error(pc.red(`✖ Folder "${targetName}" sudah ada dan tidak kosong.`))
         process.exit(1)
     }
 
-    console.log(pc.cyan(`\n⏬ Mengunduh template NodeAdmin ke ${pc.bold(targetName)}/ ...`))
+    const label = variant === 'api' ? 'API only' : 'Full (UI + API)'
+    console.log(pc.cyan(`\n⏬ Mengunduh template NodeAdmin [${label}] ke ${pc.bold(targetName)}/ ...`))
     try {
-        await downloadTemplate(TEMPLATE_SRC, { dir: targetDir, force: true })
+        await downloadTemplate(src, { dir: targetDir, force: true })
     } catch (err) {
         console.error(pc.red('✖ Gagal mengunduh template:'), err.message)
-        console.error(pc.dim(`  Sumber: ${TEMPLATE_SRC}`))
+        console.error(pc.dim(`  Sumber: ${src}`))
         process.exit(1)
     }
 
@@ -61,7 +88,7 @@ async function main() {
         // non-fatal — template tetap berfungsi tanpa rename.
     }
 
-    printNextSteps(targetName)
+    printNextSteps(targetName, variant)
 }
 
 function sanitizeName(name) {
@@ -70,15 +97,21 @@ function sanitizeName(name) {
         .replace(/^-+|-+$/g, '') || 'nodeadmin-app'
 }
 
-function printNextSteps(name) {
-    console.log(pc.green('\n✔ Selesai! Aplikasi NodeAdmin siap.\n'))
+function printNextSteps(name, variant) {
+    const isApi = variant === 'api'
+    console.log(pc.green(`\n✔ Selesai! ${isApi ? 'REST API NodeAdmin' : 'Aplikasi NodeAdmin'} siap.\n`))
     console.log('Langkah berikutnya:\n')
     console.log(pc.cyan(`  cd ${name}`))
     console.log(pc.cyan('  npm install'))
     console.log(pc.cyan('  cp .env.example .env') + pc.dim('     # default: SQLite (tanpa server DB)'))
     console.log(pc.cyan('  npm run migration:run') + pc.dim('    # buat tabel + seed admin & setting'))
     console.log(pc.cyan('  npm run start:dev') + pc.dim('        # http://localhost:3000'))
-    console.log('\nLogin default: ' + pc.bold('admin@admin.com') + ' / ' + pc.bold('12345678'))
+    if (isApi) {
+        console.log('\nUji API: ' + pc.bold('POST /api/v1/auth/login') + pc.dim('  { "email": "admin@admin.com", "password": "12345678" }'))
+        console.log(pc.dim('→ dapatkan access_token, lalu pakai header Authorization: Bearer <token>'))
+    } else {
+        console.log('\nLogin default: ' + pc.bold('admin@admin.com') + ' / ' + pc.bold('12345678'))
+    }
     console.log(pc.dim('(ganti password admin sebelum production)\n'))
 }
 

@@ -16,18 +16,20 @@ const DROP_SECTIONS = [
  * @param {object} opts
  * @param {(p:string)=>string} [opts.imagePath] transform path gambar (mis. → URL raw GitHub).
  * @param {boolean} [opts.dropTitle] buang judul H1 + intro asli (utk diganti header sendiri).
+ * @param {string[]} [opts.dropSections] heading H2 tambahan yang dibuang (mis. varian api).
  * @returns {string}
  */
 function buildCleanReadme(opts = {}) {
     const src = fs.readFileSync(path.join(ROOT, 'README.md'), 'utf8')
     const lines = src.split('\n')
+    const drop = [...DROP_SECTIONS, ...(opts.dropSections || [])]
     const out = []
     let skipping = false
 
     for (const line of lines) {
         const h2 = line.match(/^##\s+(.*)$/)
         if (h2) {
-            skipping = DROP_SECTIONS.some((t) => h2[1].trim() === t)
+            skipping = drop.some((t) => h2[1].trim() === t)
             if (skipping) {
                 while (out.length && out[out.length - 1].trim() === '') out.pop()
                 if (out.length && out[out.length - 1].trim() === '---') out.pop()
