@@ -11,13 +11,27 @@ Runtime generik & tooling diekstrak ke **paket terbitan** (`@flazhost-nodeadmin/
 Cara tercepat — satu perintah menghasilkan aplikasi NodeAdmin utuh di folder tujuan:
 
 ```bash
-npm create @flazhost-nodeadmin/app myapp
+npm create @flazhost-nodeadmin/app@latest myapp
 cd myapp
 npm install
 cp .env.example .env          # default: SQLite (tanpa server DB)
 npm run migration:run         # buat tabel + seed admin & setting
 npm run start:dev             # http://localhost:3000
 ```
+
+> Pakai akhiran **`@latest`** agar `npx` tidak memakai versi lama dari cache.
+
+**Pilih varian aplikasi** — scaffolder menanyakan jenis app (atau pilih via flag, tanpa prompt):
+
+```bash
+npm create @flazhost-nodeadmin/app@latest myapp              # interaktif: pilih Full / API only
+npm create @flazhost-nodeadmin/app@latest myapp -- --api     # langsung API only (REST, tanpa UI)
+```
+
+| Varian | Isi | Cocok untuk |
+|--------|-----|-------------|
+| **Full (UI + REST API)** *(default)* | Admin panel lengkap: halaman web (EJS+Tailwind), aset, landing + frontend template, komponen UI, plus REST API. | Admin panel siap pakai. |
+| **API only (REST, tanpa UI)** | Hanya REST API — tanpa `public/`, views, modul UI (landing/components/media). Ringan. | Backend headless / SPA / mobile. |
 
 Login default: `admin@admin.com` / `12345678`. Aplikasi hasil scaffold adalah project **standalone** yang menarik runtime dari `@flazhost-nodeadmin/core` + `cli` (npm) — update cukup `npm update`. Lihat [`@flazhost-nodeadmin/create-app`](https://www.npmjs.com/package/@flazhost-nodeadmin/create-app).
 

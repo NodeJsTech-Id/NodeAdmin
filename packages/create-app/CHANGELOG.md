@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.10
+
+### Patch Changes
+
+- Tarik `template-v1.0.6`: perbaikan migration fresh-install (`InitSetting` gagal `table settings has no column named fe_template`) — seed via raw query agar lepas dari metadata entity. Plus fitur frontend template switcher (katalog 640 + paginasi/search + preview) & landing data-driven ikut di template.
+
 ## 1.0.9
 
 ### Patch Changes
