@@ -10,6 +10,7 @@ const ROOT = path.resolve(__dirname, '..', '..')
 const DROP_SECTIONS = [
     '⚡ Create a New App (Scaffold)',
     '📦 Factory Packages',
+    '🚢 Publishing to npm (maintainer)',
 ]
 
 /**
