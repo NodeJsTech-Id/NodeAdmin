@@ -92,6 +92,8 @@ Daftar lengkap kapabilitas NodeAdmin. App hasil porting **harus** punya padanann
 - [ ] **Config env terpusat & tervalidasi** (tipe dikonversi, secret divalidasi).
 - [ ] **Helper DRY**: pagination, search case-insensitive (`ciLike` setara), render/response, dll.
 - [ ] **Graceful shutdown** (tutup koneksi DB/Redis saat SIGTERM/SIGINT).
+- [ ] **Bind/listen error fail-fast** — tangani error saat server mulai listen (mis. **port sudah dipakai**/EADDRINUSE): cetak pesan jelas + exit non-zero, **jangan** biarkan jadi unhandled error yang mematikan proses senyap. Di runtime async (mis. Node), event `error` server tak tertangkap `try/catch` di sekitar `listen` — pasang handler `error` eksplisit.
+- [ ] **Dev hot-reload jangan restart karena data runtime** — bila app menulis cache/unduhan ke direktori dalam project (mis. cache katalog, file ter-download), **kecualikan direktori itu dari watcher** dev (nodemon/`--watch`/setara), dan batasi watch ke folder sumber. Jika tidak: tiap penulisan cache memicu **restart di tengah request** → tampak sebagai "app mati senyap" / request gagal saat pemakaian pertama (sebelum cache terbentuk).
 - [ ] **Stateless** (session & file di store eksternal) → siap horizontal scaling.
 - [ ] **Named routes** — URL dirujuk lewat nama (helper `route('nama')`), bukan string hardcode → mudah refactor.
 - [ ] **Method-override** — form HTML bisa kirim PUT/DELETE (via `_method` atau mekanisme native framework).
@@ -108,6 +110,7 @@ Daftar lengkap kapabilitas NodeAdmin. App hasil porting **harus** punya padanann
   - **Daftar di server, sekali**: ambil katalog dari sumber (API/manifest) → cache (memori TTL + persist disk/cache store); **fallback** ke katalog kurasi statis bila sumber offline. Jangan fetch tiap request.
   - **Paginasi + search server-side** atas katalog (filter nama + kategori), bukan kirim seluruh daftar ke klien; **item aktif disematkan ke halaman pertama**.
   - **Thumbnail ringan + preview penuh**: render desain via iframe (thumbnail = iframe ter-scale, lazy-load saat terlihat; klik → modal preview); HTML preview **di-cache di sisi klien** (localStorage/setara) → server hanya proxy sekali per item.
+  - **Proxy preview tahan-banting (server-side)**: saat server mem-fetch HTML item dari sumber, **(a)** sajikan dari cache lokal lebih dulu bila ada (instan, tak bergantung jaringan/rate-limit), **(b)** beri **timeout** pada fetch upstream agar request tak menggantung (timeout fetch katalog/tree boleh lebih longgar dari fetch 1 file), **(c)** bila upstream gagal namun cache lokal ada → fallback ke lokal; baru error bila benar-benar tak ada sumber. Tanpa ini, blip jaringan/proxy-timeout muncul sebagai "gagal memuat preview" di klien.
   - **Anti-SSRF**: hanya item yang ada di katalog (atau cocok pola slug ketat) yang boleh di-fetch/proxy; validasi sebelum unduh.
   - **Unduh on-demand + cache lokal** saat item dipilih & disimpan (template aktif disajikan dari cache; app tetap ramping — hanya 1 default ter-bundle agar jalan offline).
 - [ ] **Landing publik data-driven (sample)** — template default mengikat data Setting (nama, logo, deskripsi, kontak, copyright) dengan guard + fallback → contoh hidup pola binding; item katalog lain disajikan sebagai HTML statis (preview desain).
