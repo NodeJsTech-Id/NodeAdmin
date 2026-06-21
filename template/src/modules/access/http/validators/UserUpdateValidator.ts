@@ -81,7 +81,7 @@ const UserUpdateValidator = (req: Request, res: Response, next: NextFunction): v
         if (errorTotal.length > 0) {
             req.session.errors = errorTotal
             req.session.old = req.body
-            return res.redirect('back')
+            return res.redirect(req.get('Referrer') || '/')
         }
     }
 

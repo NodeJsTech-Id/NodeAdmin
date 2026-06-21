@@ -73,24 +73,24 @@ export default class RoleController {
     public async permission_assign(req: Request, res: Response) {
         await this.roleService.permission_assign(req.params.id, req.params.permission_id)
         req.session.flashMessage = { key: 'success', message: 'Assign Permission Success.' }
-        return res.redirect('back')
+        return res.redirect(req.get('Referrer') || '/')
     }
 
     public async permission_assign_selected(req: Request, res: Response) {
         await this.roleService.permission_assign_selected(req.params.id, req.body.selected)
         req.session.flashMessage = { key: 'success', message: 'Assign Permission Success.' }
-        return res.redirect('back')
+        return res.redirect(req.get('Referrer') || '/')
     }
 
     public async permission_unassign(req: Request, res: Response) {
         await this.roleService.permission_unassign(req.params.id, req.params.permission_id)
         req.session.flashMessage = { key: 'success', message: 'Unassign Permission Success.' }
-        return res.redirect('back')
+        return res.redirect(req.get('Referrer') || '/')
     }
 
     public async permission_unassign_selected(req: Request, res: Response) {
         await this.roleService.permission_unassign_selected(req.params.id, req.body.selected)
         req.session.flashMessage = { key: 'success', message: 'Unassign Permission Success.' }
-        return res.redirect('back')
+        return res.redirect(req.get('Referrer') || '/')
     }
 }

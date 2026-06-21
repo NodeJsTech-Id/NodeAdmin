@@ -149,10 +149,10 @@ function copyRecursive(src, dst, variant) {
 
 // Deps yang HANYA dipakai UI web → dibuang pada varian api.
 // (ejs TETAP — dipakai render email reset-password. express-session/method-override
-//  dibuang karena api stateless JWT; connect-flash & layouts UI-only.)
+//  dibuang karena api stateless JWT; layouts UI-only. Flash kini inline di core,
+//  tak ada lagi dependency connect-flash.)
 const UI_ONLY_DEPS = [
     'express-ejs-layouts',
-    'connect-flash',
     'method-override',
     // CATATAN: express-session & connect-redis TETAP — redisClient.ts (shared,
     // dipakai blacklist token JWT) meng-import keduanya di module-level. Membuangnya

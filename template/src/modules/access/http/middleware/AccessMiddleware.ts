@@ -35,7 +35,7 @@ const AccessMiddleware = async (req: Request, res: Response, next: NextFunction)
                 if (!req.isAuthenticated()) {
                     return res.redirect('/auth/login')
                 }
-                return res.redirect('back')
+                return res.redirect(req.get('Referrer') || '/')
             } else {
                 return res.status(403).json({ message: 'Forbidden' })
             }

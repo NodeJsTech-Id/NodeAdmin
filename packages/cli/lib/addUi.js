@@ -44,11 +44,9 @@ const OVERWRITE_ON_UPGRADE = new Set([
 // Deps runtime UI-only yang ditambahkan saat upgrade (dibuang di varian api).
 const UI_DEPS = {
     'express-ejs-layouts': '^2.5.1',
-    'connect-flash': '^0.1.1',
     'method-override': '^3.0.0',
 }
 const UI_DEV_DEPS = {
-    '@types/connect-flash': '^0.0.40',
     '@types/method-override': '^0.0.35',
     '@playwright/test': '^1.45.0',
     '@cucumber/cucumber': '^10.8.0',

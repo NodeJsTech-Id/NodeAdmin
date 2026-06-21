@@ -8,7 +8,7 @@ import session from 'express-session'
 import cookieParser from 'cookie-parser'
 import methodOverride from 'method-override'
 import expressLayouts from 'express-ejs-layouts'
-import flash from 'connect-flash'
+import { flash } from './middleware/flash'
 import passport from 'passport'
 import namedRoutes from './utils/namedRoutes'
 import { csrfProtection } from './middleware/csrf'
@@ -135,7 +135,7 @@ export function createApp(opts: CreateAppOptions): Application {
         app.use(passport.initialize())
         app.use(passport.session())
 
-        // connect-flash
+        // flash messages (inline — pengganti connect-flash, tanpa util.isArray)
         app.use(flash())
 
         // Pindahkan session errors/flash/old ke res.locals + route builder di view

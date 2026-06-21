@@ -31,7 +31,7 @@ const ResetPasswordProcessValidator = (req: Request, res: Response, next: NextFu
         if (errorTotal.length > 0) {
             req.session.errors = errorTotal
             req.session.old = req.body
-            return res.redirect('back')
+            return res.redirect(req.get('Referrer') || '/')
         }
     }
 
