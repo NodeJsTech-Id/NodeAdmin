@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.5
+
+### Patch Changes
+
+- Arahkan ke template-v1.0.3 (README app turunan kini lengkap, bukan ringkas).
+
 ## 1.0.4
 
 ### Patch Changes
