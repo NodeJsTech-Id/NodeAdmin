@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.18
+
+### Patch Changes
+
+- README: tambah bagian **"Upgrade API-only → Full"** (`npx nodeadmin add-ui`) agar jalur upgrade terlihat di halaman npm create-app (sebelumnya hanya didokumentasikan di README cli). Tanpa perubahan kode scaffolder.
+
 ## 1.0.17
 
 ### Patch Changes

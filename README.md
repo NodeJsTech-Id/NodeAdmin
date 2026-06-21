@@ -33,6 +33,8 @@ npm create @flazhost-nodeadmin/app@latest myapp -- --api     # straight to API o
 | **Full (UI + REST API)** *(default)* | Complete admin panel: web pages (EJS+Tailwind), assets, home + frontend template, UI components, plus REST API. | Ready-to-use admin panel. |
 | **API only (REST, no UI)** | REST API only — no `public/`, views, or UI modules (home/components/media). Lightweight. | Headless backend / SPA / mobile. |
 
+> Started with **API only** and want the UI later? Run `npx nodeadmin add-ui` from the project root — it adds the UI layer on top of your API project (purely additive & idempotent; the variant is selected at runtime via `APP_MODE`), then verifies (`install` → `check` → `tsc` → `test`). No re-scaffold.
+
 Default login: `admin@admin.com` / `12345678`. The scaffolded app is a **standalone** project that pulls its runtime from `@flazhost-nodeadmin/core` + `cli` (npm) — updating is just `npm update`. See [`@flazhost-nodeadmin/create-app`](https://www.npmjs.com/package/@flazhost-nodeadmin/create-app).
 
 > Important distinction: `npm install @flazhost-nodeadmin/core` only installs the **library** into `node_modules/` (to be used by an existing app). To **scaffold a complete application** into an empty folder, use `npm create @flazhost-nodeadmin/app`.
