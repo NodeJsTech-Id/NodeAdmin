@@ -36,6 +36,7 @@ Tiap prompt di bawah sudah memuat instruksi standar ini:
 - Hasilkan juga: AGENTS.md versi target + convention checker + CI + equivalent `/make-module` + 1 modul percontohan (User/Role/Permission) lengkap + **halaman showcase komponen UI (`/admin/v1/components` setara) + docs/UI_COMPONENTS.md**.
 - **Modul Landing + Frontend Template Switcher** (lihat checklist "Fitur Fungsional" PORTING_GUIDE): katalog desain landing dari sumber eksternal — **daftar di server sekali (cache + fallback kurasi)**, **paginasi + search server-side** (item aktif ke halaman 1), **thumbnail iframe ter-scale (lazy) + modal preview** dgn **cache HTML di klien**, **anti-SSRF** (whitelist katalog/pola slug), **unduh on-demand + cache lokal** saat dipilih (1 default ter-bundle). **Landing default bind ke Setting** (nama/logo/deskripsi/kontak/copyright, guard+fallback) sebagai sample data-driven. **Routing**: root `/` **render halaman home LANGSUNG** (bukan redirect), `/home` alias; login eksplisit di `/auth/login`; daftarkan `/` **di modul home** (setelah middleware layout aktif), bukan root-handler inti, agar layout publik penuh ter-render. **Proxy preview tahan-banting (server-side)**: cache lokal dulu → fetch upstream pakai timeout → fallback ke cache lokal saat gagal (cegah "gagal memuat preview" akibat blip jaringan).
 - **Robustness runtime/dev**: (a) **listen/bind error fail-fast** — tangani EADDRINUSE (port dipakai) dengan pesan jelas + exit non-zero, jangan biarkan proses mati senyap; (b) **dev hot-reload jangan restart karena data runtime** — kecualikan direktori cache/unduhan dari watcher dev & batasi watch ke folder sumber (penulisan cache di tengah request → restart → tampak "app mati").
+- **Varian Full (UI + API) vs API-only** dari **satu basis kode**, dipilih runtime via env (mis. `APP_MODE=full|api`): mode `api` melewati lapisan web (session/static/layout/route web) → REST + JWT saja; mode `full` memasang semuanya. Pastikan **diff antar-varian purely-additive** (file shared identik di kedua mode — cabang via env/guard runtime, modul UI didaftarkan dengan guard kehadiran) sehingga API-only = Full dikurangi file UI utuh, dan install API-only bisa **di-upgrade ke Full** lewat **command idempotent** (mis. `add-ui` setara) yang menyalin file UI yang absent + set `APP_MODE=full` lalu memverifikasi (checker + typecheck + test). Jangan bikin dua project terpisah yang gampang divergen.
 - BERTAHAP: fondasi → modul percontohan → guardrail → sisanya. Verifikasi tiap fase.
 
 ---
@@ -294,9 +295,11 @@ Buat bootstrap SETARA pakai IDIOM NATIVE Go/Gin. Pemetaan:
 - Test                → testing + httptest (integration) + SQLite in-memory (glebarez/sqlite) + godog (BDD)
 - Checker             → custom linter (go/ast) / golangci-lint custom rule + gate CI
 - /make-module        → generator Go (text/template): go run ./cmd/make-module
+- Varian Full vs API-only → build tag / `APP_MODE` env pilih mode di main.go (mode api skip router web, hanya REST+JWT; modul UI didaftarkan dgn guard kehadiran). Diff antar-varian purely-additive. Upgrade API→Full → `go run ./cmd/add-ui` (salin paket/aset UI yg absent + set APP_MODE=full) lalu go build + go test ./...
 
 Pertahankan SEMUA prinsip Bagian 1 PORTING_GUIDE + penuhi SELURUH Capability Checklist.
 WAJIB hasilkan AGENTS.md versi Go, convention checker + CI, generator /make-module,
+varian Full/API-only (APP_MODE) + command upgrade add-ui,
 modul percontohan User/Role/Permission lengkap, halaman showcase komponen UI + docs/UI_COMPONENTS.md.
 Kerjakan BERTAHAP (fondasi → modul percontohan → guardrail → sisanya), verifikasi tiap fase
 (go build + go test ./... + checker hijau).

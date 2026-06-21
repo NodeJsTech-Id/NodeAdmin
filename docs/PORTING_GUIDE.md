@@ -95,6 +95,7 @@ Daftar lengkap kapabilitas NodeAdmin. App hasil porting **harus** punya padanann
 - [ ] **Bind/listen error fail-fast** — tangani error saat server mulai listen (mis. **port sudah dipakai**/EADDRINUSE): cetak pesan jelas + exit non-zero, **jangan** biarkan jadi unhandled error yang mematikan proses senyap. Di runtime async (mis. Node), event `error` server tak tertangkap `try/catch` di sekitar `listen` — pasang handler `error` eksplisit.
 - [ ] **Dev hot-reload jangan restart karena data runtime** — bila app menulis cache/unduhan ke direktori dalam project (mis. cache katalog, file ter-download), **kecualikan direktori itu dari watcher** dev (nodemon/`--watch`/setara), dan batasi watch ke folder sumber. Jika tidak: tiap penulisan cache memicu **restart di tengah request** → tampak sebagai "app mati senyap" / request gagal saat pemakaian pertama (sebelum cache terbentuk).
 - [ ] **Stateless** (session & file di store eksternal) → siap horizontal scaling.
+- [ ] **Varian aplikasi: Full (UI + API) vs API-only**, dipilih **runtime via env** (mis. `APP_MODE=full|api`) dari **satu basis kode** — bukan dua project terpisah. Mode `api` melewati lapisan web (session/static/layout/route web), hanya REST + JWT (stateless); mode `full` memasang semuanya. **Diff antar-varian WAJIB purely-additive**: file shared identik di kedua mode (cabang lewat env/guard runtime, bukan meng-edit isi file saat build varian), modul UI didaftarkan dengan **guard kehadiran** (absent → lewati diam-diam) sehingga API-only = Full **dikurangi file UI utuh**. Konsekuensinya install API-only bisa **di-upgrade ke Full kapan saja** (tambah file UI yang absent + set `APP_MODE=full`) tanpa scaffold ulang & tanpa konflik — sediakan **command upgrade idempotent** (mis. `add-ui` setara) yang menyalin hanya file absent, merge deps/scripts UI, lalu **verifikasi (checker + typecheck + test)**.
 - [ ] **Named routes** — URL dirujuk lewat nama (helper `route('nama')`), bukan string hardcode → mudah refactor.
 - [ ] **Method-override** — form HTML bisa kirim PUT/DELETE (via `_method` atau mekanisme native framework).
 - [ ] **Flash messages** — feedback sukses/error setelah redirect (PRG pattern), + tampilan `old input` saat validasi gagal.
@@ -184,6 +185,7 @@ WAJIB hasilkan juga:
   - AGENTS.md versi {FRAMEWORK} (aturan + checklist modul + larangan)
   - Convention checker idiomatik {FRAMEWORK} + integrasi CI
   - Equivalent "/make-module" (generator/command) bila framework mendukung
+  - Varian Full (UI+API) vs API-only (pilih runtime via env, mis. `APP_MODE`) + command upgrade idempotent (mis. `add-ui`) — diff antar-varian purely-additive
   - 1 modul percontohan lengkap (mis. User/Role/Permission) sebagai acuan pola
   - Halaman showcase komponen UI + docs/UI_COMPONENTS.md (katalog snippet)
 
@@ -338,6 +340,7 @@ Kolom kiri = konsep NodeAdmin. Kolom kanan = padanan idiomatik. Yang ditandai **
 | BDD | **`cucumber/godog`** |
 | Convention checker | **custom linter** (`go/ast` atau **golangci-lint** custom rule) + script gate CI |
 | /make-module skill | **generator Go** (`text/template`) — `go run ./cmd/make-module` |
+| Varian Full vs API-only + upgrade | **build tag** atau **`APP_MODE` env** memilih mode di `main.go` (registrasi router web di-skip pada mode api); modul UI didaftarkan dengan guard kehadiran. Upgrade API→Full = subcommand generator (mis. `go run ./cmd/add-ui`) yang menyalin paket/aset UI yang absent + set `APP_MODE=full`, lalu `go build` + `go test ./...` |
 
 ---
 
