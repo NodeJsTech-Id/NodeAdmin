@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import FeCatalogService from '../../src/modules/landing/http/services/v1/FeCatalogService'
+import FeCatalogService from '../../src/modules/home/http/services/v1/FeCatalogService'
 import { deriveFeTemplate } from '../../src/config/feTemplates'
 
 // Stub fetch agar test deterministik (tak menyentuh GitHub).

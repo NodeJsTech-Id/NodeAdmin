@@ -1,5 +1,5 @@
 import 'reflect-metadata'
-import FeTemplateService from '../../src/modules/landing/http/services/v1/FeTemplateService'
+import FeTemplateService from '../../src/modules/home/http/services/v1/FeTemplateService'
 import { DEFAULT_FE_TEMPLATE } from '../../src/config/feTemplates'
 
 describe('FeTemplateService (integration)', () => {

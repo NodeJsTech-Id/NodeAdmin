@@ -10,7 +10,7 @@ import { ISettingService } from './ISettingService'
 import { TOKENS } from '../../../../../tokens'
 import { AppError } from '@flazhost-nodeadmin/core'
 import { cleanRichText } from '../../../../../helpers/sanitizeHtml'
-import type { IFeTemplateService } from '../../../../landing/http/services/v1/IFeTemplateService'
+import type { IFeTemplateService } from '../../../../home/http/services/v1/IFeTemplateService'
 
 function generateUniqueFileName(): string {
     const currentDate = new Date();

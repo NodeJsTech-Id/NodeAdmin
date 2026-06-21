@@ -89,7 +89,7 @@ export default class UserService implements IUserService {
 
 ## Frontend Template (Landing)
 
-Halaman publik `/` memakai katalog 640 landing [opentailwind](https://github.com/lindoai/opentailwind). Dua service di modul `landing` (`http/services/v1`):
+Halaman publik `/` memakai katalog 640 landing [opentailwind](https://github.com/lindoai/opentailwind). Dua service di modul `home` (`http/services/v1`):
 
 | Service | Tugas |
 |---------|-------|

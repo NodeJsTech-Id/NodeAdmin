@@ -15,9 +15,9 @@ describe('Smoke', () => {
         expect(res.text).toContain('csrf-token')
     })
 
-    it('root redirect ke /landing', async () => {
+    it('root render home langsung (200 HTML, tanpa redirect)', async () => {
         const res = await request(app).get('/')
-        expect(res.status).toBe(302)
-        expect(res.headers.location).toBe('/landing')
+        expect(res.status).toBe(200)
+        expect(res.headers['content-type']).toMatch(/html/)
     })
 })

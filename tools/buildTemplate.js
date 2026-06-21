@@ -70,7 +70,7 @@ const EXCLUDE_PATHS_API = new Set([
     'src/globalFunctions.ts',
     'src/modules/components',
     'src/modules/media',     // file manager rich text editor = fitur UI (web), tak relevan API-only
-    'src/modules/landing',   // landing/template switcher = fitur UI (web)
+    'src/modules/home',      // home/template switcher = fitur UI (web)
     'src/config/feTemplates.ts',
     'src/index.ts',
     'playwright.config.ts',
@@ -89,10 +89,10 @@ const WEB_TEST_PATHS = new Set([
     'tests/api/components.test.ts',
     'tests/api/access.user.test.ts',
     'tests/api/auth.test.ts',
-    // Test fitur UI yang modulnya dibuang di api (media, landing).
+    // Test fitur UI yang modulnya dibuang di api (media, home).
     'tests/api/media.test.ts',
     'tests/integration/mediaService.test.ts',
-    'tests/api/landing.test.ts',
+    'tests/api/home.test.ts',
     'tests/integration/feTemplateService.test.ts',
 ].map((p) => path.normalize(p)))
 
@@ -254,13 +254,14 @@ function buildVariant(variant, out) {
             }
         }
 
-        // Modul UI (media, landing) dibuang di api → hapus referensinya di
+        // Modul UI (media, home) dibuang di api → hapus referensinya di
         // container.ts agar tak ada import yatim.
         const containerPath = path.join(out, 'src/container.ts')
         if (fs.existsSync(containerPath)) {
             let c = fs.readFileSync(containerPath, 'utf8')
             c = c.replace(/^.*MediaService.*\n/gm, '')
             c = c.replace(/^.*FeTemplateService.*\n/gm, '')
+            c = c.replace(/^.*FeCatalogService.*\n/gm, '')
             fs.writeFileSync(containerPath, c)
         }
 
@@ -323,7 +324,7 @@ function buildReadme(variant) {
     if (variant === 'api') {
         // Buang section UI murni: screenshot halaman & template switcher tak relevan
         // untuk REST API. (docs/screenshots juga tak ikut — lihat EXCLUDE api docs.)
-        return buildCleanReadme({ dropSections: ['🖼️ Tampilan', '🎨 Template Switcher'] })
+        return buildCleanReadme({ dropSections: ['🖼️ Screenshots', '🎨 Template Switcher'] })
     }
     return buildCleanReadme()
 }

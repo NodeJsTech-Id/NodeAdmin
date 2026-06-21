@@ -8,8 +8,8 @@ const ROOT = path.resolve(__dirname, '..', '..')
 
 // Heading `## ...` yang dibuang (materi pabrik/monorepo, tak relevan utk konsumen).
 const DROP_SECTIONS = [
-    '⚡ Buat Aplikasi Baru (Scaffold)',
-    '📦 Paket Pabrik',
+    '⚡ Create a New App (Scaffold)',
+    '📦 Factory Packages',
 ]
 
 /**
@@ -41,11 +41,11 @@ function buildCleanReadme(opts = {}) {
     }
 
     let text = out.join('\n')
-    text = text.replace(/^Runtime generik & tooling diekstrak[^\n]*\n/m, '')
-    text = text.replace(/\n# Paket pabrik \(packages\/\*\)[\s\S]*?changeset publish[^\n]*\n/m, '\n')
+    text = text.replace(/^The generic runtime & tooling are extracted[^\n]*\n/m, '')
+    text = text.replace(/\n# Factory packages \(packages\/\*\)[\s\S]*?changeset publish[^\n]*\n/m, '\n')
     text = text.replace(/^packages\/.*\n(?:[├└│].*\n)*\n?/m, '')
     text = text.replace(/^\.changeset\/.*\n/m, '')
-    text = text.replace(/^(src\/\s+#).*$/m, '$1 kode aplikasi')
+    text = text.replace(/^(src\/\s+#).*$/m, '$1 application code')
 
     // Transform path gambar bila diminta (mis. relatif → URL absolut).
     if (opts.imagePath) {

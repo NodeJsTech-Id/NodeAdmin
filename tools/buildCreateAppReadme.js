@@ -22,40 +22,40 @@ const HEADER = `# create-app — NodeAdmin
 [![npm](https://img.shields.io/npm/v/@flazhost-nodeadmin/create-app.svg)](https://www.npmjs.com/package/@flazhost-nodeadmin/create-app)
 [![license](https://img.shields.io/npm/l/@flazhost-nodeadmin/create-app.svg)](https://github.com/FlazHost-Com/NodeAdmin/blob/main/LICENSE)
 
-Scaffold **aplikasi admin panel Node.js yang utuh & siap pakai** dalam satu perintah — auth, RBAC, profile, setting, theme + frontend template switcher, migrasi + seed admin, semuanya sudah tertata.
+Scaffold a **complete, ready-to-use Node.js admin panel application** in a single command — auth, RBAC, profile, setting, theme + frontend template switcher, migrations + admin seed, everything already wired up.
 
 \`\`\`bash
 npm create @flazhost-nodeadmin/app@latest myapp
 cd myapp
 npm install
-cp .env.example .env          # default: SQLite — tanpa server DB
-npm run migration:run         # buat tabel + seed admin & setting
+cp .env.example .env          # default: SQLite — no DB server
+npm run migration:run         # create tables + seed admin & setting
 npm run start:dev             # http://localhost:3000
 \`\`\`
 
-> Pakai akhiran **\`@latest\`** agar \`npx\` tidak memakai versi lama dari cache.
+> Use the **\`@latest\`** suffix so \`npx\` does not use a stale version from cache.
 
-## Pilih varian aplikasi
+## Choose an application variant
 
-Scaffolder menanyakan **jenis aplikasi** (menu pilih), atau tentukan via flag tanpa prompt:
+The scaffolder asks for the **application type** (a select menu), or you can set it via a flag without any prompt:
 
 \`\`\`bash
-npm create @flazhost-nodeadmin/app@latest myapp              # interaktif: pilih Full / API only
-npm create @flazhost-nodeadmin/app@latest myapp -- --api     # langsung API only (REST, tanpa UI)
+npm create @flazhost-nodeadmin/app@latest myapp              # interactive: choose Full / API only
+npm create @flazhost-nodeadmin/app@latest myapp -- --api     # straight to API only (REST, no UI)
 \`\`\`
 
-| Varian | Isi | Cocok untuk |
-|--------|-----|-------------|
-| **Full (UI + REST API)** *(default)* | Admin panel lengkap: halaman web (EJS+Tailwind), aset, landing + frontend template, komponen UI, plus REST API. | Admin panel siap pakai. |
-| **API only (REST, tanpa UI)** | Hanya REST API — tanpa \`public/\`, views, modul UI (landing/components/media). Ringan. | Backend headless / SPA / mobile. |
+| Variant | Contents | Best for |
+|---------|----------|----------|
+| **Full (UI + REST API)** *(default)* | Complete admin panel: web pages (EJS+Tailwind), assets, home + frontend template, UI components, plus REST API. | A ready-to-use admin panel. |
+| **API only (REST, no UI)** | REST API only — no \`public/\`, views, or UI modules (home/components/media). Lightweight. | Headless backend / SPA / mobile. |
 
-Juga: \`npm init\`, \`yarn create\`, \`pnpm create\`. Tanpa argumen nama → ditanya interaktif.
-Login default: \`admin@admin.com\` / \`12345678\`.
+Also works with: \`npm init\`, \`yarn create\`, \`pnpm create\`. With no name argument → you are prompted interactively.
+Default login: \`admin@admin.com\` / \`12345678\`.
 
-Aplikasi hasil scaffold adalah project **standalone** yang menarik runtime dari
+The scaffolded application is a **standalone** project that pulls its runtime from
 [\`@flazhost-nodeadmin/core\`](https://www.npmjs.com/package/@flazhost-nodeadmin/core) +
 [\`@flazhost-nodeadmin/cli\`](https://www.npmjs.com/package/@flazhost-nodeadmin/cli) (npm) —
-update cukup \`npm update\`.
+to update, just run \`npm update\`.
 
 ---
 

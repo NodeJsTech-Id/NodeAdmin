@@ -111,13 +111,14 @@ Daftar lengkap kapabilitas NodeAdmin. App hasil porting **harus** punya padanann
   - **Anti-SSRF**: hanya item yang ada di katalog (atau cocok pola slug ketat) yang boleh di-fetch/proxy; validasi sebelum unduh.
   - **Unduh on-demand + cache lokal** saat item dipilih & disimpan (template aktif disajikan dari cache; app tetap ramping — hanya 1 default ter-bundle agar jalan offline).
 - [ ] **Landing publik data-driven (sample)** — template default mengikat data Setting (nama, logo, deskripsi, kontak, copyright) dengan guard + fallback → contoh hidup pola binding; item katalog lain disajikan sebagai HTML statis (preview desain).
+- [ ] **Routing home publik** — root `/` **me-render halaman home LANGSUNG** (bukan redirect; URL tetap bersih di root), `/home` = alias eksplisit yang dapat di-link. Login **tidak lagi di root**; halaman login eksplisit di `/auth/login`. Catatan port: daftarkan route `/` **di modul home** (setelah middleware layout/template aktif), **bukan** sebagai root-handler inti — agar layout publik penuh ikut ter-render.
 - [ ] **Multi-timezone** — tampilan tanggal mengikuti timezone user.
 - [ ] **File storage eksternal** (S3/OSS/setara) dengan signed URL.
 - [ ] **Email** (reset OTP, notifikasi) via SMTP konfigurable.
 - [ ] **UI server-side** (template engine native + Tailwind): layout/partial (head/sidebar/topbar/foot), tabel + search + pagination, form CRUD, status pakai ikon, fallback gambar gagal-load.
 - [ ] **Sidebar dinamis** — item menu tampil sesuai permission user (`hasAccess`), penanda menu aktif.
 - [ ] **Halaman showcase komponen UI** (`/admin/v1/components` setara) — acuan hidup elemen: stat card+counter, chart (themeable), badge/status, alert, button+dropdown, form, tabel+pagination.
-- [ ] Modul inti: **User, Role, Permission (RBAC), Profile, Setting, Dashboard (stats), Components (showcase), Landing (frontend template + halaman publik)**.
+- [ ] Modul inti: **User, Role, Permission (RBAC), Profile, Setting, Dashboard (stats), Components (showcase), Home (frontend template + halaman publik)**.
 
 #### 🧪 Testing (wajib tiap fitur)
 - [ ] **Unit** (helper murni), **Integration** (service↔DB, SQLite in-memory), **API** (HTTP), **Security** (RBAC/CSRF/rate-limit/JWT/mass-assign), **Smoke**, **E2E** (browser), **BDD** (skenario).

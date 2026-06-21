@@ -6,13 +6,13 @@ import { IFeTemplateService } from '../../../services/v1/IFeTemplateService'
 import { TOKENS } from '../../../../../../tokens'
 
 /**
- * Halaman frontend (landing) publik.
+ * Halaman home (frontend publik).
  * - Template DEFAULT → dirender via layout EJS (fe/default) — terpisah head/
  *   header/footer + aset di public/fe/default (konsistensi ala eduzone).
  * - Template lain (hasil switch/download) → HTML mentah self-contained.
  */
 @injectable()
-export default class LandingController {
+export default class HomeController {
     constructor(@inject(TOKENS.IFeTemplateService) private feTemplate: IFeTemplateService) {}
 
     public async index(_req: Request, res: Response) {

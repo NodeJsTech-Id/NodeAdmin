@@ -1,26 +1,26 @@
 # @flazhost-nodeadmin/cli
 
-Tooling [NodeAdmin](https://github.com/NodeJsTech-Id/NodeAdmin) — convention checker (CI gate), generator migration, dan copy views untuk app turunan.
+Tooling for [NodeAdmin](https://github.com/NodeJsTech-Id/NodeAdmin) — convention checker (CI gate), migration generator, and view copier for derived apps.
 
-## Instalasi
+## Installation
 
 ```bash
 npm install -D @flazhost-nodeadmin/cli
 ```
 
-## Penggunaan
+## Usage
 
 ```bash
 npx nodeadmin <command>
 ```
 
-| Command | Fungsi |
-|---------|--------|
-| `nodeadmin check` | Cek konvensi modul (DI, error handling, route, render) — dipakai sebagai CI gate. Penyimpangan → exit non-zero. |
-| `nodeadmin make-migration <Nama>` | Generate file migration TypeORM dari template. |
-| `nodeadmin copy-views` | Salin views generik ke struktur app. |
+| Command | Purpose |
+|---------|---------|
+| `nodeadmin check` | Check module conventions (DI, error handling, routing, render) — used as a CI gate. Any violation → non-zero exit. |
+| `nodeadmin make-migration <Name>` | Generate a TypeORM migration file from a template. |
+| `nodeadmin copy-views` | Copy generic views into the app structure. |
 
-Contoh di `package.json` app turunan:
+Example in a derived app's `package.json`:
 
 ```json
 {
@@ -34,6 +34,6 @@ Contoh di `package.json` app turunan:
 npm run lint:conventions
 ```
 
-## Lisensi
+## License
 
 MIT

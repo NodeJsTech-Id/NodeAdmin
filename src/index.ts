@@ -75,11 +75,6 @@ const configurePassport = (p: typeof passport) => {
     })
 }
 
-// Root '/' — arahkan ke landing publik (satu sumber render di LandingController).
-const rootHandler = (_req: express.Request, res: express.Response) => {
-    res.redirect('/landing')
-}
-
 const app = createApp({
     isProd: env.isProd,
     isTest,
@@ -90,7 +85,7 @@ const app = createApp({
     ensureRedisConnected,
     globalLocals: globalFunctions,
     configurePassport,
-    rootHandler,
+    // Root '/' didaftar di module home (routes/web.ts) agar terkena layout.
     views: {
         engine: 'ejs',
         dir: path.resolve(__dirname, 'resources'),

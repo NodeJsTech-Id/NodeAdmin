@@ -1,14 +1,14 @@
 # Node Admin
 
-Node Admin adalah **starter pack / bootstrap** untuk membangun aplikasi admin panel berbasis Node.js (TypeScript + Express + TypeORM). Dirancang sebagai fondasi yang scalable dengan menerapkan prinsip rekayasa perangkat lunak yang solid, keamanan berlapis, dan suite pengujian lengkap.
+Node Admin is a **starter pack / bootstrap** for building Node.js-based admin panel applications (TypeScript + Express + TypeORM). It is designed as a scalable foundation that applies solid software engineering principles, layered security, and a complete test suite.
 
-## 🖼️ Tampilan
+## 🖼️ Screenshots
 
 | Login | Dashboard |
 |-------|-----------|
 | ![Login](docs/screenshots/login.png) | ![Dashboard](docs/screenshots/dashboard.png) |
 
-| User Management (RBAC) | Setting + Frontend Template (640 katalog) |
+| User Management (RBAC) | Setting + Frontend Template (640 catalog) |
 |------------------------|-------------------------------------------|
 | ![Users](docs/screenshots/users.png) | ![Setting](docs/screenshots/setting.png) |
 
@@ -16,60 +16,60 @@ Node Admin adalah **starter pack / bootstrap** untuk membangun aplikasi admin pa
 |-------------------|---------------|
 | ![Roles](docs/screenshots/roles.png) | ![Components](docs/screenshots/components.png) |
 
-| Landing Page (template default, bind ke Setting) |
+| Home Page (default template, bound to Setting) |
 |--------------------------------------------------|
-| ![Landing](docs/screenshots/landing.png) |
+| ![Home](docs/screenshots/landing.png) |
 
 ---
 
-## ✨ Fitur
+## ✨ Features
 
-- **User Management** — CRUD pengguna, multi-role, foto profil.
-- **Role & Permission (RBAC)** — kontrol akses berbasis route + permission per-aksi.
-- **Profile Management** — pengguna mengelola profil & password sendiri.
-- **Authentication** — sesi (Passport local + Redis) untuk web & **JWT** untuk API.
+- **User Management** — user CRUD, multi-role, profile photo.
+- **Role & Permission (RBAC)** — route-based access control + per-action permissions.
+- **Profile Management** — users manage their own profile & password.
+- **Authentication** — sessions (Passport local + Redis) for the web & **JWT** for the API.
 - **Password Reset** — OTP via email (hashed + expiry).
-- **Template Switcher** — 9 tema warna (Blue, Black, Brown, Green, Grey, Orange, Purple, Red, Yellow) yang dapat diganti dari halaman Setting; seluruh UI admin berubah tanpa rebuild.
-- **Frontend Template Switcher** — halaman landing publik (`/`) dengan **640 desain** dari [opentailwind](https://github.com/lindoai/opentailwind) (MIT), ditelusuri di Setting via **pencarian + filter kategori + paginasi** (server-side); template aktif disematkan ke halaman pertama. Tiap kartu menampilkan **thumbnail live** (iframe ter-scale) dan klik → **Preview** penuh; HTML preview di-cache di `localStorage` browser agar tak membebani server. Template terpilih di-unduh & di-cache lokal saat **Save** — app tetap ramping (hanya 1 default ter-bundle).
-- **Landing Default sebagai Sample** — template default (EJS) mengikat data **Setting** (nama, logo, deskripsi, kontak, copyright) sebagai contoh hidup; ubah Setting → landing ikut berubah. Jadi pola acuan saat membuat landing kustom.
-- **Multi-Database** — dialect-agnostic via TypeORM (MySQL, MariaDB, PostgreSQL, SQLite, MSSQL, Oracle) cukup dengan mengganti `DB_TYPE`.
-- **Multi-Timezone** — tampilan tanggal mengikuti timezone pengguna (dayjs).
-- **File Storage** — upload ke Alibaba Cloud OSS (re-encode gambar via sharp).
-- **Stateless** — session di Redis, file di OSS → siap horizontal scaling.
+- **Template Switcher** — 9 color themes (Blue, Black, Brown, Green, Grey, Orange, Purple, Red, Yellow) that can be changed from the Setting page; the entire admin UI changes without a rebuild.
+- **Frontend Template Switcher** — the public home page (served directly at the root `/`) with **640 landing designs** from [opentailwind](https://github.com/lindoai/opentailwind) (MIT), browsable in Setting via **search + category filter + pagination** (server-side); the active template is pinned to the first page. Each card shows a **live thumbnail** (scaled iframe) and clicking it opens a full **Preview**; the preview HTML is cached in the browser's `localStorage` to avoid loading the server. The selected template is downloaded & cached locally on **Save** — the app stays lean (only 1 default is bundled).
+- **Default Home as a Sample** — the default template (EJS) binds to the **Setting** data (name, logo, description, contact, copyright) as a living example; change Setting → the home page changes too. It serves as the reference pattern when building a custom home page.
+- **Multi-Database** — dialect-agnostic via TypeORM (MySQL, MariaDB, PostgreSQL, SQLite, MSSQL, Oracle) just by changing `DB_TYPE`.
+- **Multi-Timezone** — date display follows the user's timezone (dayjs).
+- **File Storage** — upload to Alibaba Cloud OSS (image re-encoding via sharp).
+- **Stateless** — sessions in Redis, files in OSS → ready for horizontal scaling.
 
 ---
 
-## 🏗️ Arsitektur & Prinsip
+## 🏗️ Architecture & Principles
 
-Aplikasi disusun **modular per fitur** (`src/modules/<modul>`), tiap modul punya lapisan: `routes → middleware → controller → service → entity → views`.
+The application is structured **modularly per feature** (`src/modules/<module>`), each module having layers: `routes → middleware → controller → service → entity → views`.
 
-Prinsip yang diterapkan (detail di [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)):
+Principles applied (details in [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md)):
 
-| Prinsip | Penerapan |
+| Principle | Implementation |
 |---------|-----------|
-| **SOLID** | Dependency Injection via [tsyringe](https://github.com/microsoft/tsyringe) — controller & service di-inject lewat container (`src/container.ts`), service mengimplementasikan interface (`I*Service`). |
-| **DRY** | Helper terpusat: `paginate()`, `ciLike()`, `renderView()`, `removeEmptyFields()`. |
-| **Separation of Concerns** | Controller (HTTP) ≠ Service (bisnis) ≠ Repository (data) ≠ View (presentasi). |
-| **Clean Code** | Error handling terpusat (`AppError` + `errorHandler` middleware); service `throw`, bukan `return error`. |
-| **Low Coupling** | Komponen bergantung pada abstraksi (interface + token DI), bukan implementasi konkret. |
-| **Twelve-Factor** | Config via env terpusat & tervalidasi (`src/config/env.ts`), stateless, logs ke stdout, graceful shutdown. |
-| **TDD / BDD** | Suite test menyeluruh (lihat bagian Testing). |
+| **SOLID** | Dependency Injection via [tsyringe](https://github.com/microsoft/tsyringe) — controllers & services are injected through the container (`src/container.ts`), services implement an interface (`I*Service`). |
+| **DRY** | Centralized helpers: `paginate()`, `ciLike()`, `renderView()`, `removeEmptyFields()`. |
+| **Separation of Concerns** | Controller (HTTP) ≠ Service (business) ≠ Repository (data) ≠ View (presentation). |
+| **Clean Code** | Centralized error handling (`AppError` + `errorHandler` middleware); services `throw`, not `return error`. |
+| **Low Coupling** | Components depend on abstractions (interfaces + DI tokens), not concrete implementations. |
+| **Twelve-Factor** | Config via centralized & validated env (`src/config/env.ts`), stateless, logs to stdout, graceful shutdown. |
+| **TDD / BDD** | Comprehensive test suite (see the Testing section). |
 
 ---
 
-## 📁 Struktur Direktori
+## 📁 Directory Structure
 
 ```
-src/                     # kode aplikasi
-├── config/          # env (terpusat & tervalidasi), ormconfig, app
-├── container.ts     # registrasi DI (tsyringe)
-├── tokens.ts        # token DI
+src/                     # application code
+├── config/          # env (centralized & validated), ormconfig, app
+├── container.ts     # DI registration (tsyringe)
+├── tokens.ts        # DI tokens
 ├── services/        # fileService (OSS), mailer, settingCache
-├── resources/       # layout & partial EJS (be/default = tema Tailwind aktif)
+├── resources/       # EJS layouts & partials (be/default = active Tailwind theme)
 └── modules/
     ├── access/      # user, role, permission (RBAC)
-    ├── auth/        # login, register, JWT, reset password
-    ├── components/  # showcase komponen UI
+    ├── auth/        # login, register, JWT, password reset
+    ├── components/  # UI component showcase
     ├── dashboard/
     ├── profile/
     └── setting/     # setting + template switcher
@@ -79,7 +79,7 @@ docs/                # ARCHITECTURE.md, TESTING.md, API.md
 
 ---
 
-## 🚀 Instalasi
+## 🚀 Installation
 
 ```bash
 git clone https://github.com/NodeJsTech-Id/NodeAdmin.git
@@ -87,25 +87,25 @@ cd NodeAdmin
 npm install
 ```
 
-### 1. Siapkan database
+### 1. Prepare the database
 
-Default MySQL — buat database kosong:
+Default is MySQL — create an empty database:
 ```sql
 CREATE DATABASE nodeadmin;
 ```
-(Untuk DB lain, lihat bagian **Multi-Database** di bawah.)
+(For other databases, see the **Multi-Database** section below.)
 
-### 2. Konfigurasi `.env`
+### 2. Configure `.env`
 
-Salin `.env.example` ke `.env`, lalu isi. **Wajib** di production: `SESSION_SECRET` & `JWT_SECRET` (app berhenti jika kosong saat `NODE_ENV=production`).
+Copy `.env.example` to `.env`, then fill it in. **Required** in production: `SESSION_SECRET` & `JWT_SECRET` (the app halts if they are empty when `NODE_ENV=production`).
 
 ```bash
 cp .env.example .env
-# generate secret:
+# generate a secret:
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-Variabel penting:
+Important variables:
 ```
 APP_PORT=3000
 NODE_ENV=development
@@ -119,13 +119,13 @@ DB_DATABASE=nodeadmin
 
 REDIS_URL=redis://127.0.0.1:6379
 
-SESSION_SECRET=          # WAJIB di production
-JWT_SECRET=              # WAJIB di production
+SESSION_SECRET=          # REQUIRED in production
+JWT_SECRET=              # REQUIRED in production
 JWT_EXPIRES_IN=1h
 BCRYPT_ROUNDS=10
 OTP_EXPIRY_MINUTES=10
 
-# Alibaba OSS (penyimpanan file)
+# Alibaba OSS (file storage)
 OSS_ACCESS_ID=
 OSS_ACCESS_KEY=
 OSS_ENDPOINT=oss-ap-southeast-5.aliyuncs.com
@@ -133,109 +133,109 @@ OSS_BUCKET=
 OSS_SSL=true
 ```
 
-### 3. Migrasi + seed
+### 3. Migrate + seed
 
 ```bash
 npm run migration:run
 ```
-Membuat skema + seed admin default & data setting awal.
+Creates the schema + seeds the default admin & initial setting data.
 
-### 4. Jalankan
+### 4. Run
 
 ```bash
-npm run start:dev      # mode dev (nodemon + ts-node)
-# atau
-npm start              # mode produksi (build + pm2 dari dist)
+npm run start:dev      # dev mode (nodemon + ts-node)
+# or
+npm start              # production mode (build + pm2 from dist)
 ```
 
-Buka **http://localhost:3000**. Login default:
+Open **http://localhost:3000** — the public home page is rendered directly at the root (no redirect, clean URL); `/home` is an explicit alias. The admin login is at **http://localhost:3000/auth/login**. Default login:
 ```
 Email   : admin@admin.com
 Password: 12345678
 ```
-> ⚠️ Ganti password admin sebelum production.
+> ⚠️ Change the admin password before going to production.
 
 ---
 
 ## 🗄️ Multi-Database
 
-Aplikasi dialect-agnostic. Ganti `DB_TYPE` + install driver yang sesuai:
+The application is dialect-agnostic. Change `DB_TYPE` + install the appropriate driver:
 
 | DB | DB_TYPE | Driver |
 |----|---------|--------|
-| MySQL | `mysql` | `mysql2` (terpasang) |
+| MySQL | `mysql` | `mysql2` (installed) |
 | MariaDB | `mariadb` | `mysql2` |
-| PostgreSQL | `postgres` | `pg` (terpasang) |
+| PostgreSQL | `postgres` | `pg` (installed) |
 | SQLite | `better-sqlite3` | `better-sqlite3` (dev) |
 | SQL Server | `mssql` | `mssql` |
 | Oracle | `oracle` | `oracledb` |
 
-SQLite: isi `DB_DATABASE` dengan path file (mis. `./dev.sqlite`). Lalu `npm run migration:run`.
+SQLite: set `DB_DATABASE` to a file path (e.g. `./dev.sqlite`). Then run `npm run migration:run`.
 
 ---
 
 ## 🎨 Template Switcher
 
-Login → menu **Setting** → pilih salah satu dari 9 swatch warna → **Save**. Seluruh UI admin & halaman login berganti warna seketika (disimpan di `settings.theme`, dibaca lewat CSS variable). Palet didefinisikan di `src/config/themes.ts`.
+Log in → **Setting** menu → pick one of the 9 color swatches → **Save**. The entire admin UI & login page change color instantly (stored in `settings.theme`, read via a CSS variable). The palettes are defined in `src/config/themes.ts`.
 
 ---
 
-## 🔒 Keamanan
+## 🔒 Security
 
 - **Helmet** — security headers (HSTS, X-Frame-Options, nosniff).
-- **CSRF protection** — token sinkron untuk semua form web (`src/middleware/csrf.ts`).
-- **Rate limiting** — login / register / OTP dibatasi per-IP.
-- **Session cookie** — `httpOnly`, `sameSite`, `secure` (otomatis di production).
-- **Password** — bcrypt; OTP reset di-hash + expiry + rate-limit.
-- **JWT** — algoritma di-pin (HS256), blacklist saat logout (TTL).
-- **RBAC** — `ensureAuthenticated` → `AccessMiddleware` di setiap route admin.
-- **Mass-assignment guard** — Joi `stripUnknown` pada input.
-- **Validasi upload** — magic-byte (sharp), whitelist ekstensi.
-- **Secrets** — fail-fast jika `SESSION_SECRET`/`JWT_SECRET` kosong di production.
+- **CSRF protection** — synchronizer tokens for all web forms (`src/middleware/csrf.ts`).
+- **Rate limiting** — login / register / OTP are throttled per IP.
+- **Session cookie** — `httpOnly`, `sameSite`, `secure` (automatic in production).
+- **Password** — bcrypt; OTP reset is hashed + expiry + rate-limit.
+- **JWT** — algorithm is pinned (HS256), blacklisted on logout (TTL).
+- **RBAC** — `ensureAuthenticated` → `AccessMiddleware` on every admin route.
+- **Mass-assignment guard** — Joi `stripUnknown` on input.
+- **Upload validation** — magic-byte (sharp), extension whitelist.
+- **Secrets** — fail-fast if `SESSION_SECRET`/`JWT_SECRET` are empty in production.
 
 ---
 
 ## 🧪 Testing
 
-Suite lengkap — detail di [`docs/TESTING.md`](docs/TESTING.md).
+A complete suite — details in [`docs/TESTING.md`](docs/TESTING.md).
 
-| Perintah | Cakupan |
+| Command | Coverage |
 |----------|---------|
-| `npm test` | Semua Jest (unit + integration + api + security + smoke) |
-| `npm run test:unit` | Helper murni |
+| `npm test` | All Jest (unit + integration + api + security + smoke) |
+| `npm run test:unit` | Pure helpers |
 | `npm run test:integration` | Service ↔ DB (SQLite in-memory) |
-| `npm run test:api` | Endpoint via supertest |
+| `npm run test:api` | Endpoints via supertest |
 | `npm run test:security` | RBAC, CSRF, rate-limit, JWT, mass-assign |
 | `npm run test:smoke` | Health, login, DB connect |
-| `npm run test:coverage` | Jest + laporan coverage |
-| `npm run test:e2e` | Playwright (browser, 3 engine) |
-| `npm run test:bdd` | Cucumber (skenario Gherkin) |
+| `npm run test:coverage` | Jest + coverage report |
+| `npm run test:e2e` | Playwright (browser, 3 engines) |
+| `npm run test:bdd` | Cucumber (Gherkin scenarios) |
 
-CI (GitHub Actions, `.github/workflows/ci.yml`): typecheck + Jest + audit + matrix DB (MySQL/Postgres) + Playwright tiap push/PR.
+CI (GitHub Actions, `.github/workflows/ci.yml`): typecheck + Jest + audit + DB matrix (MySQL/Postgres) + Playwright on every push/PR.
 
 ---
 
 ## 🔌 API
 
-Endpoint REST `/api/v1/*` (auth via JWT Bearer). Daftar lengkap + contoh request/response di [`docs/API.md`](docs/API.md).
+REST endpoints at `/api/v1/*` (auth via JWT Bearer). The full list + request/response examples are in [`docs/API.md`](docs/API.md).
 
-Ringkas:
-- `POST /api/v1/auth/login` → dapatkan `access_token`
-- `/api/v1/access/user|role|permission` → CRUD (butuh `Authorization: Bearer <token>`)
-- `/api/v1/profile` → profil sendiri
+Summary:
+- `POST /api/v1/auth/login` → obtain an `access_token`
+- `/api/v1/access/user|role|permission` → CRUD (requires `Authorization: Bearer <token>`)
+- `/api/v1/profile` → own profile
 
 ---
 
 ## 📜 Scripts
 
 ```
-npm run build            # compile TS + copy views ke dist
+npm run build            # compile TS + copy views to dist
 npm run start:dev        # dev (nodemon + ts-node)
 npm start                # build + pm2
-npm run migration:run    # jalankan migrasi
-npm run migration:revert # rollback migrasi terakhir
-npm run migration:create # buat file migrasi baru
-npm test / test:*        # lihat bagian Testing
+npm run migration:run    # run migrations
+npm run migration:revert # roll back the last migration
+npm run migration:create # create a new migration file
+npm test / test:*        # see the Testing section
 
 ```
 
@@ -243,7 +243,7 @@ npm test / test:*        # lihat bagian Testing
 
 ## 🧩 Tech Stack
 
-TypeScript · Express · TypeORM · MySQL/PostgreSQL/dll · Redis (session) · EJS + Tailwind · tsyringe (DI) · Passport (local + JWT) · Joi · Jest + supertest · Playwright · Cucumber · Alibaba OSS · Helmet.
+TypeScript · Express · TypeORM · MySQL/PostgreSQL/etc. · Redis (session) · EJS + Tailwind · tsyringe (DI) · Passport (local + JWT) · Joi · Jest + supertest · Playwright · Cucumber · Alibaba OSS · Helmet.
 
 ---
 
