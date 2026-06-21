@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.3
+
+### Patch Changes
+
+- Uji rantai rilis otomatis (CI → mirror → release.yml → npm). Tanpa perubahan fungsional.
+
 ## 1.0.2
 
 ### Patch Changes
