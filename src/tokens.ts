@@ -15,4 +15,5 @@ export const TOKENS = {
     IDashboardService: Symbol('IDashboardService'),
     IMediaService: Symbol('IMediaService'),
     IFeTemplateService: Symbol('IFeTemplateService'),
+    IFeCatalogService: Symbol('IFeCatalogService'),
 } as const

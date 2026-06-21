@@ -27,6 +27,7 @@ import SettingService from './modules/setting/http/services/v1/SettingService'
 import DashboardService from './modules/dashboard/http/services/v1/DashboardService'
 import MediaService from './modules/media/http/services/v1/MediaService'
 import FeTemplateService from './modules/landing/http/services/v1/FeTemplateService'
+import FeCatalogService from './modules/landing/http/services/v1/FeCatalogService'
 container.register(TOKENS.IUserService, { useClass: UserService })
 container.register(TOKENS.IRoleService, { useClass: RoleService })
 container.register(TOKENS.IPermissionService, { useClass: PermissionService })
@@ -34,5 +35,6 @@ container.register(TOKENS.ISettingService, { useClass: SettingService })
 container.register(TOKENS.IDashboardService, { useClass: DashboardService })
 container.register(TOKENS.IMediaService, { useClass: MediaService })
 container.register(TOKENS.IFeTemplateService, { useClass: FeTemplateService })
+container.register(TOKENS.IFeCatalogService, { useClass: FeCatalogService })
 
 export { container, TOKENS }

@@ -54,13 +54,17 @@ Repo ini sendiri adalah **monorepo** (npm workspaces): app referensi di `src/`, 
 |-------|-----------|
 | ![Login](docs/screenshots/login.png) | ![Dashboard](docs/screenshots/dashboard.png) |
 
-| User Management (RBAC) | Setting + Template Switcher (9 tema) |
-|------------------------|--------------------------------------|
+| User Management (RBAC) | Setting + Frontend Template (640 katalog) |
+|------------------------|-------------------------------------------|
 | ![Users](docs/screenshots/users.png) | ![Setting](docs/screenshots/setting.png) |
 
 | Role & Permission | UI Components |
 |-------------------|---------------|
 | ![Roles](docs/screenshots/roles.png) | ![Components](docs/screenshots/components.png) |
+
+| Landing Page (template default, bind ke Setting) |
+|--------------------------------------------------|
+| ![Landing](docs/screenshots/landing.png) |
 
 ---
 
@@ -72,7 +76,8 @@ Repo ini sendiri adalah **monorepo** (npm workspaces): app referensi di `src/`, 
 - **Authentication** — sesi (Passport local + Redis) untuk web & **JWT** untuk API.
 - **Password Reset** — OTP via email (hashed + expiry).
 - **Template Switcher** — 9 tema warna (Blue, Black, Brown, Green, Grey, Orange, Purple, Red, Yellow) yang dapat diganti dari halaman Setting; seluruh UI admin berubah tanpa rebuild.
-- **Frontend Template Switcher** — halaman landing publik (`/`) dengan ~15 desain pilihan dari [opentailwind](https://github.com/lindoai/opentailwind) (MIT). Template di-unduh on-demand saat dipilih di Setting & di-cache lokal — app tetap ramping (hanya 1 default ter-bundle).
+- **Frontend Template Switcher** — halaman landing publik (`/`) dengan **640 desain** dari [opentailwind](https://github.com/lindoai/opentailwind) (MIT), ditelusuri di Setting via **pencarian + filter kategori + paginasi** (server-side); template aktif disematkan ke halaman pertama. Tiap kartu menampilkan **thumbnail live** (iframe ter-scale) dan klik → **Preview** penuh; HTML preview di-cache di `localStorage` browser agar tak membebani server. Template terpilih di-unduh & di-cache lokal saat **Save** — app tetap ramping (hanya 1 default ter-bundle).
+- **Landing Default sebagai Sample** — template default (EJS) mengikat data **Setting** (nama, logo, deskripsi, kontak, copyright) sebagai contoh hidup; ubah Setting → landing ikut berubah. Jadi pola acuan saat membuat landing kustom.
 - **Multi-Database** — dialect-agnostic via TypeORM (MySQL, MariaDB, PostgreSQL, SQLite, MSSQL, Oracle) cukup dengan mengganti `DB_TYPE`.
 - **Multi-Timezone** — tampilan tanggal mengikuti timezone pengguna (dayjs).
 - **File Storage** — upload ke Alibaba Cloud OSS (re-encode gambar via sharp).
@@ -110,7 +115,7 @@ src/                     # app referensi (mengonsumsi @flazhost-nodeadmin/core)
 ├── container.ts     # registrasi DI (tsyringe)
 ├── tokens.ts        # token DI
 ├── services/        # fileService (OSS), mailer, settingCache
-├── resources/       # layout & partial EJS (be/tw = tema Tailwind aktif)
+├── resources/       # layout & partial EJS (be/default = tema Tailwind aktif)
 └── modules/
     ├── access/      # user, role, permission (RBAC)
     ├── auth/        # login, register, JWT, reset password

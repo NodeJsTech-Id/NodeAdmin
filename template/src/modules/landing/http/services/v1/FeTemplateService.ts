@@ -4,7 +4,7 @@ import path from 'path'
 import { AppError } from '@flazhost-nodeadmin/core'
 import { getSetting } from '../../../../../services/settingCache'
 import {
-    FE_TEMPLATE_BASE_URL, FE_TEMPLATE_DIR, FE_TEMPLATE_SLUGS, DEFAULT_FE_TEMPLATE,
+    FE_TEMPLATE_BASE_URL, FE_TEMPLATE_DIR, FE_TEMPLATE_SLUG_RE, DEFAULT_FE_TEMPLATE,
 } from '../../../../../config/feTemplates'
 import { IFeTemplateService } from './IFeTemplateService'
 
@@ -21,10 +21,19 @@ export default class FeTemplateService implements IFeTemplateService {
         return fs.existsSync(this.file(slug))
     }
 
+    /**
+     * Slug dianggap valid bila cocok pola opentailwind `{kategori}-{NNN}-{nama}`.
+     * Mencakup seluruh 640 landing tanpa mengikat ke katalog kurasi statis.
+     * (Anti-SSRF: pola membatasi ke charset a-z0-9- + struktur tetap.)
+     */
+    private isValidSlug(slug: string): boolean {
+        return slug === DEFAULT_FE_TEMPLATE || FE_TEMPLATE_SLUG_RE.test(slug)
+    }
+
     /** Slug template aktif dari setting (fallback default). */
     public async getActiveSlug(): Promise<string> {
         const setting = await getSetting()
-        return (setting?.fe_template && FE_TEMPLATE_SLUGS.includes(setting.fe_template))
+        return (setting?.fe_template && this.isValidSlug(setting.fe_template))
             ? setting.fe_template
             : DEFAULT_FE_TEMPLATE
     }
@@ -40,10 +49,10 @@ export default class FeTemplateService implements IFeTemplateService {
     /**
      * Pastikan template tersedia lokal. Bila belum → download HTML dari
      * opentailwind (GitHub raw) lalu simpan ke folder cache. Hanya slug yang
-     * ada di katalog kurasi yang diizinkan (anti SSRF/arbitrary fetch).
+     * cocok pola opentailwind yang diizinkan (anti SSRF/arbitrary fetch).
      */
     public async ensure(slug: string): Promise<void> {
-        if (!FE_TEMPLATE_SLUGS.includes(slug)) {
+        if (!this.isValidSlug(slug)) {
             throw new AppError('Template tidak dikenali', 400)
         }
         if (this.isCached(slug)) return
@@ -70,7 +79,7 @@ export default class FeTemplateService implements IFeTemplateService {
      */
     public async getActiveHtml(): Promise<string> {
         const setting = await getSetting()
-        const slug = (setting?.fe_template && FE_TEMPLATE_SLUGS.includes(setting.fe_template))
+        const slug = (setting?.fe_template && this.isValidSlug(setting.fe_template))
             ? setting.fe_template
             : DEFAULT_FE_TEMPLATE
 

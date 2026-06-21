@@ -81,7 +81,7 @@ src/                     # kode aplikasi
 ├── container.ts     # registrasi DI (tsyringe)
 ├── tokens.ts        # token DI
 ├── services/        # fileService (OSS), mailer, settingCache
-├── resources/       # layout & partial EJS (be/tw = tema Tailwind aktif)
+├── resources/       # layout & partial EJS (be/default = tema Tailwind aktif)
 └── modules/
     ├── access/      # user, role, permission (RBAC)
     ├── auth/        # login, register, JWT, reset password

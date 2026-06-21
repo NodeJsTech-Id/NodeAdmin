@@ -11,6 +11,7 @@ const router = Router()
 const settingRoute = named.extendRouter(Router())
 
 settingRoute.get('admin.v1.setting.index', '/admin/v1/setting', ensureAuthenticated, AccessMiddleware, handler(SettingController, 'index'))
+settingRoute.get('admin.v1.setting.fe_preview', '/admin/v1/setting/fe-preview/:slug', ensureAuthenticated, AccessMiddleware, handler(SettingController, 'fePreview'))
 settingRoute.put('admin.v1.setting.update', '/admin/v1/setting/update', ensureAuthenticated, AccessMiddleware, upload.any(), SettingValidator, handler(SettingController, 'update'))
 
 router.use(settingRoute)

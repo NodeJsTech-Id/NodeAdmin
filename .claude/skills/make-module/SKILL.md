@@ -39,7 +39,7 @@ Buat semua artefak sesuai kebutuhan:
 - http/validators/{Nama}Validator.ts (Joi stripUnknown; cabang /api/ → ResponseHandler.validationError, web → redirect back)
 - http/controllers/web/v1/{Nama}Controller.ts (jika UI: @injectable, inject interface, renderView) DAN/ATAU http/controllers/api/v1/{Nama}Controller.ts (jika API: ResponseHandler)
 - routes/web.ts (jika UI) dan/atau routes/api.ts (jika API) — pakai handler(Controller,'method'), urutan ensureAuthenticated→AccessMiddleware (web) / ensureAuthenticatedApi→AccessMiddleware (api)
-- views/be/tw/{nama}/{index,create,edit}.ejs (jika UI; tiru pola users: tabel+search+pagination mt-4, form, status ikon fa-check-circle/fa-times-circle, dropdown relasi bila ada)
+- views/be/default/{nama}/{index,create,edit}.ejs (jika UI; tiru pola users: tabel+search+pagination mt-4, form, status ikon fa-check-circle/fa-times-circle, dropdown relasi bila ada)
 - Module.ts
 - tests: tests/integration/{nama}Service.test.ts (pakai `new {Nama}Service()` + resetDb) + tests/api/{nama}.test.ts (jika API, pakai loginApi) + tests/bdd (jika UI: feature+steps)
 - Registrasi: tambah TOKENS.{Nama}Repository & TOKENS.I{Nama}Service di src/tokens.ts; repo factory + useClass di src/container.ts; entity di src/config/ormconfig.ts entities[]
@@ -60,7 +60,7 @@ Laporkan ringkas: daftar file dibuat + hasil 3 verifikasi.
 ### 3. Setelah subagent selesai (di context utama)
 - Verifikasi ulang singkat: jalankan `npm run lint:conventions` + `npx tsc --noEmit` sendiri (cek cepat, bukan percaya buta).
 - Jika modul ber-migration & user mau pakai di DB: tawarkan `npm run migration:run`.
-- Jika ada UI & user mau muncul di menu: tawarkan tambah ke `src/resources/layouts/be/tw/sidebar.ejs`.
+- Jika ada UI & user mau muncul di menu: tawarkan tambah ke `src/resources/layouts/be/default/sidebar.ejs`.
 - Lapor ke user: ringkasan + hasil verifikasi + langkah lanjutan opsional (migration, menu, permission seed untuk non-admin).
 
 ## Catatan token

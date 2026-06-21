@@ -2,7 +2,7 @@
 
 Acuan komponen UI untuk membuat elemen yang konsisten. **Lihat langsung** di halaman `/admin/v1/components`; **salin snippet** dari sini.
 
-Stack UI: EJS + Tailwind (Preflight ON) + komponen kelas via `@apply` di `be/tw/head.ejs` (`form-control`, `btn`, `table`, `badge`, `pagination`, `dropdown`, dll) + Chart.js + Font Awesome 5. Warna aksen pakai CSS variable tema: `var(--primary)`, `var(--secondary)`, `var(--theme-light)`, `var(--theme-dark)` → otomatis ikut template switcher.
+Stack UI: EJS + Tailwind (Preflight ON) + komponen kelas via `@apply` di `be/default/head.ejs` (`form-control`, `btn`, `table`, `badge`, `pagination`, `dropdown`, dll) + Chart.js + Font Awesome 5. Warna aksen pakai CSS variable tema: `var(--primary)`, `var(--secondary)`, `var(--theme-light)`, `var(--theme-dark)` → otomatis ikut template switcher.
 
 > Helper view yang tersedia: `route(name, params)`, `getError(field)`, `getOld(field)`, `getFlashMessage(key)`, `getFile(path)`, `addOrUpdateQueryParam(url, key, val)`, `now(fmt)`, `theme`/`themeName`/`themes`, `setting`, `auth`.
 
@@ -170,7 +170,7 @@ Textarea biasa jadi rich editor: tambah class **`trumbowyg-editor`** (bukan `.tr
 - **Wajib sanitasi server-side** sebelum simpan (`helpers/sanitizeHtml.ts` → `cleanRichText()`) — cegah XSS, karena Joi tak mem-filter HTML. Contoh di `SettingService.update`.
 - Saat submit, `foot.ejs` otomatis sync HTML editor → textarea sumber.
 
-**File Manager** (modal): tombol ikon gambar di toolbar → browse gambar (`GET /admin/v1/media/list`), upload (`POST .../upload`), hapus (`POST .../delete`), klik thumbnail = sisip `<img>`. Backend = modul `media` (web, session + CSRF via header `x-csrf-token`). Folder OSS: `modules/media/editor/`. Tanpa OSS dikonfigurasi → list kosong (graceful, tak crash). Aset: `public/be/sb/vendor/trumbowyg/filemanager.js`.
+**File Manager** (modal): tombol ikon gambar di toolbar → browse gambar (`GET /admin/v1/media/list`), upload (`POST .../upload`), hapus (`POST .../delete`), klik thumbnail = sisip `<img>`. Backend = modul `media` (web, session + CSRF via header `x-csrf-token`). Folder OSS: `modules/media/editor/`. Tanpa OSS dikonfigurasi → list kosong (graceful, tak crash). Aset: `public/be/default/vendor/trumbowyg/filemanager.js`.
 
 ## 7. Data Table + Pagination
 ```html
@@ -223,6 +223,6 @@ document.querySelectorAll('.counter').forEach(function(el){
 
 ## Catatan
 - Aksen warna: pakai `var(--primary)`/`var(--theme-light)`/dll → ikut **template switcher** otomatis. Hindari warna primary hardcode.
-- Kelas komponen (`form-control`/`btn`/`table`/`badge`/`pagination`/`dropdown`) didefinisikan di `src/resources/layouts/be/tw/head.ejs` (`@layer components`) — ubah di sana untuk styling global.
+- Kelas komponen (`form-control`/`btn`/`table`/`badge`/`pagination`/`dropdown`) didefinisikan di `src/resources/layouts/be/default/head.ejs` (`@layer components`) — ubah di sana untuk styling global.
 - Ikon: **Font Awesome 5** (`fa-check-circle`, bukan `fa-circle-check` FA6).
 - Live preview semua komponen: **`/admin/v1/components`**.

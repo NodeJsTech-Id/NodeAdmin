@@ -15,7 +15,7 @@ Hasil porting memakai konvensi nama `{Framework}Admin` (folder project, nama app
 | Node/Express (ini) | **NodeAdmin** | Django | **DjangoAdmin** |
 | Laravel | **LaravelAdmin** | .NET Core | **DotNetAdmin** |
 | NestJS | **NestAdmin** | Rust (Rocket) | **RustAdmin** |
-| Spring Boot | **SpringAdmin** | | |
+| Spring Boot | **SpringAdmin** | Go (Gin) | **GoAdmin** |
 
 Pakai nama ini untuk: folder project, `APP_NAME` di env, judul halaman, dan referensi di README/docs hasil porting.
 
@@ -55,7 +55,7 @@ Tiap fitur = satu modul mandiri berisi lapisannya sendiri (model, migration, ser
 3. **Aturan AI**: sebelum coding, sajikan rencana artefak + tanya bila ambigu; setelah coding, jalankan checker+typecheck+test sampai hijau.
 
 ### Fitur fungsional referensi
-RBAC (role+permission per-route), auth sesi (web) + token (API), reset password OTP, **template/theme switcher** (DB-driven, ganti palet tanpa rebuild), multi-database (dialect-agnostic via ORM), file storage eksternal, multi-timezone.
+RBAC (role+permission per-route), auth sesi (web) + token (API), reset password OTP, **theme switcher** (DB-driven, ganti palet tanpa rebuild), **frontend template switcher** (katalog landing dari sumber eksternal — paginasi + search server-side, thumbnail/preview ringan, unduh on-demand + cache), **landing publik bind-ke-Setting** (sample data-driven), multi-database (dialect-agnostic via ORM), file storage eksternal, multi-timezone.
 
 ### Capability Checklist (WAJIB direplikasi agar app porting IDENTIK)
 
@@ -103,14 +103,21 @@ Daftar lengkap kapabilitas NodeAdmin. App hasil porting **harus** punya padanann
 - [ ] **Tipe kolom abstrak**, tanpa collation hardcoded, tanpa raw query vendor, tanpa `LIKE` manual (case-sensitivity beda) → pakai helper case-insensitive.
 
 #### 🎨 Fitur Fungsional
-- [ ] **Template/theme switcher** — palet tema disimpan di DB, ganti tanpa rebuild (CSS variable), beberapa pilihan warna.
+- [ ] **Theme switcher (admin)** — palet tema disimpan di DB, ganti tanpa rebuild (CSS variable), beberapa pilihan warna.
+- [ ] **Frontend template switcher (landing)** — katalog desain landing dari sumber eksternal (mis. repo opentailwind). WAJIB:
+  - **Daftar di server, sekali**: ambil katalog dari sumber (API/manifest) → cache (memori TTL + persist disk/cache store); **fallback** ke katalog kurasi statis bila sumber offline. Jangan fetch tiap request.
+  - **Paginasi + search server-side** atas katalog (filter nama + kategori), bukan kirim seluruh daftar ke klien; **item aktif disematkan ke halaman pertama**.
+  - **Thumbnail ringan + preview penuh**: render desain via iframe (thumbnail = iframe ter-scale, lazy-load saat terlihat; klik → modal preview); HTML preview **di-cache di sisi klien** (localStorage/setara) → server hanya proxy sekali per item.
+  - **Anti-SSRF**: hanya item yang ada di katalog (atau cocok pola slug ketat) yang boleh di-fetch/proxy; validasi sebelum unduh.
+  - **Unduh on-demand + cache lokal** saat item dipilih & disimpan (template aktif disajikan dari cache; app tetap ramping — hanya 1 default ter-bundle agar jalan offline).
+- [ ] **Landing publik data-driven (sample)** — template default mengikat data Setting (nama, logo, deskripsi, kontak, copyright) dengan guard + fallback → contoh hidup pola binding; item katalog lain disajikan sebagai HTML statis (preview desain).
 - [ ] **Multi-timezone** — tampilan tanggal mengikuti timezone user.
 - [ ] **File storage eksternal** (S3/OSS/setara) dengan signed URL.
 - [ ] **Email** (reset OTP, notifikasi) via SMTP konfigurable.
 - [ ] **UI server-side** (template engine native + Tailwind): layout/partial (head/sidebar/topbar/foot), tabel + search + pagination, form CRUD, status pakai ikon, fallback gambar gagal-load.
 - [ ] **Sidebar dinamis** — item menu tampil sesuai permission user (`hasAccess`), penanda menu aktif.
 - [ ] **Halaman showcase komponen UI** (`/admin/v1/components` setara) — acuan hidup elemen: stat card+counter, chart (themeable), badge/status, alert, button+dropdown, form, tabel+pagination.
-- [ ] Modul inti: **User, Role, Permission (RBAC), Profile, Setting, Dashboard (stats), Components (showcase)**.
+- [ ] Modul inti: **User, Role, Permission (RBAC), Profile, Setting, Dashboard (stats), Components (showcase), Landing (frontend template + halaman publik)**.
 
 #### 🧪 Testing (wajib tiap fitur)
 - [ ] **Unit** (helper murni), **Integration** (service↔DB, SQLite in-memory), **API** (HTTP), **Security** (RBAC/CSRF/rate-limit/JWT/mass-assign), **Smoke**, **E2E** (browser), **BDD** (skenario).
@@ -145,6 +152,7 @@ NodeAdmin memakai TypeORM karena **multi-database** + **migration fleksibel**. V
 | Django ORM | ✅ MySQL/PG/SQLite/Oracle | ✅ migrations portabel | Sangat baik, bawaan |
 | EF Core (.NET) | ✅ banyak provider | ✅ migrations portabel | Sangat baik; provider per-DB |
 | Diesel (Rust) | ⚠️ **satu DB per-build** (feature flag), kurang fleksibel ganti runtime | ✅ migration (sering SQL) | **SeaORM lebih agnostik** → pilih SeaORM bila butuh multi-DB runtime |
+| GORM (Go) | ✅ MySQL/PG/SQLite/SQLServer (driver per-dialek) | ⚠️ AutoMigrate (non-reversible) atau **golang-migrate** untuk versioned up/down | Pilih **golang-migrate** (SQL portabel) atau **goose** untuk migration reversible; AutoMigrate cukup utk dev/test |
 
 > Jika ORM target kurang fleksibel (mis. Diesel), pilih alternatif yang agnostik (SeaORM) ATAU dokumentasikan keterbatasan + sediakan abstraksi repository agar ganti DB tetap terlokalisir.
 
@@ -297,12 +305,42 @@ Kolom kiri = konsep NodeAdmin. Kolom kanan = padanan idiomatik. Yang ditandai **
 | Checker | `clippy` lint custom + script CI |
 | /make-module | `cargo generate` template / script |
 
+### 3.7 Go (Gin)
+> **Kenapa Gin (bukan Fiber)**: Gin di atas `net/http` standar → semua lib ekosistem Go (OSS SDK, OAuth, observability, middleware) langsung kompatibel. Fiber pakai `fasthttp` (non-standar) → sering perlu adapter/tak didukung. Untuk admin panel (bottleneck = DB/IO, bukan HTTP parsing) keunggulan throughput Fiber tak relevan, sedangkan gap kompatibilitas fasthttp = utang teknis. **Gin = kapabilitas setara, risiko ekosistem paling kecil.**
+
+| Konsep NodeAdmin | Padanan Go + Gin |
+|---|---|
+| Modular per fitur | package per fitur (`internal/modules/{modul}`) + registrasi router eksplisit |
+| DI (tsyringe) | **constructor injection manual** (wiring di `main.go`/`wire`) atau **`google/wire`** (compile-time DI) |
+| Service + Interface | **interface** + struct impl (idiom Go: interface di sisi konsumen) |
+| Controller tipis + handler() | Gin `HandlerFunc` (`*gin.Context`), logika di service |
+| Validator Joi stripUnknown | **`go-playground/validator`** + binding struct tag (`binding:"required"`) + DTO whitelist (anti mass-assign) |
+| Error AppError + middleware | `AppError` struct + **middleware error terpusat** (`c.Error()` + handler), service `return error` di-map ke HTTP |
+| RBAC | middleware auth → middleware authorize (cek role/permission), atau **Casbin** (`casbin/gin`) |
+| Migration portabel | **golang-migrate** / **goose** (SQL portabel up/down) — bukan AutoMigrate utk produksi |
+| Entity/Repository (TypeORM) | **GORM model** + repository interface (multi-DB via driver) |
+| View EJS+Tailwind+switcher | **`html/template`** (atau `templ`) + Tailwind + theme switcher (kolom DB, CSS var) |
+| env tervalidasi | **`spf13/viper`** + struct config + validasi fail-fast (secret kosong di prod → panic) |
+| Session Redis | **`gin-contrib/sessions`** + redis store |
+| JWT (API) | **`golang-jwt/jwt`** (HS256 di-pin) + blacklist token via Redis (TTL = sisa berlaku) |
+| Password/OTP | **`golang.org/x/crypto/bcrypt`** + OTP `crypto/rand` (hashed + expiry + rate-limit) |
+| Rate limit | middleware per-IP (`ulule/limiter` / `gin-contrib`) |
+| Security headers | **`secure`** middleware (helmet setara) + `gin-contrib/cors` |
+| Kompresi/static cache | **`gin-contrib/gzip`** + `Cache-Control` pada static |
+| File storage (OSS) | **`aliyun-oss-go-sdk`** (resmi) / `aws-sdk-go-v2` (S3) + signed URL |
+| Email | **`net/smtp`** / `gomail` |
+| Graceful shutdown | `http.Server.Shutdown(ctx)` pada SIGTERM/SIGINT (bawaan `net/http`) |
+| env/Test | **`testing` + `httptest`** (integration) + **SQLite in-memory** (`glebarez/sqlite`, pure-Go) |
+| BDD | **`cucumber/godog`** |
+| Convention checker | **custom linter** (`go/ast` atau **golangci-lint** custom rule) + script gate CI |
+| /make-module skill | **generator Go** (`text/template`) — `go run ./cmd/make-module` |
+
 ---
 
 ## Catatan Penting
 
 1. **Banyak hal jadi lebih mudah** di framework matang (Laravel/Nest/Spring/.NET/Django): DI, validasi, migration, RBAC sudah bawaan. Effort yang kita keluarkan manual di NodeAdmin sebagian **tak perlu** diulang — pakai yang native.
-2. **Yang tetap harus dibuat manual** di mana pun: AGENTS.md versi target, convention checker, equivalent /make-module, theme switcher, struktur modular yang disepakati.
+2. **Yang tetap harus dibuat manual** di mana pun: AGENTS.md versi target, convention checker, equivalent /make-module, theme switcher, **frontend template switcher (katalog + paginasi/search server-side + thumbnail/preview cache-klien + unduh on-demand)**, **landing publik data-driven (bind ke Setting)**, struktur modular yang disepakati.
 3. **Idiom > kemiripan**: kode harus terasa natural di bahasa target. Reviewer framework itu harus menganggapnya "ditulis oleh developer {FRAMEWORK}", bukan "porting dari JS".
 4. **Bertahap & terverifikasi**: fondasi → modul percontohan → guardrail → sisanya; build+test hijau tiap fase.
 5. **Test = non-negotiable**: apa pun bahasanya, tiap fitur wajib test (prinsip TDD/BDD dipertahankan).

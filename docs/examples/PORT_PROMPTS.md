@@ -14,6 +14,7 @@ Semua hasil porting WAJIB pakai nama standar berikut (folder project + nama app)
 | Django | **DjangoAdmin** |
 | .NET Core | **DotNetAdmin** |
 | Rust (Rocket) | **RustAdmin** |
+| Go (Gin) | **GoAdmin** |
 
 ## Cara pakai (3 langkah)
 1. **Scaffold project target kosong** (perintah di tiap bagian).
@@ -29,10 +30,11 @@ Semua hasil porting WAJIB pakai nama standar berikut (folder project + nama app)
 Tiap prompt di bawah sudah memuat instruksi standar ini:
 - **Nama app baku** `{Framework}Admin` (lihat tabel di atas) — dipakai untuk folder project, `APP_NAME` env, judul halaman, dan README/docs hasil porting.
 - Baca `docs/PORTING_GUIDE.md` (Bagian 1 konsep + tabel framework terkait), `AGENTS.md`, `docs/ARCHITECTURE.md`, `docs/MODULE_GUIDE.md`, `docs/TESTING.md`.
-- Pertahankan prinsip: SOLID/DI, DRY, SoC, Clean Code, error terpusat, RBAC, env tervalidasi, theme switcher (DB-driven), test wajib tiap fitur, guardrail.
+- Pertahankan prinsip: SOLID/DI, DRY, SoC, Clean Code, error terpusat, RBAC, env tervalidasi, theme switcher (DB-driven), **frontend template switcher (landing) + landing publik data-driven**, test wajib tiap fitur, guardrail.
 - **WAJIB penuhi SELURUH "Capability Checklist" di PORTING_GUIDE Bagian 1** (keamanan: helmet/CSRF/rate-limit/JWT+sesi/bcrypt/OTP-hash/mass-assign/upload-magicbyte/secret-fail-fast; performa: kompresi/cache-setting/static-cache/pool/pagination/anti-N+1; arsitektur; multi-DB; fitur; testing; guardrail). App porting harus IDENTIK kapabilitasnya dengan NodeAdmin.
 - **ORM WAJIB multi-database (dialect-agnostic) + migration kode portabel + tipe kolom abstrak** (lihat "Kriteria ORM & Migration" di PORTING_GUIDE Bagian 1). Test pakai SQLite in-memory. Hindari tipe/SQL vendor.
 - Hasilkan juga: AGENTS.md versi target + convention checker + CI + equivalent `/make-module` + 1 modul percontohan (User/Role/Permission) lengkap + **halaman showcase komponen UI (`/admin/v1/components` setara) + docs/UI_COMPONENTS.md**.
+- **Modul Landing + Frontend Template Switcher** (lihat checklist "Fitur Fungsional" PORTING_GUIDE): katalog desain landing dari sumber eksternal — **daftar di server sekali (cache + fallback kurasi)**, **paginasi + search server-side** (item aktif ke halaman 1), **thumbnail iframe ter-scale (lazy) + modal preview** dgn **cache HTML di klien**, **anti-SSRF** (whitelist katalog/pola slug), **unduh on-demand + cache lokal** saat dipilih (1 default ter-bundle). **Landing default bind ke Setting** (nama/logo/deskripsi/kontak/copyright, guard+fallback) sebagai sample data-driven.
 - BERTAHAP: fondasi → modul percontohan → guardrail → sisanya. Verifikasi tiap fase.
 
 ---
@@ -61,6 +63,7 @@ Buat bootstrap SETARA dengan KONSEP SAMA pakai IDIOM NATIVE Laravel. Pemetaan:
 - RBAC                → middleware + spatie/laravel-permission
 - ORM/Migration       → Eloquent + migration Laravel
 - View + theme switcher → Blade + Tailwind + kolom theme di DB
+- Landing + FE template → Blade publik (bind Setting) + katalog landing (paginasi/search server-side, thumbnail/preview cache-klien, unduh on-demand)
 - Test                → Pest/PHPUnit Feature test + Behat (BDD)
 - Convention checker  → artisan command + Pint + Larastan
 - /make-module        → php artisan make:module
@@ -93,6 +96,7 @@ Buat bootstrap SETARA pakai IDIOM NATIVE NestJS. Pemetaan:
 - Controller          → @Controller + decorator route
 - Validasi            → class-validator + ValidationPipe (whitelist:true)
 - Error terpusat      → Exception filter + HttpException
+- Landing + FE template → view publik (bind Setting) + katalog landing (paginasi/search server-side, thumbnail/preview cache-klien, unduh on-demand)
 - RBAC                → Guards + @Roles() decorator
 - ORM                 → TypeORM (atau Prisma)
 - env                 → @nestjs/config + Joi schema
@@ -127,6 +131,7 @@ Buat bootstrap SETARA pakai IDIOM NATIVE Spring. Pemetaan:
 - RBAC                → Spring Security + @PreAuthorize
 - ORM                 → Spring Data JPA / Hibernate
 - View                → Thymeleaf + Tailwind (atau REST + SPA)
+- Landing + FE template → view publik (bind Setting) + katalog landing (paginasi/search server-side, thumbnail/preview cache-klien, unduh on-demand)
 - env                 → application.yml + @ConfigurationProperties
 - Test                → JUnit 5 + MockMvc + Testcontainers
 - BDD                 → Cucumber-JVM
@@ -163,6 +168,7 @@ Buat bootstrap SETARA pakai IDIOM NATIVE Django. Pemetaan:
 - RBAC                → DRF Permissions + Groups / django-guardian
 - ORM/Migration       → Django ORM + migrations
 - View                → Django Templates + Tailwind
+- Landing + FE template → template publik (bind Setting) + katalog landing (paginasi/search server-side, thumbnail/preview cache-klien, unduh on-demand)
 - env                 → django-environ
 - Test                → pytest-django + DRF APITestCase + behave/pytest-bdd
 - Checker             → custom management command + ruff + mypy
@@ -198,6 +204,7 @@ Buat bootstrap SETARA pakai IDIOM NATIVE ASP.NET Core. Pemetaan:
 - RBAC                → ASP.NET Identity + Authorization Policy/[Authorize(Roles)]
 - ORM/Migration       → Entity Framework Core + Migrations
 - View                → Razor + Tailwind (atau API + SPA)
+- Landing + FE template → Razor publik (bind Setting) + katalog landing (paginasi/search server-side, thumbnail/preview cache-klien, unduh on-demand)
 - env                 → appsettings.json + Options pattern IOptions<T>
 - Test                → xUnit + WebApplicationFactory + Testcontainers
 - BDD                 → SpecFlow / Reqnroll
@@ -233,6 +240,7 @@ Buat bootstrap SETARA pakai IDIOM NATIVE Rust/Rocket. Pemetaan:
 - RBAC                → Rocket Request Guard custom (cek role/permission)
 - ORM/Migration       → Diesel atau SeaORM + migrations
 - View                → Tera/Handlebars + Tailwind
+- Landing + FE template → view publik (bind Setting) + katalog landing (paginasi/search server-side, thumbnail/preview cache-klien, unduh on-demand)
 - env                 → figment / dotenvy + struct config
 - Test                → #[test] + rocket::local client + cucumber crate (BDD)
 - Checker             → clippy lint custom + script CI
@@ -240,6 +248,56 @@ Buat bootstrap SETARA pakai IDIOM NATIVE Rust/Rocket. Pemetaan:
 
 Pertahankan SEMUA prinsip Bagian 1. WAJIB hasilkan AGENTS.md, checker + CI, generator,
 dan modul percontohan User/Role/Permission. BERTAHAP + verifikasi tiap fase.
+```
+
+---
+
+## 7. Go (Gin)
+
+> **Gin, bukan Fiber**: Gin di atas `net/http` standar → seluruh ekosistem lib Go (OSS SDK, OAuth, middleware, observability) langsung kompatibel. Fiber pakai `fasthttp` (non-standar) → sering perlu adapter. Untuk admin panel, throughput bukan bottleneck (DB/IO yang dominan), jadi kompatibilitas Gin lebih bernilai.
+
+Scaffold:
+```bash
+mkdir GoAdmin && cd GoAdmin   # nama baku: GoAdmin
+go mod init goadmin
+go get github.com/gin-gonic/gin gorm.io/gorm github.com/golang-jwt/jwt/v5 \
+  github.com/spf13/viper github.com/gin-contrib/sessions github.com/go-playground/validator/v10
+```
+
+Prompt:
+```
+Referensi: {PATH_NODEADMIN} (Express/TS/TypeORM). Baca docs/PORTING_GUIDE.md
+(Bagian 1 + tabel 3.7 Go/Gin), AGENTS.md, docs/ARCHITECTURE.md, docs/MODULE_GUIDE.md,
+docs/TESTING.md untuk KONSEP/PRINSIP/ALUR (JANGAN tiru kode mentah).
+
+Target: {PATH_TARGET} (Go + Gin kosong, modul `goadmin`).
+Buat bootstrap SETARA pakai IDIOM NATIVE Go/Gin. Pemetaan:
+- Modular per fitur   → package per fitur (internal/modules/{modul}) + registrasi router eksplisit
+- DI                  → constructor injection (wiring di main.go) atau google/wire
+- Service + Interface → interface + struct impl (interface di sisi konsumen)
+- Controller          → gin.HandlerFunc (*gin.Context), logika di service
+- Validasi            → go-playground/validator + binding struct tag + DTO whitelist (anti mass-assign)
+- Error terpusat      → AppError struct + middleware error (c.Error + handler), service return error → map ke HTTP
+- RBAC                → middleware auth → authorize (role/permission) atau Casbin (casbin/gin)
+- ORM                 → GORM (multi-DB via driver)
+- Migration           → golang-migrate / goose (SQL portabel up/down) — bukan AutoMigrate utk produksi
+- View + theme switcher → html/template (atau templ) + Tailwind + kolom theme DB (CSS var)
+- Landing + FE template → view publik (bind Setting) + katalog landing (paginasi/search server-side, thumbnail/preview cache-klien, unduh on-demand)
+- Session/JWT         → gin-contrib/sessions + redis store; golang-jwt (HS256 di-pin) + blacklist via Redis
+- Password/OTP        → bcrypt + OTP crypto/rand (hashed + expiry + rate-limit)
+- Keamanan            → secure (helmet setara) + gin-contrib/cors + rate limit per-IP + gzip + static cache
+- File storage        → aliyun-oss-go-sdk / aws-sdk-go-v2 (signed URL); Email → net/smtp / gomail
+- env                 → viper + struct config + fail-fast (secret kosong di prod → panic)
+- Graceful shutdown   → http.Server.Shutdown(ctx) pada SIGTERM/SIGINT
+- Test                → testing + httptest (integration) + SQLite in-memory (glebarez/sqlite) + godog (BDD)
+- Checker             → custom linter (go/ast) / golangci-lint custom rule + gate CI
+- /make-module        → generator Go (text/template): go run ./cmd/make-module
+
+Pertahankan SEMUA prinsip Bagian 1 PORTING_GUIDE + penuhi SELURUH Capability Checklist.
+WAJIB hasilkan AGENTS.md versi Go, convention checker + CI, generator /make-module,
+modul percontohan User/Role/Permission lengkap, halaman showcase komponen UI + docs/UI_COMPONENTS.md.
+Kerjakan BERTAHAP (fondasi → modul percontohan → guardrail → sisanya), verifikasi tiap fase
+(go build + go test ./... + checker hijau).
 ```
 
 ---

@@ -86,7 +86,7 @@ Ikuti `docs/MODULE_GUIDE.md` (ada template lengkap). Urutan & file wajib:
 6. **Controller** `controllers/web/v1` &/ `api/v1` — `@injectable()`, inject `I<X>Service`. Web: `renderView(res, Module.path, 'view', locals)`. API: `ResponseHandler`. Tanpa try/catch error.
 7. **Validator** `http/validators/` — Joi dengan `{ stripUnknown: true }`; tulis balik `req.body = value`.
 8. **Routes** `routes/web.ts` / `api.ts` — `handler(Controller, 'method')`; urutan middleware `ensureAuthenticated, AccessMiddleware, ...`. (CSRF & rate-limit lihat Security.)
-9. **Views** `views/be/tw/` — Tailwind, ikuti pola tabel/form/pagination modul `access`.
+9. **Views** `views/be/default/` — Tailwind, ikuti pola tabel/form/pagination modul `access`.
 10. **Test** (lihat `docs/TESTING.md`): integration (service↔sqlite), api (supertest), + BDD bila user-facing.
 11. **Docs** — tambah fitur di `README.md`, endpoint di `docs/API.md`.
 

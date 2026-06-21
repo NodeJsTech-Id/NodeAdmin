@@ -20,17 +20,36 @@
     <!-- Main Links Grid -->
     <div class="py-16 grid sm:grid-cols-2 lg:grid-cols-5 gap-10">
       
-      <!-- Brand Column -->
+      <!-- Brand Column — bind ke Setting (logo, name, description, kontak). -->
       <div data-motion="brand" class="lg:col-span-1">
-        <a href="#" class="flex items-center gap-3 mb-6">
+        <a href="/" class="flex items-center gap-3 mb-6">
+          <% if (typeof setting !== 'undefined' && setting && setting.logo) { %>
+          <img src="<%= getFile(setting.logo) %>" alt="<%= setting.name || 'Logo' %>" class="w-10 h-10 rounded-xl object-contain bg-white">
+          <% } else { %>
           <div data-motion="icon" class="w-10 h-10 bg-linear-to-br from-orange-400 to-orange-500 rounded-xl flex items-center justify-center">
             <svg class="w-6 h-6 text-neutral-900 dark:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 15a4 4 0 004 4h9a5 5 0 10-.1-9.999 5.002 5.002 0 10-9.78 2.096A4.001 4.001 0 003 15z"/>
             </svg>
           </div>
-          <span class="text-xl font-bold text-neutral-900 dark:text-white">CloudSync</span>
+          <% } %>
+          <span class="text-xl font-bold text-neutral-900 dark:text-white"><%= (typeof setting !== 'undefined' && setting && setting.name) ? setting.name : 'NodeAdmin' %></span>
         </a>
+        <% if (typeof setting !== 'undefined' && setting && setting.description) { %>
+        <p class="text-neutral-600 dark:text-neutral-400 text-sm"><%- setting.description %></p>
+        <% } else { %>
         <p class="text-neutral-600 dark:text-neutral-400 text-sm">Secure cloud storage for modern teams.</p>
+        <% } %>
+        <ul class="mt-5 space-y-2 text-sm">
+          <% if (typeof setting !== 'undefined' && setting && setting.email) { %>
+          <li><a href="mailto:<%= setting.email %>" class="text-neutral-600 dark:text-neutral-400 hover:text-orange-600 transition-colors"><i class="fas fa-envelope me-2"></i><%= setting.email %></a></li>
+          <% } %>
+          <% if (typeof setting !== 'undefined' && setting && setting.phone) { %>
+          <li><a href="tel:<%= setting.phone %>" class="text-neutral-600 dark:text-neutral-400 hover:text-orange-600 transition-colors"><i class="fas fa-phone me-2"></i><%= setting.phone %></a></li>
+          <% } %>
+          <% if (typeof setting !== 'undefined' && setting && setting.address) { %>
+          <li class="text-neutral-600 dark:text-neutral-400"><i class="fas fa-location-dot me-2"></i><%= setting.address %></li>
+          <% } %>
+        </ul>
       </div>
 
       <!-- Links Columns -->
@@ -78,7 +97,7 @@
 
     <!-- Bottom Bar -->
     <div data-motion="bottom" class="py-8 border-t border-neutral-200 dark:border-neutral-800 flex flex-col sm:flex-row items-center justify-between gap-6">
-      <p class="text-neutral-500 text-sm">© 2026 CloudSync. All rights reserved.</p>
+      <p class="text-neutral-500 text-sm"><%= (typeof setting !== 'undefined' && setting && setting.copyright) ? setting.copyright : '© 2026 ' + ((setting && setting.name) ? setting.name : 'NodeAdmin') + '. All rights reserved.' %></p>
       <div class="flex items-center gap-4">
         <a href="#" class="text-neutral-600 dark:text-neutral-400 hover:text-orange-600 dark:text-orange-400 transition-colors" aria-label="Twitter">
           <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">

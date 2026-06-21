@@ -27,7 +27,7 @@ Request
 | Controller | `modules/*/http/controllers/{web,api}/v1` | Orkestrasi HTTP. `@injectable`, service di-inject. Tidak ada logika bisnis. |
 | Service | `modules/*/http/services/v1` | Logika bisnis. `@injectable`, implement `I*Service`, repo di-inject. `throw` saat gagal. |
 | Entity | `modules/*/models/*.entity.ts` | Model TypeORM. Tipe kolom portabel (dialect-agnostic). |
-| View | `modules/*/views/be/tw`, `src/resources/layouts/be/tw` | EJS + Tailwind. Dirender via `renderView()`. |
+| View | `modules/*/views/be/default`, `src/resources/layouts/be/default` | EJS + Tailwind. Dirender via `renderView()`. |
 
 ## Dependency Injection (SOLID-D)
 
@@ -66,7 +66,7 @@ export default class UserService implements IUserService {
 
 - **`src/config/env.ts`** — satu-satunya sumber env, sudah dikonversi tipe (number/boolean) & divalidasi. Secret wajib (`SESSION_SECRET`, `JWT_SECRET`) → fail-fast di production.
 - **`src/config/ormconfig.ts`** — DataSource dialect-agnostic (baca `env.db.type`), pool, timezone kondisional.
-- **`src/config/app.ts`** — `be_view`/`be_layout` (set view aktif = `be/tw`).
+- **`src/config/app.ts`** — `be_view`/`be_layout` (set view aktif = `be/default`).
 - **`src/config/themes.ts`** — palet 9 tema (template switcher).
 
 ## Helper DRY
@@ -86,6 +86,19 @@ export default class UserService implements IUserService {
 - **File** → Alibaba OSS (`services/fileService.ts`), bukan disk lokal.
 - **Setting** → cache in-memory TTL 60s (`services/settingCache.ts`), invalidasi saat update.
 - **Graceful shutdown** → SIGTERM/SIGINT menutup Redis + DataSource.
+
+## Frontend Template (Landing)
+
+Halaman publik `/` memakai katalog 640 landing [opentailwind](https://github.com/lindoai/opentailwind). Dua service di modul `landing` (`http/services/v1`):
+
+| Service | Tugas |
+|---------|-------|
+| `FeCatalogService` (`IFeCatalogService`) | Sumber katalog: fetch GitHub **tree API sekali**, cache memori (TTL 6 jam) + disk (`public/fe/templates/_catalog.json`); fallback ke katalog kurasi (`FE_TEMPLATES`) bila offline. `paginate(filter, pinSlug)` — search (`q_name`) + filter (`q_category`) + slice in-memory (server-side), `pinSlug` menyematkan template aktif ke halaman pertama. `previewHtml(slug)` — proxy HTML mentah on-demand (validasi slug via katalog, anti-SSRF). |
+| `FeTemplateService` (`IFeTemplateService`) | Template aktif: `ensure(slug)` unduh & cache file lokal saat dipilih; `getActiveHtml()` sajikan landing. Slug divalidasi via pola `FE_TEMPLATE_SLUG_RE` (mencakup 640, bukan enum statis). |
+
+Alur UI (Setting → Frontend Template): katalog paginated di-render server-side; **thumbnail** = iframe ber-`srcdoc` (HTML diambil dari endpoint `admin.v1.setting.fe_preview` lalu di-cache **localStorage** browser, lazy-load via `IntersectionObserver`); klik kartu → **modal preview** penuh (reuse cache). Beban server minimal — server hanya proxy HTML sekali per template.
+
+**Sample:** template default (`views/fe/default` + `resources/layouts/fe/default`) **mengikat data Setting** (name, logo, description, email/phone/address, copyright) dengan guard + fallback. Ini contoh hidup pola binding; 639 template lain disajikan sebagai HTML statis (preview desain murni).
 
 ## Menambah Modul Baru (panduan singkat)
 

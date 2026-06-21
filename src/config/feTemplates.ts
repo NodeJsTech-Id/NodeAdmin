@@ -17,8 +17,36 @@ export interface FeTemplate {
 export const FE_TEMPLATE_BASE_URL =
     'https://raw.githubusercontent.com/lindoai/opentailwind/master/landings'
 
+/** GitHub API tree (recursive) untuk mendaftar seluruh 640 landing. */
+export const FE_TEMPLATE_TREE_URL =
+    'https://api.github.com/repos/lindoai/opentailwind/git/trees/master?recursive=1'
+
 /** Folder cache lokal (relatif root app). */
 export const FE_TEMPLATE_DIR = 'public/fe/templates'
+
+/** File cache katalog (daftar 640) hasil fetch tree, agar tak bebani GitHub. */
+export const FE_TEMPLATE_CATALOG_FILE = 'public/fe/templates/_catalog.json'
+
+/**
+ * Pola slug opentailwind: `{kategori}-{NNN}-{nama}` (kategori boleh ber-hyphen,
+ * mis. `agency-consulting`). Dipakai validator & derive metadata.
+ */
+export const FE_TEMPLATE_SLUG_RE = /^([a-z]+(?:-[a-z]+)*)-(\d{3})-([a-z0-9-]+)$/
+
+/** Title-case dari segmen hyphen: `digital-marketing` → `Digital Marketing`. */
+const titleize = (s: string): string =>
+    s.split('-').filter(Boolean).map((w) => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+
+/**
+ * Derive metadata tampil dari slug opentailwind. Bila slug tak cocok pola,
+ * pakai slug apa adanya sebagai name & kategori 'Other'.
+ */
+export const deriveFeTemplate = (slug: string): FeTemplate => {
+    const m = FE_TEMPLATE_SLUG_RE.exec(slug)
+    if (!m) return { slug, name: titleize(slug), category: 'Other' }
+    const [, category, , name] = m
+    return { slug, name: titleize(name), category: titleize(category) }
+}
 
 /** Katalog kurasi (~15 dari 640 landing opentailwind). */
 export const FE_TEMPLATES: FeTemplate[] = [

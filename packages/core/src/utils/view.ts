@@ -4,8 +4,8 @@ import path from 'path'
 /**
  * Konfigurasi path view backend, di-inject oleh app saat bootstrap
  * (bukan import `config/app` agar core tetap generik & app-agnostic).
- * - `viewSegment`   → sub-path di dalam `<module>/views` (mis. '/be/tw').
- * - `layoutSegment` → sub-path layout relatif './layouts' (mis. '/be/tw').
+ * - `viewSegment`   → sub-path di dalam `<module>/views` (mis. '/be/default').
+ * - `layoutSegment` → sub-path layout relatif './layouts' (mis. '/be/default').
  */
 export interface ViewPathsConfig {
     viewSegment: string

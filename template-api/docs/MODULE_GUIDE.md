@@ -18,7 +18,7 @@ src/modules/product/
 │   └── validators/ProductValidator.ts
 ├── routes/web.ts
 ├── routes/api.ts                                  (opsional)
-└── views/be/tw/product/{index,create,edit}.ejs
+└── views/be/default/product/{index,create,edit}.ejs
 ```
 
 ---
@@ -240,8 +240,8 @@ export default router
 ```
 Modul dimuat otomatis oleh `loadRoutes` (tak perlu daftar manual di index.ts).
 
-## 10. Views (`views/be/tw/product/`)
-Salin pola dari `modules/access/views/be/tw/users/` (index = tabel + search + pagination `mt-4`; create/edit = form). Form mutasi: token CSRF di-inject otomatis (foot.ejs). Status pakai ikon FontAwesome (`fa-check-circle`/`fa-times-circle`).
+## 10. Views (`views/be/default/product/`)
+Salin pola dari `modules/access/views/be/default/users/` (index = tabel + search + pagination `mt-4`; create/edit = form). Form mutasi: token CSRF di-inject otomatis (foot.ejs). Status pakai ikon FontAwesome (`fa-check-circle`/`fa-times-circle`).
 
 ## 11. Test (wajib)
 - **Integration** `tests/integration/productService.test.ts`:

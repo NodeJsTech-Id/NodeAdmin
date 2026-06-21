@@ -3,7 +3,7 @@
 // identik, hanya berbeda 4 nilai warna (primary/secondary/light/dark) di tailwind.config.
 // Folder "Flutter" dikecualikan karena itu proyek Flutter, bukan template web.
 //
-// Satu set view Tailwind (be/tw) didorong oleh nilai-nilai ini via CSS variable +
+// Satu set view Tailwind (be/default) didorong oleh nilai-nilai ini via CSS variable +
 // tailwind.config inline di head.ejs, sehingga ganti tema = ganti palet saat render
 // tanpa menduplikasi view per warna.
 

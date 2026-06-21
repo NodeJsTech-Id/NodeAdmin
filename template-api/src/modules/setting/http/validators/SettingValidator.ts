@@ -3,6 +3,7 @@ import Joi, { ObjectSchema } from 'joi';
 import multer, { FileFilterCallback } from 'multer';
 import app from '../../../../config/app';
 import { THEME_NAMES } from '@flazhost-nodeadmin/core';
+import { FE_TEMPLATE_SLUG_RE } from '../../../../config/feTemplates';
 
 const fileSchema = Joi.object({
     fieldname: Joi.string().optional(),
@@ -22,6 +23,7 @@ const SettingServiceSchema: ObjectSchema = Joi.object({
     email: Joi.string().allow('').optional(),
     copyright: Joi.string().allow('').optional(),
     theme: Joi.string().valid(...THEME_NAMES).optional(),
+    // Validasi pola slug opentailwind; keberadaan dicek di service (katalog).
 });
 
 const SettingValidator = (req: Request, res: Response, next: NextFunction): void => {

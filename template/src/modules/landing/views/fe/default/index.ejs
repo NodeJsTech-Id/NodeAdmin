@@ -19,13 +19,18 @@
       <div class="grid lg:grid-cols-5 gap-10">
         <!-- Main Content - 3 columns -->
         <div class="lg:col-span-3" data-motion="hero">
-          <span data-motion="badge" class="text-orange-600 dark:text-orange-400 text-sm font-semibold tracking-wide uppercase mb-4 block">Digital Agency</span>
+          <!-- Hero — contoh bind ke Setting (badge=initial, heading=name, deskripsi). -->
+          <span data-motion="badge" class="text-orange-600 dark:text-orange-400 text-sm font-semibold tracking-wide uppercase mb-4 block"><%= (typeof setting !== 'undefined' && setting && setting.initial) ? setting.initial : 'Digital Agency' %></span>
           <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold text-neutral-900 dark:text-white leading-tight mb-6">
-            <span data-animate="heading">We Build</span><br>
-            <span data-animate="heading" class="text-orange-600 dark:text-orange-400">Digital Futures</span>
+            <span data-animate="heading">Welcome to</span><br>
+            <span data-animate="heading" class="text-orange-600 dark:text-orange-400"><%= (typeof setting !== 'undefined' && setting && setting.name) ? setting.name : 'NodeAdmin' %></span>
           </h1>
           <p class="text-lg text-neutral-600 dark:text-neutral-400 mb-8" data-animate="text">
+            <% if (typeof setting !== 'undefined' && setting && setting.description) { %>
+            <%- setting.description %>
+            <% } else { %>
             Partner with us to transform your vision into exceptional digital experiences. From strategy to execution, we deliver solutions that drive growth and innovation.
+            <% } %>
           </p>
           <div class="flex flex-wrap gap-4">
             <a href="#" data-motion="button" class="px-6 py-3 bg-orange-600 hover:bg-orange-700 transition-colors rounded-full text-white font-semibold">

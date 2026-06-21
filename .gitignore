@@ -15,3 +15,6 @@ coverage/
 # Template frontend hasil download on-demand (kecuali default yang di-bundle)
 public/fe/templates/*
 !public/fe/templates/agency-consulting-002-creative-agency.html
+
+# Debug screenshots (lokal, jangan dikomit)
+bug/

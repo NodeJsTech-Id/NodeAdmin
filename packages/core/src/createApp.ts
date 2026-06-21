@@ -56,9 +56,9 @@ export interface CreateAppOptions {
         dir: string
         /** Path layout default (app.set('layout')). UI-only. */
         layoutPath?: string
-        /** Segmen view backend untuk renderView (mis. '/be/tw'). UI-only. */
+        /** Segmen view backend untuk renderView (mis. '/be/default'). UI-only. */
         viewSegment?: string
-        /** Segmen layout backend untuk renderView (mis. '/be/tw'). UI-only. */
+        /** Segmen layout backend untuk renderView (mis. '/be/default'). UI-only. */
         layoutSegment?: string
     }
     /** Direktori modul untuk auto-load routes (web/api). */
