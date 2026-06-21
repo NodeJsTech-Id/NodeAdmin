@@ -148,39 +148,56 @@ function main() {
     fs.writeFileSync(path.join(OUT, '.env.example'), buildEnvExample())
     console.log('  tulis .env.example (SQLite)')
 
-    // README ringkas khusus app hasil scaffold.
-    fs.writeFileSync(path.join(OUT, 'README.md'), TEMPLATE_README)
-    console.log('  tulis README.md')
+    // README lengkap tapi disesuaikan: dari README utama, buang section "pabrik"
+    // (monorepo/rilis/scaffold) yang tak relevan untuk app turunan.
+    fs.writeFileSync(path.join(OUT, 'README.md'), buildReadme())
+    console.log('  tulis README.md (disesuaikan dari README utama)')
 
     console.log('[build-template] selesai →', path.relative(ROOT, OUT))
 }
 
-const TEMPLATE_README = `# NodeAdmin App
+// Heading `## ...` yang dibuang dari README app turunan (materi pabrik/monorepo).
+const DROP_SECTIONS = [
+    '⚡ Buat Aplikasi Baru (Scaffold)', // app sudah ter-scaffold; tak relevan
+    '📦 Paket Pabrik',                  // info monorepo/rilis/changeset
+]
 
-Aplikasi admin panel yang di-scaffold dari \`@flazhost-nodeadmin/create-app\`.
-Runtime generik berasal dari paket [\`@flazhost-nodeadmin/core\`](https://www.npmjs.com/package/@flazhost-nodeadmin/core).
+function buildReadme() {
+    const src = fs.readFileSync(path.join(ROOT, 'README.md'), 'utf8')
+    const lines = src.split('\n')
+    const out = []
+    let skipping = false
 
-## Mulai
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i]
+        const h2 = line.match(/^##\s+(.*)$/)
+        if (h2) {
+            skipping = DROP_SECTIONS.some((t) => h2[1].trim() === t)
+            if (skipping) {
+                // Buang juga pemisah '---' tepat sebelum section ini (sudah ter-push ke out).
+                while (out.length && out[out.length - 1].trim() === '') out.pop()
+                if (out.length && out[out.length - 1].trim() === '---') out.pop()
+                while (out.length && out[out.length - 1].trim() === '') out.pop()
+                continue
+            }
+        }
+        if (!skipping) out.push(line)
+    }
 
-\`\`\`bash
-npm install
-cp .env.example .env          # default: SQLite (tanpa server DB)
-npm run migration:run         # buat tabel + seed admin & setting
-npm run start:dev             # http://localhost:3000
-\`\`\`
-
-Login default: \`admin@admin.com\` / \`12345678\` (ganti sebelum production).
-
-## Ganti database
-
-Edit \`.env\` → \`DB_TYPE\` (mysql | mariadb | postgres | better-sqlite3 | mssql | oracle)
-dan kredensialnya. Driver mysql2 & pg sudah terpasang.
-
-## Update runtime
-
-\`\`\`bash
-npm update @flazhost-nodeadmin/core @flazhost-nodeadmin/cli
-\`\`\`
-`
+    let text = out.join('\n')
+    // Bersihkan baris intro yang merujuk Paket Pabrik (section yg dibuang).
+    text = text.replace(/^Runtime generik & tooling diekstrak[^\n]*\n/m, '')
+    // Buang sub-blok "Paket pabrik (packages/*)" di dalam blok Scripts.
+    text = text.replace(/\n# Paket pabrik \(packages\/\*\)[\s\S]*?changeset publish[^\n]*\n/m, '\n')
+    // Di blok "Struktur Direktori": buang baris monorepo (packages/ tree + .changeset/),
+    // karena app turunan bukan monorepo.
+    text = text.replace(/^packages\/.*\n(?:[├└│].*\n)*\n?/m, '')
+    text = text.replace(/^\.changeset\/.*\n/m, '')
+    // Sesuaikan keterangan src yang menyebut konsumsi paket.
+    text = text.replace(/^(src\/\s+#).*$/m, '$1 kode aplikasi')
+    // Rapikan kelebihan baris kosong.
+    text = text.replace(/\n{3,}/g, '\n\n')
+    return text
+}
 
 main()
