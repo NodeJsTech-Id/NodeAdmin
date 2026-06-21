@@ -13,6 +13,18 @@ Juga: `npm init`, `yarn create`, `pnpm create`. Tanpa argumen nama → ditanya i
 
 ---
 
+## 🖼️ Tampilan
+
+| Login | Dashboard |
+|-------|-----------|
+| ![Login](https://raw.githubusercontent.com/FlazHost-Com/NodeAdmin/main/docs/screenshots/login.png) | ![Dashboard](https://raw.githubusercontent.com/FlazHost-Com/NodeAdmin/main/docs/screenshots/dashboard.png) |
+
+| User Management (RBAC) | Setting + Template Switcher (9 tema) |
+|------------------------|--------------------------------------|
+| ![Users](https://raw.githubusercontent.com/FlazHost-Com/NodeAdmin/main/docs/screenshots/users.png) | ![Setting](https://raw.githubusercontent.com/FlazHost-Com/NodeAdmin/main/docs/screenshots/setting.png) |
+
+---
+
 ## ⚡ Mulai cepat (zero-setup)
 
 ```bash

@@ -2,6 +2,22 @@
 
 Node Admin adalah **starter pack / bootstrap** untuk membangun aplikasi admin panel berbasis Node.js (TypeScript + Express + TypeORM). Dirancang sebagai fondasi yang scalable dengan menerapkan prinsip rekayasa perangkat lunak yang solid, keamanan berlapis, dan suite pengujian lengkap.
 
+## 🖼️ Tampilan
+
+| Login | Dashboard |
+|-------|-----------|
+| ![Login](docs/screenshots/login.png) | ![Dashboard](docs/screenshots/dashboard.png) |
+
+| User Management (RBAC) | Setting + Template Switcher (9 tema) |
+|------------------------|--------------------------------------|
+| ![Users](docs/screenshots/users.png) | ![Setting](docs/screenshots/setting.png) |
+
+| Role & Permission | UI Components |
+|-------------------|---------------|
+| ![Roles](docs/screenshots/roles.png) | ![Components](docs/screenshots/components.png) |
+
+---
+
 ## ✨ Fitur
 
 - **User Management** — CRUD pengguna, multi-role, foto profil.
