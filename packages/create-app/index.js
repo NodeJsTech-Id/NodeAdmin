@@ -17,7 +17,7 @@ const pc = require('picocolors')
 const { downloadTemplate } = require('giget')
 
 // Tag tunggal mencakup kedua subdir (template + template-api).
-const TEMPLATE_TAG = 'template-v1.0.9'
+const TEMPLATE_TAG = 'template-v1.0.10'
 const REPO = 'FlazHost-Com/NodeAdmin'
 
 async function main() {

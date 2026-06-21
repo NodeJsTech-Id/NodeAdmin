@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.15
+
+### Patch Changes
+
+- Tarik `template-v1.0.10`: perbaiki app "mati senyap" / "Gagal memuat preview" saat fresh install (dev). Sumbernya **nodemon restart-loop** — penulisan cache `public/fe/templates/_catalog.json` memicu nodemon me-restart server di tengah request. Tambah `nodemon.json` (watch `src` saja, ignore folder cache). Plus `server.on('error')` untuk EADDRINUSE (pesan jelas, tak mati mendadak) & timeout fetch katalog dilonggarkan ke 20s.
+
 ## 1.0.14
 
 ### Patch Changes
