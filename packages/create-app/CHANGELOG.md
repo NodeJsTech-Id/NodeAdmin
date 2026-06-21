@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.7
+
+### Patch Changes
+
+- Tambah section Tampilan (screenshot UI) di README create-app.
+
 ## 1.0.6
 
 ### Patch Changes
