@@ -5,12 +5,15 @@ import { AppError } from '@flazhost-nodeadmin/core'
 import type { PaginateResult } from '@flazhost-nodeadmin/core'
 import {
     FE_TEMPLATE_BASE_URL, FE_TEMPLATE_TREE_URL, FE_TEMPLATE_CATALOG_FILE,
-    FE_TEMPLATES, deriveFeTemplate, FeTemplate,
+    FE_TEMPLATE_DIR, FE_TEMPLATES, deriveFeTemplate, FeTemplate,
 } from '../../../../../config/feTemplates'
 import { IFeCatalogService } from './IFeCatalogService'
 
 /** TTL cache memori katalog (ms). Disk dipakai sebagai persist lintas-restart. */
 const CATALOG_TTL_MS = 6 * 60 * 60 * 1000 // 6 jam
+
+/** Timeout fetch jaringan (ms) — cegah request menggantung saat GitHub lambat. */
+const FETCH_TIMEOUT_MS = 8000
 
 /**
  * Katalog template frontend (640 landing opentailwind). Sumber kebenaran =
@@ -23,6 +26,16 @@ export default class FeCatalogService implements IFeCatalogService {
 
     private cacheFile(): string {
         return path.resolve(process.cwd(), FE_TEMPLATE_CATALOG_FILE)
+    }
+
+    /** Path HTML template yang sudah ter-download lokal (dipakai sbg fallback preview). */
+    private localHtmlFile(slug: string): string {
+        return path.resolve(process.cwd(), FE_TEMPLATE_DIR, `${slug}.html`)
+    }
+
+    /** fetch dgn timeout (AbortSignal) agar tak menggantung saat upstream lambat. */
+    private async fetchWithTimeout(url: string, init?: RequestInit): Promise<globalThis.Response> {
+        return fetch(url, { ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
     }
 
     /** Parse path tree → slug landing (buang prefix `landings/` & `.html`). */
@@ -66,7 +79,7 @@ export default class FeCatalogService implements IFeCatalogService {
         }
         // Belum ada cache → fetch GitHub tree sekali.
         try {
-            const res = await fetch(FE_TEMPLATE_TREE_URL, {
+            const res = await this.fetchWithTimeout(FE_TEMPLATE_TREE_URL, {
                 headers: { Accept: 'application/vnd.github+json' },
             })
             if (!res.ok) throw new Error(`HTTP ${res.status}`)
@@ -132,22 +145,39 @@ export default class FeCatalogService implements IFeCatalogService {
         return all.some((t) => t.slug === slug)
     }
 
+    /** Baca HTML template dari cache lokal bila ada & valid (fallback offline). */
+    private readLocalHtml(slug: string): string | null {
+        try {
+            const html = fs.readFileSync(this.localHtmlFile(slug), 'utf8')
+            return /<\/html>/i.test(html) ? html : null
+        } catch {
+            return null
+        }
+    }
+
     public async previewHtml(slug: string): Promise<string> {
         if (!(await this.has(slug))) {
             throw new AppError('Template tidak dikenali', 400)
         }
+
+        // 1) Cache lokal lebih dulu — instan & tak bergantung jaringan/rate-limit.
+        const local = this.readLocalHtml(slug)
+        if (local) return local
+
+        // 2) Fetch upstream dengan timeout agar tak menggantung saat GitHub lambat.
         const url = `${FE_TEMPLATE_BASE_URL}/${slug}.html`
-        let html: string
         try {
-            const res = await fetch(url)
+            const res = await this.fetchWithTimeout(url)
             if (!res.ok) throw new Error(`HTTP ${res.status}`)
-            html = await res.text()
+            const html = await res.text()
+            if (!/<\/html>/i.test(html)) throw new Error('HTML tidak valid')
+            return html
         } catch (e: any) {
-            throw new AppError(`Gagal mengambil preview: ${e.message}`, 502)
+            // 3) Fallback terakhir: cache lokal (jika sempat ter-download sebagian).
+            const fallback = this.readLocalHtml(slug)
+            if (fallback) return fallback
+            const reason = e?.name === 'TimeoutError' ? 'timeout' : e?.message
+            throw new AppError(`Gagal mengambil preview: ${reason}`, 502)
         }
-        if (!/<\/html>/i.test(html)) {
-            throw new AppError('Template preview tidak valid', 502)
-        }
-        return html
     }
 }

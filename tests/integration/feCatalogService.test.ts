@@ -86,6 +86,35 @@ describe('FeCatalogService (integration, fetch di-stub)', () => {
         await expect(service.previewHtml('slug-tak-ada')).rejects.toMatchObject({ statusCode: 400 })
     })
 
+    it('previewHtml() cache lokal ada → kembalikan lokal tanpa fetch upstream', async () => {
+        const slug = 'agency-consulting-002-creative-agency'
+        await service.list() // hangatkan katalog (memo) agar has() tak fetch lagi
+        const before = (global.fetch as jest.Mock).mock.calls.length
+        ;(service as any).readLocalHtml = (s: string) =>
+            s === slug ? '<html><body>LOKAL</body></html>' : null
+        const html = await service.previewHtml(slug)
+        expect(html).toContain('LOKAL')
+        // Tak ada fetch tambahan: cache lokal dilayani sebelum jalur GitHub.
+        expect((global.fetch as jest.Mock).mock.calls.length).toBe(before)
+    })
+
+    it('previewHtml() upstream gagal + ada cache lokal → fallback ke lokal', async () => {
+        const slug = 'agency-consulting-002-creative-agency'
+        let calls = 0
+        // readLocalHtml: null saat cek awal (paksa fetch), lalu lokal saat fallback.
+        ;(service as any).readLocalHtml = () => (++calls === 1 ? null : '<html>FALLBACK</html>')
+        global.fetch = jest.fn(async () => { throw new Error('network down') }) as any
+        const html = await service.previewHtml(slug)
+        expect(html).toContain('FALLBACK')
+    })
+
+    it('previewHtml() upstream gagal tanpa cache lokal → AppError 502', async () => {
+        const slug = 'agency-consulting-002-creative-agency'
+        ;(service as any).readLocalHtml = () => null
+        global.fetch = jest.fn(async () => ({ ok: false, status: 503 })) as any
+        await expect(service.previewHtml(slug)).rejects.toMatchObject({ statusCode: 502 })
+    })
+
     it('list() fallback ke katalog kurasi saat fetch gagal', async () => {
         global.fetch = jest.fn(async () => ({ ok: false, status: 500 })) as any
         const all = await service.list()
