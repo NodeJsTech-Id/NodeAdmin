@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/cli
 
+## 1.2.1
+
+### Patch Changes
+
+- Naikkan `giget` `^1.2.3` → `^3.3.0` untuk menghapus **3 audit high** (node-tar path-traversal) yang masuk lewat `giget@1.x` (bawa `tar@^6` rentan; fix hanya di `tar@7`, dan `giget@3` melepas dependency `tar` sepenuhnya). `giget@3` ESM-only → pemanggilan diganti `await import('giget')` (call-site sudah async). Tanpa perubahan perilaku `add-ui`.
+
 ## 1.2.0
 
 ### Minor Changes

@@ -83,7 +83,9 @@ async function downloadFullTemplate() {
         log(`📁 Memakai template lokal: ${localOverride}`)
         return localOverride
     }
-    const { downloadTemplate } = require('giget')
+    // giget ≥3 = ESM-only → dynamic import (file ini CommonJS). Versi 3.x
+    // melepas dependency `tar` rentan → menghilangkan audit high.
+    const { downloadTemplate } = await import('giget')
     const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'nodeadmin-ui-'))
     const src = `github:${REPO}/template#${TEMPLATE_TAG}`
     log(`⏬ Mengunduh template UI (${TEMPLATE_TAG}) ...`)

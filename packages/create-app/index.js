@@ -14,7 +14,9 @@ const fs = require('fs')
 const path = require('path')
 const prompts = require('prompts')
 const pc = require('picocolors')
-const { downloadTemplate } = require('giget')
+// giget ≥3 = ESM-only → muat via dynamic import() (file ini CommonJS).
+// Dipakai di main() yang sudah async. Versi 3.x melepas dependency `tar` yang
+// rentan (node-tar path-traversal) → menghapus audit high di app turunan.
 
 // Tag tunggal mencakup kedua subdir (template + template-api).
 const TEMPLATE_TAG = 'template-v1.0.11'
@@ -71,6 +73,7 @@ async function main() {
     const label = variant === 'api' ? 'API only' : 'Full (UI + API)'
     console.log(pc.cyan(`\n⏬ Mengunduh template NodeAdmin [${label}] ke ${pc.bold(targetName)}/ ...`))
     try {
+        const { downloadTemplate } = await import('giget')
         await downloadTemplate(src, { dir: targetDir, force: true })
     } catch (err) {
         console.error(pc.red('✖ Gagal mengunduh template:'), err.message)

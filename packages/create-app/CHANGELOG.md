@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.17
+
+### Patch Changes
+
+- Naikkan `giget` `^1.2.3` → `^3.3.0` (hapus **3 audit high** node-tar; `giget@3` melepas `tar`). ESM-only → pemanggilan diganti `await import('giget')` di `main()`. Tanpa perubahan perilaku scaffolder.
+
 ## 1.0.16
 
 ### Patch Changes
