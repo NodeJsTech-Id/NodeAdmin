@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.4
+
+### Patch Changes
+
+- Uji ulang rantai rilis otomatis (CI → mirror → release.yml → npm) dengan NPM_TOKEN baru.
+
 ## 1.0.3
 
 ### Patch Changes
