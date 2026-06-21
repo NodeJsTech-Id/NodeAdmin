@@ -97,7 +97,7 @@
     "@types/redis": "^4.0.11",
     "@types/supertest": "^7.2.0",
     "@types/uuid": "^10.0.0",
-    "better-sqlite3": "^9.6.0",
+    "better-sqlite3": "^12.11.1",
     "ioredis-mock": "^8.13.1",
     "jest": "^30.4.2",
     "nodemon": "^3.1.3",
