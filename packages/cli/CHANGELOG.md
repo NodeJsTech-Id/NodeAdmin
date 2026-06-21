@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/cli
 
+## 1.1.3
+
+### Patch Changes
+
+- README dialihbahasakan ke **Inggris** (instalasi, tabel command, contoh). Tanpa perubahan perilaku CLI.
+
 ## 1.1.2
 
 ### Patch Changes

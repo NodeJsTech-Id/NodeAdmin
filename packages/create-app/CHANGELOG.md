@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.13
+
+### Patch Changes
+
+- Tarik `template-v1.0.8`: modul/route `landing` → **`home`** (halaman publik `/` me-render home LANGSUNG tanpa redirect; `/home` alias; login eksplisit di `/auth/login`). README app turunan dialihbahasakan ke **Inggris**. Plus perbaikan import yatim `FeCatalogService` di varian API-only (template-api kini buildable).
+
 ## 1.0.12
 
 ### Patch Changes

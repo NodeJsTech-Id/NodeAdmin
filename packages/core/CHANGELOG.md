@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/core
 
+## 1.2.1
+
+### Patch Changes
+
+- README dialihbahasakan ke **Inggris** (Quick Start, daftar export, prinsip). Tanpa perubahan API/runtime.
+
 ## 1.2.0
 
 ### Minor Changes
