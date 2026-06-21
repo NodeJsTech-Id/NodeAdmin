@@ -354,6 +354,7 @@ npm run migration:run    # run migrations
 npm run migration:revert # roll back the last migration
 npm run migration:create # create a new migration file
 npm test / test:*        # see the Testing section
+npx nodeadmin add-ui     # upgrade an API-only install → Full (add the UI layer)
 
 # Factory packages (packages/*)
 npm run build:core       # compile @flazhost-nodeadmin/core to dist

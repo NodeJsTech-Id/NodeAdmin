@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.19
+
+### Patch Changes
+
+- Tarik `template-v1.0.12`: **perbaikan keamanan** — JWT logout blacklist sebelumnya gagal senyap di runtime (redis `legacyMode` → `clientRedis.set/get` tak menerima Promise/opsi `{EX}`), sehingga token tetap valid setelah logout. Kini pakai `clientRedis.v4.*` + test regresi. Juga: `npx nodeadmin add-ui` ditambahkan ke blok Scripts di README.
+
 ## 1.0.18
 
 ### Patch Changes

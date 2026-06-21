@@ -16,7 +16,10 @@ export const ensureAuthenticatedApi = async (req: Request, res: Response, next: 
     if (!token) {
         return ResponseHandler.error(res, "No token provided", null, 401)
     }
-    const checkToken = await clientRedis.get(token)
+    // clientRedis legacyMode → pakai .v4 untuk Promise API (lihat AuthController.logout).
+    // clientRedis.get langsung mengembalikan undefined di legacy mode → cek blacklist
+    // selalu gagal & token logout tetap diterima.
+    const checkToken = await clientRedis.v4.get(token)
     if (checkToken == 'blacklisted') return ResponseHandler.error(res, "Unauthenticated", null, 401)
     jwt.verify(token, env.jwt.secret, { algorithms: [env.jwt.algorithm] }, (err, decoded) => {
         if (err) {

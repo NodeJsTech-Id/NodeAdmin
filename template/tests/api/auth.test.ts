@@ -65,4 +65,27 @@ describe('Auth (API/web)', () => {
             .send({ email: ADMIN.email, password: 'salah' })
         expect(res.status).toBe(401)
     })
+
+    it('API logout mem-blacklist token → token sama ditolak (401)', async () => {
+        // login → dapatkan JWT
+        const login = await request(app).post('/api/v1/auth/login')
+            .send({ email: ADMIN.email, password: ADMIN.password })
+        const token = login.body.data.access_token
+        expect(token).toBeTruthy()
+
+        // sebelum logout: token valid di endpoint terproteksi
+        const before = await request(app).get('/api/v1/dashboard')
+            .set('Authorization', `Bearer ${token}`)
+        expect(before.status).toBe(200)
+
+        // logout → blacklist
+        const logout = await request(app).get('/api/v1/auth/logout')
+            .set('Authorization', `Bearer ${token}`)
+        expect(logout.status).toBe(200)
+
+        // sesudah logout: token yang sama HARUS ditolak (regresi blacklist legacyMode)
+        const after = await request(app).get('/api/v1/dashboard')
+            .set('Authorization', `Bearer ${token}`)
+        expect(after.status).toBe(401)
+    })
 })

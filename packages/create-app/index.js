@@ -19,7 +19,7 @@ const pc = require('picocolors')
 // rentan (node-tar path-traversal) → menghapus audit high di app turunan.
 
 // Tag tunggal mencakup kedua subdir (template + template-api).
-const TEMPLATE_TAG = 'template-v1.0.11'
+const TEMPLATE_TAG = 'template-v1.0.12'
 const REPO = 'FlazHost-Com/NodeAdmin'
 
 async function main() {

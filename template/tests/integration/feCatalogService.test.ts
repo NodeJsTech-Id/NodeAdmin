@@ -28,8 +28,14 @@ describe('deriveFeTemplate (unit)', () => {
 describe('FeCatalogService (integration, fetch di-stub)', () => {
     let service: FeCatalogService
     const realFetch = global.fetch
+    // Beberapa test SENGAJA memicu jalur fallback (upstream gagal) yang memang
+    // memanggil console.error di service — itu perilaku produksi yang benar.
+    // Spy menyenyapkan output (agar tak tampak seperti kegagalan test) sekaligus
+    // memungkinkan assertion bahwa error memang dipanggil (lihat test fallback).
+    let errSpy: jest.SpyInstance
 
     beforeEach(() => {
+        errSpy = jest.spyOn(console, 'error').mockImplementation(() => {})
         service = new FeCatalogService()
         // Hindari baca cache disk lama → paksa jalur fetch.
         ;(service as any).readDiskCache = () => null
@@ -39,7 +45,10 @@ describe('FeCatalogService (integration, fetch di-stub)', () => {
             json: async () => TREE,
         })) as any
     })
-    afterEach(() => { global.fetch = realFetch })
+    afterEach(() => {
+        global.fetch = realFetch
+        errSpy.mockRestore()
+    })
 
     it('list() → hanya blob landings .html yang diparse (3 item)', async () => {
         const all = await service.list()
@@ -106,6 +115,7 @@ describe('FeCatalogService (integration, fetch di-stub)', () => {
         global.fetch = jest.fn(async () => { throw new Error('network down') }) as any
         const html = await service.previewHtml(slug)
         expect(html).toContain('FALLBACK')
+        expect(errSpy).toHaveBeenCalled() // error katalog memang diharapkan (fallback)
     })
 
     it('previewHtml() upstream gagal tanpa cache lokal → AppError 502', async () => {
@@ -113,11 +123,13 @@ describe('FeCatalogService (integration, fetch di-stub)', () => {
         ;(service as any).readLocalHtml = () => null
         global.fetch = jest.fn(async () => ({ ok: false, status: 503 })) as any
         await expect(service.previewHtml(slug)).rejects.toMatchObject({ statusCode: 502 })
+        expect(errSpy).toHaveBeenCalled() // error katalog memang diharapkan (fallback)
     })
 
     it('list() fallback ke katalog kurasi saat fetch gagal', async () => {
         global.fetch = jest.fn(async () => ({ ok: false, status: 500 })) as any
         const all = await service.list()
         expect(all.length).toBeGreaterThan(0) // FE_TEMPLATES fallback
+        expect(errSpy).toHaveBeenCalled() // error katalog memang diharapkan (fallback)
     })
 })

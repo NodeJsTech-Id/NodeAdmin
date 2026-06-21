@@ -1,6 +1,6 @@
 {
   "name": "@flazhost-nodeadmin/cli",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "description": "Tooling NodeAdmin (convention checker, generator migration, copy views, add-ui) untuk app turunan.",
   "license": "ISC",
   "bin": {

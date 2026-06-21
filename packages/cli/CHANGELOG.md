@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/cli
 
+## 1.2.2
+
+### Patch Changes
+
+- `add-ui` menarik `template-v1.0.12` (berisi perbaikan JWT logout blacklist). Tanpa perubahan perilaku command.
+
 ## 1.2.1
 
 ### Patch Changes

@@ -14,14 +14,26 @@ jest.mock('../../src/services/fileService', () => ({
 // --- Mock client Redis (dipakai di logout/blacklist) ---
 jest.mock('redis', () => {
     const store = new Map<string, string>()
+    // Promise API (cermin clientRedis.v4 di legacyMode — dipakai blacklist token).
+    const v4 = {
+        get: jest.fn(async (k: string) => store.get(k) ?? null),
+        set: jest.fn(async (k: string, v: string) => { store.set(k, v); return 'OK' }),
+        del: jest.fn(async (k: string) => { store.delete(k); return 1 }),
+    }
     const client = {
         isOpen: true,
         on: jest.fn(),
         connect: jest.fn(async () => {}),
         quit: jest.fn(async () => {}),
-        get: jest.fn(async (k: string) => store.get(k) ?? null),
-        set: jest.fn(async (k: string, v: string) => { store.set(k, v); return 'OK' }),
-        del: jest.fn(async (k: string) => { store.delete(k); return 1 }),
+        // legacy (callback-style, redis v3): TIDAK mengembalikan Promise nilai.
+        // Disengaja meniru perilaku legacyMode asli — `await clientRedis.get(k)`
+        // menghasilkan undefined (bukan nilai). Maka kode yang keliru memakai flat
+        // get/set untuk blacklist (bukan .v4) akan GAGAL test, bukan lolos diam-diam.
+        get: jest.fn((_k: string, cb?: (e: any, v: any) => void) => { cb?.(null, store.get(_k) ?? null) }),
+        set: jest.fn((_k: string, _v: string, cb?: (e: any, v: any) => void) => { store.set(_k, _v); cb?.(null, 'OK') }),
+        del: jest.fn((_k: string, cb?: (e: any, v: any) => void) => { store.delete(_k); cb?.(null, 1) }),
+        // Promise API (cermin clientRedis.v4) — dipakai blacklist token.
+        v4,
     }
     return { createClient: () => client }
 })

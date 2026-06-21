@@ -67,7 +67,11 @@ export default class AuthController {
 			const decoded: any = jwt.decode(token)
 			if (decoded?.exp) ttlSec = Math.max(1, decoded.exp - Math.floor(Date.now() / 1000))
 		} catch { /* pakai default */ }
-		await clientRedis.set(token, 'blacklisted', { EX: ttlSec })
+		// PENTING: clientRedis dibuat dengan legacyMode (utk connect-redis v6).
+		// Di legacy mode, clientRedis.set/get = API callback v3 dan TIDAK menerima
+		// opsi { EX } / Promise → harus pakai clientRedis.v4.* untuk Promise API.
+		// Tanpa ini blacklist senyap gagal (token tetap valid setelah logout).
+		await clientRedis.v4.set(token, 'blacklisted', { EX: ttlSec })
 		return ResponseHandler.success(res, "Success")
 	}
 
