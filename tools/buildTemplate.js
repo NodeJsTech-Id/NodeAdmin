@@ -13,6 +13,7 @@
  */
 const fs = require('fs')
 const path = require('path')
+const { buildCleanReadme } = require('./lib/readme')
 
 const ROOT = path.resolve(__dirname, '..')
 const OUT = path.join(ROOT, 'template')
@@ -83,6 +84,9 @@ function buildPackageJson() {
     const s = { ...root.scripts }
     delete s['build:core']
     delete s['pretest']
+    // Script khusus pabrik (monorepo) — tak relevan di app turunan.
+    delete s['build:template']
+    delete s['build:create-app-readme']
     s.build = 'rimraf dist && tsc && nodeadmin copy-views'
     s.start = 'npm run build && pm2 start dist/index.js --watch'
 
@@ -156,48 +160,10 @@ function main() {
     console.log('[build-template] selesai →', path.relative(ROOT, OUT))
 }
 
-// Heading `## ...` yang dibuang dari README app turunan (materi pabrik/monorepo).
-const DROP_SECTIONS = [
-    '⚡ Buat Aplikasi Baru (Scaffold)', // app sudah ter-scaffold; tak relevan
-    '📦 Paket Pabrik',                  // info monorepo/rilis/changeset
-]
-
+// README app turunan: dari README utama, strip section pabrik. Path gambar tetap
+// relatif (docs/screenshots/ ikut ter-copy ke template).
 function buildReadme() {
-    const src = fs.readFileSync(path.join(ROOT, 'README.md'), 'utf8')
-    const lines = src.split('\n')
-    const out = []
-    let skipping = false
-
-    for (let i = 0; i < lines.length; i++) {
-        const line = lines[i]
-        const h2 = line.match(/^##\s+(.*)$/)
-        if (h2) {
-            skipping = DROP_SECTIONS.some((t) => h2[1].trim() === t)
-            if (skipping) {
-                // Buang juga pemisah '---' tepat sebelum section ini (sudah ter-push ke out).
-                while (out.length && out[out.length - 1].trim() === '') out.pop()
-                if (out.length && out[out.length - 1].trim() === '---') out.pop()
-                while (out.length && out[out.length - 1].trim() === '') out.pop()
-                continue
-            }
-        }
-        if (!skipping) out.push(line)
-    }
-
-    let text = out.join('\n')
-    // Bersihkan baris intro yang merujuk Paket Pabrik (section yg dibuang).
-    text = text.replace(/^Runtime generik & tooling diekstrak[^\n]*\n/m, '')
-    // Buang sub-blok "Paket pabrik (packages/*)" di dalam blok Scripts.
-    text = text.replace(/\n# Paket pabrik \(packages\/\*\)[\s\S]*?changeset publish[^\n]*\n/m, '\n')
-    // Di blok "Struktur Direktori": buang baris monorepo (packages/ tree + .changeset/),
-    // karena app turunan bukan monorepo.
-    text = text.replace(/^packages\/.*\n(?:[├└│].*\n)*\n?/m, '')
-    text = text.replace(/^\.changeset\/.*\n/m, '')
-    // Sesuaikan keterangan src yang menyebut konsumsi paket.
-    text = text.replace(/^(src\/\s+#).*$/m, '$1 kode aplikasi')
-    // Rapikan kelebihan baris kosong.
-    text = text.replace(/\n{3,}/g, '\n\n')
-    return text
+    return buildCleanReadme()
 }
 
 main()
