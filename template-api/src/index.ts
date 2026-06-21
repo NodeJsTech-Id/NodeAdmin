@@ -66,11 +66,23 @@ const initializeApp = async () => {
     try {
         await AppDataSource.initialize()
         console.log('Data Source has been initialized!')
-        app.listen(PORT, () => {
+        const server = app.listen(PORT, () => {
             console.log(`API server is running on ${env.app.host}:${PORT}`)
+        })
+        // Tangani error listen (mis. EADDRINUSE) — tanpa handler, event 'error'
+        // tak tertangkap try/catch (asinkron) → proses mati mendadak.
+        server.on('error', (err: NodeJS.ErrnoException) => {
+            if (err.code === 'EADDRINUSE') {
+                console.error(`Port ${PORT} sudah dipakai proses lain. ` +
+                    `Hentikan instance lama atau ubah PORT di .env.`)
+            } else {
+                console.error('Server gagal dijalankan:', err)
+            }
+            process.exit(1)
         })
     } catch (error) {
         console.error('Error during Data Source initialization:', error)
+        process.exit(1)
     }
 }
 

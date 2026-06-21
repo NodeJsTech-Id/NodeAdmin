@@ -12,8 +12,16 @@ import { IFeCatalogService } from './IFeCatalogService'
 /** TTL cache memori katalog (ms). Disk dipakai sebagai persist lintas-restart. */
 const CATALOG_TTL_MS = 6 * 60 * 60 * 1000 // 6 jam
 
-/** Timeout fetch jaringan (ms) — cegah request menggantung saat GitHub lambat. */
+/** Timeout fetch preview 1 file HTML (ms) — cukup ketat, file tunggal & ringan. */
 const FETCH_TIMEOUT_MS = 8000
+
+/**
+ * Timeout fetch tree katalog (ms) — lebih longgar dari preview: respons tree
+ * recursive mencakup 640 entry (lebih besar) & hanya dijalankan SEKALI lalu
+ * di-cache (memori+disk). Longgar agar blip jaringan tak men-degrade ke fallback
+ * kurasi (15 item) yang membuat katalog tampak nyaris kosong.
+ */
+const TREE_FETCH_TIMEOUT_MS = 20000
 
 /**
  * Katalog template frontend (640 landing opentailwind). Sumber kebenaran =
@@ -34,8 +42,10 @@ export default class FeCatalogService implements IFeCatalogService {
     }
 
     /** fetch dgn timeout (AbortSignal) agar tak menggantung saat upstream lambat. */
-    private async fetchWithTimeout(url: string, init?: RequestInit): Promise<globalThis.Response> {
-        return fetch(url, { ...init, signal: AbortSignal.timeout(FETCH_TIMEOUT_MS) })
+    private async fetchWithTimeout(
+        url: string, init?: RequestInit, timeoutMs: number = FETCH_TIMEOUT_MS,
+    ): Promise<globalThis.Response> {
+        return fetch(url, { ...init, signal: AbortSignal.timeout(timeoutMs) })
     }
 
     /** Parse path tree → slug landing (buang prefix `landings/` & `.html`). */
@@ -81,7 +91,7 @@ export default class FeCatalogService implements IFeCatalogService {
         try {
             const res = await this.fetchWithTimeout(FE_TEMPLATE_TREE_URL, {
                 headers: { Accept: 'application/vnd.github+json' },
-            })
+            }, TREE_FETCH_TIMEOUT_MS)
             if (!res.ok) throw new Error(`HTTP ${res.status}`)
             const body: any = await res.json()
             const data = this.parseTree(body?.tree ?? [])

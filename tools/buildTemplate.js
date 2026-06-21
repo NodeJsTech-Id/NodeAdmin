@@ -32,6 +32,7 @@ const COPY = [
     'tests',
     'docs',
     'tsconfig.json',
+    'nodemon.json',   // watch hanya src/ + ignore cache fe/templates (cegah restart-loop)
     'jest.config.js',
     'cucumber.cjs',
     'playwright.config.ts',
