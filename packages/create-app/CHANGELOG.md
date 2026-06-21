@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.8
+
+### Patch Changes
+
+- Arahkan ke template-v1.0.4 (better-sqlite3 ^12 dgn prebuilt Node 22 → install cepat tanpa compile).
+
 ## 1.0.7
 
 ### Patch Changes
