@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.12
+
+### Patch Changes
+
+- Tarik `template-v1.0.7`: upgrade **nodemailer 6 → 9** (memperbaiki 1 kerentanan HIGH: SMTP command injection / DoS / TLS). Audit app turunan: 0 high (sisa moderate hanya devDependency `js-yaml` via jest, tak ke production).
+
 ## 1.0.11
 
 ### Patch Changes
