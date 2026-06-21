@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.6
+
+### Patch Changes
+
+- README create-app lebih lengkap: badge, tabel fitur, mulai cepat, ganti DB, prasyarat, tautan.
+
 ## 1.0.5
 
 ### Patch Changes
