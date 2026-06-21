@@ -34,6 +34,41 @@
     </div>
   </div>
 
+  <!-- ===== Frontend Template Switcher ===== -->
+  <div class="tw-card p-6 mb-6">
+    <div class="flex items-center gap-2 mb-1">
+      <i class="fas fa-window-maximize" style="color:var(--primary)"></i>
+      <h2 class="text-lg font-bold" style="color:var(--primary)">Frontend Template</h2>
+    </div>
+    <p class="text-sm text-gray-500 mb-4">
+      Pilih desain halaman depan (landing) publik. Template diunduh otomatis dari
+      <a href="https://github.com/lindoai/opentailwind" target="_blank" class="underline">opentailwind</a>
+      saat dipilih, lalu di-cache. Lihat hasilnya di
+      <a href="/" target="_blank" class="underline" style="color:var(--primary)">halaman depan ↗</a>.
+    </p>
+
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
+      <% feTemplates.forEach(function(t) { var active = (data.fe_template || feTemplate) === t.slug; %>
+        <label class="cursor-pointer block">
+          <input type="radio" name="fe_template" value="<%= t.slug %>" class="sr-only fe-radio" <%= active ? 'checked' : '' %>>
+          <div class="fe-swatch rounded-xl overflow-hidden border-2 transition <%= active ? 'border-gray-800' : 'border-transparent' %>"
+               style="box-shadow:0 4px 10px rgba(0,0,0,.08)">
+            <div class="h-20 flex items-center justify-center text-white text-2xl" style="background:linear-gradient(135deg,var(--primary),var(--theme-dark))">
+              <i class="fas fa-window-maximize opacity-70"></i>
+            </div>
+            <div class="bg-white py-2 px-3">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-semibold text-gray-700 truncate"><%= t.name %></span>
+                <i class="fas fa-check-circle fe-check <%= active ? '' : 'hidden' %>" style="color:var(--primary)"></i>
+              </div>
+              <span class="text-xs text-gray-400"><%= t.category %></span>
+            </div>
+          </div>
+        </label>
+      <% }); %>
+    </div>
+  </div>
+
   <!-- ===== Form Setting ===== -->
   <div class="tw-card p-6">
     <h2 class="text-lg font-bold mb-4" style="color:var(--primary)">Setting Form</h2>
@@ -124,6 +159,19 @@
       var box = r.closest('label').querySelector('.theme-swatch');
       box.classList.add('border-gray-800'); box.classList.remove('border-transparent');
       r.closest('label').querySelector('.check-icon').classList.remove('hidden');
+    });
+  });
+
+  // Highlight template frontend terpilih
+  document.querySelectorAll('.fe-radio').forEach(function (r) {
+    r.addEventListener('change', function () {
+      document.querySelectorAll('.fe-swatch').forEach(function (s) {
+        s.classList.remove('border-gray-800'); s.classList.add('border-transparent');
+      });
+      document.querySelectorAll('.fe-check').forEach(function (c) { c.classList.add('hidden'); });
+      var box = r.closest('label').querySelector('.fe-swatch');
+      box.classList.add('border-gray-800'); box.classList.remove('border-transparent');
+      r.closest('label').querySelector('.fe-check').classList.remove('hidden');
     });
   });
 </script>

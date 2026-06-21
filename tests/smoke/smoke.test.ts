@@ -15,8 +15,9 @@ describe('Smoke', () => {
         expect(res.text).toContain('csrf-token')
     })
 
-    it('redirect root saat belum login', async () => {
+    it('root redirect ke /landing', async () => {
         const res = await request(app).get('/')
-        expect([301, 302]).toContain(res.status)
+        expect(res.status).toBe(302)
+        expect(res.headers.location).toBe('/landing')
     })
 })

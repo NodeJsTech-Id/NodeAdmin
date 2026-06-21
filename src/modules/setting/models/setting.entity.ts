@@ -53,6 +53,10 @@ export class Setting {
     @Column({ type: 'varchar', length: 20, nullable: true, default: 'Blue' })
     theme?: string;
 
+    // Template frontend (landing) aktif — slug di src/config/feTemplates.ts
+    @Column({ type: 'varchar', length: 80, nullable: true, default: 'agency-consulting-002-creative-agency' })
+    fe_template?: string;
+
     @CreateDateColumn()
     created_at?: Date;
 

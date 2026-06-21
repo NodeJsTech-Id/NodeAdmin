@@ -10,6 +10,7 @@ import { ISettingService } from './ISettingService'
 import { TOKENS } from '../../../../../tokens'
 import { AppError } from '@flazhost-nodeadmin/core'
 import { cleanRichText } from '../../../../../helpers/sanitizeHtml'
+import type { IFeTemplateService } from '../../../../landing/http/services/v1/IFeTemplateService'
 
 function generateUniqueFileName(): string {
     const currentDate = new Date();
@@ -80,6 +81,20 @@ export default class SettingService implements ISettingService {
 				throw new AppError("Update Setting Fail", 500)
 			}
 			invalidateSetting() // refresh cache agar perubahan langsung tampil
+
+			// FE_TEMPLATE_BLOCK_START (penanda untuk generator api — jangan hapus)
+			// Template frontend diganti → unduh on-demand (bila belum di-cache).
+			// Gagal unduh tidak menggagalkan simpan setting (landing fallback default).
+			if (typeof request.fe_template === 'string') {
+				try {
+					const { container, TOKENS } = await import('../../../../../container')
+					const fe = container.resolve<IFeTemplateService>(TOKENS.IFeTemplateService)
+					await fe.ensure(request.fe_template)
+				} catch (e) {
+					console.error('Unduh template frontend gagal:', e)
+				}
+			}
+			// FE_TEMPLATE_BLOCK_END
 			return result
 	}
 }

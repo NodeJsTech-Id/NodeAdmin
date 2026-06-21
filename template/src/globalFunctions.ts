@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from 'express'
 import fileService from './services/fileService'
 import { User } from './modules/access/models/user.entity'
 import { getTheme, DEFAULT_THEME, THEMES } from '@flazhost-nodeadmin/core'
+import { FE_TEMPLATES, DEFAULT_FE_TEMPLATE } from './config/feTemplates'
 import { getSetting } from './services/settingCache'
 import dayjs from 'dayjs'
 import utc from 'dayjs/plugin/utc'
@@ -56,6 +57,10 @@ export const globalFunctions = async (req: Request, res: Response, next: NextFun
 	res.locals.themeName = setting?.theme || DEFAULT_THEME
 	res.locals.theme = getTheme(setting?.theme)
 	res.locals.themes = THEMES // seluruh palet untuk UI switcher
+
+	// Template frontend (landing) aktif + katalog untuk switcher di Setting.
+	res.locals.feTemplate = setting?.fe_template || DEFAULT_FE_TEMPLATE
+	res.locals.feTemplates = FE_TEMPLATES
 
 	res.locals.addOrUpdateQueryParam = (fullUrl: string | URL, key: string, value: string) => {
 		const parsedUrl = new URL(fullUrl)

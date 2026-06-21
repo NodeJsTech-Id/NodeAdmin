@@ -75,13 +75,9 @@ const configurePassport = (p: typeof passport) => {
     })
 }
 
-// Root '/' — redirect berdasarkan status autentikasi (named routes app)
-const rootHandler = (req: express.Request, res: express.Response) => {
-    if (req.isAuthenticated()) {
-        res.redirect((req.app as any).namedRoutes.build('admin.v1.dashboard.index'))
-    } else {
-        res.redirect((req.app as any).namedRoutes.build('web.auth.login'))
-    }
+// Root '/' — arahkan ke landing publik (satu sumber render di LandingController).
+const rootHandler = (_req: express.Request, res: express.Response) => {
+    res.redirect('/landing')
 }
 
 const app = createApp({

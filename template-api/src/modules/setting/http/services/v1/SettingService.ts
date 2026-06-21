@@ -80,6 +80,7 @@ export default class SettingService implements ISettingService {
 				throw new AppError("Update Setting Fail", 500)
 			}
 			invalidateSetting() // refresh cache agar perubahan langsung tampil
+
 			return result
 	}
 }

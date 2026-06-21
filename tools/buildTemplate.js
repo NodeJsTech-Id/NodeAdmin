@@ -70,6 +70,8 @@ const EXCLUDE_PATHS_API = new Set([
     'src/globalFunctions.ts',
     'src/modules/components',
     'src/modules/media',     // file manager rich text editor = fitur UI (web), tak relevan API-only
+    'src/modules/landing',   // landing/template switcher = fitur UI (web)
+    'src/config/feTemplates.ts',
     'src/index.ts',
     'playwright.config.ts',
     'cucumber.cjs',
@@ -87,6 +89,11 @@ const WEB_TEST_PATHS = new Set([
     'tests/api/components.test.ts',
     'tests/api/access.user.test.ts',
     'tests/api/auth.test.ts',
+    // Test fitur UI yang modulnya dibuang di api (media, landing).
+    'tests/api/media.test.ts',
+    'tests/integration/mediaService.test.ts',
+    'tests/api/landing.test.ts',
+    'tests/integration/feTemplateService.test.ts',
 ].map((p) => path.normalize(p)))
 
 // Pola UI-only per-modul (relatif ROOT, normalized) untuk varian api.
@@ -247,14 +254,39 @@ function buildVariant(variant, out) {
             }
         }
 
-        // Modul media (file manager editor) dibuang di api → hapus referensinya
-        // di container.ts agar tak ada import yatim.
+        // Modul UI (media, landing) dibuang di api → hapus referensinya di
+        // container.ts agar tak ada import yatim.
         const containerPath = path.join(out, 'src/container.ts')
         if (fs.existsSync(containerPath)) {
             let c = fs.readFileSync(containerPath, 'utf8')
             c = c.replace(/^.*MediaService.*\n/gm, '')
+            c = c.replace(/^.*FeTemplateService.*\n/gm, '')
             fs.writeFileSync(containerPath, c)
         }
+
+        // SettingService & SettingValidator (ada di api) mengimpor fitur landing
+        // (feTemplates/IFeTemplateService) yang dibuang di api → strip referensinya.
+        // Strip baris (toleran CRLF) + blok bertanda FE_TEMPLATE_BLOCK_START..END.
+        const stripLines = (file, needles, blockStart, blockEnd) => {
+            if (!fs.existsSync(file)) return
+            const raw = fs.readFileSync(file, 'utf8')
+            const eol = raw.includes('\r\n') ? '\r\n' : '\n'
+            let inBlock = false
+            const out = raw.split(/\r?\n/).filter((line) => {
+                if (blockStart && line.includes(blockStart)) { inBlock = true; return false }
+                if (inBlock) { if (blockEnd && line.includes(blockEnd)) inBlock = false; return false }
+                return !needles.some((n) => line.includes(n))
+            })
+            fs.writeFileSync(file, out.join(eol))
+        }
+        stripLines(
+            path.join(out, 'src/modules/setting/http/services/v1/SettingService.ts'),
+            ['IFeTemplateService'], 'FE_TEMPLATE_BLOCK_START', 'FE_TEMPLATE_BLOCK_END',
+        )
+        stripLines(
+            path.join(out, 'src/modules/setting/http/validators/SettingValidator.ts'),
+            ['FE_TEMPLATE_SLUGS', 'fe_template:'],
+        )
     }
 
     fs.writeFileSync(
@@ -265,6 +297,18 @@ function buildVariant(variant, out) {
     fs.writeFileSync(path.join(out, '.env.example'), buildEnvExample())
 
     fs.writeFileSync(path.join(out, 'README.md'), buildReadme(variant))
+
+    // Template frontend: hanya sertakan DEFAULT (yang di-bundle). Sisanya hasil
+    // download on-demand di mesin user — jangan ikut ke template (jaga ramping).
+    const feDir = path.join(out, 'public/fe/templates')
+    if (fs.existsSync(feDir)) {
+        for (const f of fs.readdirSync(feDir)) {
+            if (f !== 'agency-consulting-002-creative-agency.html') {
+                fs.rmSync(path.join(feDir, f), { force: true })
+            }
+        }
+    }
+
     console.log(`[build-template:${variant}] selesai →`, path.relative(ROOT, out))
 }
 

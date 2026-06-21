@@ -26,6 +26,7 @@ Node Admin adalah **starter pack / bootstrap** untuk membangun aplikasi admin pa
 - **Authentication** — sesi (Passport local + Redis) untuk web & **JWT** untuk API.
 - **Password Reset** — OTP via email (hashed + expiry).
 - **Template Switcher** — 9 tema warna (Blue, Black, Brown, Green, Grey, Orange, Purple, Red, Yellow) yang dapat diganti dari halaman Setting; seluruh UI admin berubah tanpa rebuild.
+- **Frontend Template Switcher** — halaman landing publik (`/`) dengan ~15 desain pilihan dari [opentailwind](https://github.com/lindoai/opentailwind) (MIT). Template di-unduh on-demand saat dipilih di Setting & di-cache lokal — app tetap ramping (hanya 1 default ter-bundle).
 - **Multi-Database** — dialect-agnostic via TypeORM (MySQL, MariaDB, PostgreSQL, SQLite, MSSQL, Oracle) cukup dengan mengganti `DB_TYPE`.
 - **Multi-Timezone** — tampilan tanggal mengikuti timezone pengguna (dayjs).
 - **File Storage** — upload ke Alibaba Cloud OSS (re-encode gambar via sharp).
