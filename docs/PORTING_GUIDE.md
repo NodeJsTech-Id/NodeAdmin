@@ -65,7 +65,7 @@ Daftar lengkap kapabilitas NodeAdmin. App hasil porting **harus** punya padanann
 - [ ] **Security headers** (helmet setara) — HSTS, X-Frame-Options, X-Content-Type-Options, dll.
 - [ ] **CSRF protection** untuk semua form web mutasi (token sinkron); API stateless (JWT) dikecualikan. Catatan: form multipart butuh token via query/header (body diparse belakangan).
 - [ ] **Rate limiting** pada endpoint sensitif (login, register, reset OTP) — per-IP.
-- [ ] **Auth ganda**: sesi (web, store di Redis/cache) + **JWT** (API), algoritma di-pin (HS256), blacklist token saat logout (TTL = sisa masa berlaku).
+- [ ] **Auth ganda**: sesi (web, store di Redis/cache) + **JWT** (API), algoritma di-pin (HS256), blacklist token saat logout (TTL = sisa masa berlaku). **Uji blacklist secara nyata** (login→akses 200→logout→akses **401**) dengan store yang **berperilaku seperti runtime** — bukan mock yang selalu mulus. Pelajaran NodeAdmin: client Redis mode-legacy membuat `set/get` jadi callback-style; kode yang memakai gaya Promise gagal **senyap** (token tetap valid setelah logout) namun **lolos** test karena mock-nya flat-Promise. Pastikan API store yang dipakai = API yang diuji.
 - [ ] **RBAC**: role + permission per-route; urutan middleware **authenticated → authorize** (auth dulu, baru cek izin); Administrator bypass.
 - [ ] **Password**: hash bcrypt (rounds dari env); **reset OTP** = crypto-random + hashed + expiry + rate-limit (bukan plaintext/Math.random).
 - [ ] **Validasi input** + anti **mass-assignment** (whitelist field; `stripUnknown` / DTO / FormRequest).
@@ -99,6 +99,7 @@ Daftar lengkap kapabilitas NodeAdmin. App hasil porting **harus** punya padanann
 - [ ] **Named routes** — URL dirujuk lewat nama (helper `route('nama')`), bukan string hardcode → mudah refactor.
 - [ ] **Method-override** — form HTML bisa kirim PUT/DELETE (via `_method` atau mekanisme native framework).
 - [ ] **Flash messages** — feedback sukses/error setelah redirect (PRG pattern), + tampilan `old input` saat validasi gagal.
+- [ ] **Bebas API & dependency usang** — jangan pakai API yang sudah deprecated/akan hilang di versi mayor framework berikutnya (pelajaran NodeAdmin: `res.redirect('back')` magic-string dihapus di Express 5 → pakai `req.get('Referrer') || '/'`), dan hindari dependency tak-terawat yang memicu deprecation runtime (mis. lib lama memanggil API deprecated) — ganti dengan helper inline kecil bila perlu. Jadikan output bebas-deprecation sebagai target rilis.
 
 #### 🗄️ Database (portabel — bukan cuma ORM)
 - [ ] **Multi-database** via env (lihat "Kriteria ORM & Migration" di bawah).
@@ -127,6 +128,8 @@ Daftar lengkap kapabilitas NodeAdmin. App hasil porting **harus** punya padanann
 #### 🧪 Testing (wajib tiap fitur)
 - [ ] **Unit** (helper murni), **Integration** (service↔DB, SQLite in-memory), **API** (HTTP), **Security** (RBAC/CSRF/rate-limit/JWT/mass-assign), **Smoke**, **E2E** (browser), **BDD** (skenario).
 - [ ] **CI**: lint/checker + test + audit + matrix DB (MySQL/Postgres) tiap push/PR. (E2E dijalankan lokal — lambat/rapuh di CI, non-blocking → tak bernilai sebagai gate.)
+- [ ] **Mock setia-perilaku (fidelity)** — saat memalsukan dependency eksternal (Redis/cache/storage/HTTP), tiru **API & perilaku yang sama persis** dengan runtime (signature, nilai balik, sync vs async). Mock yang "selalu mulus" menyembunyikan bug nyata (pelajaran NodeAdmin: blacklist JWT lolos test tapi gagal di produksi karena mock Redis flat-Promise, sedangkan client asli mode-legacy callback-style). Untuk jalur kritis (auth/blacklist), tambah **test integrasi terhadap store nyata** atau verifikasi runtime, jangan hanya mock.
+- [ ] **Test resilience/fallback yang memicu error = assertion, bukan kebisingan** — saat menguji jalur gagal (upstream down → fallback), error log yang muncul itu **diharapkan**: spy/redam logger di test itu + **assert** ia terpanggil, agar output bersih dan intent jelas (bukan tampak seperti kegagalan).
 
 #### 🛡️ Guardrail (jaga konsistensi pengembangan AI)
 - [ ] **Dokumen aturan** (AGENTS.md setara) + mirror untuk tiap AI tool.
