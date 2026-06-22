@@ -11,6 +11,13 @@
       <% if(getError('name')) { %><div class="invalid-feedback"><%= getError('name')['msg'] %></div><% } %>
     </div>
     <div class="mb-3">
+      <label for="guard_name" class="form-label fw-semibold">Guard</label>
+      <select name="guard_name" id="guard_name" class="form-control">
+        <option value="web" <%= (data.guard_name == 'web') ? 'selected' : '' %>>web</option>
+        <option value="api" <%= (data.guard_name == 'api') ? 'selected' : '' %>>api</option>
+      </select>
+    </div>
+    <div class="mb-3">
       <label for="method" class="form-label fw-semibold">Method</label>
       <input id="method" type="text" class="form-control <% if(getError('method')) { %>is-invalid<% } %>" name="method" value="<%= data.method %>">
       <% if(getError('method')) { %><div class="invalid-feedback"><%= getError('method')['msg'] %></div><% } %>

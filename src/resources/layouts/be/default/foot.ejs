@@ -81,9 +81,13 @@
             if (img.dataset.imgFallback) return; // cegah loop
             img.dataset.imgFallback = '1';
 
-            // Tentukan ikon berdasarkan konteks (avatar/foto vs logo/gambar umum)
+            // Ikon berdasarkan konteks (orang utk avatar/foto vs gambar umum).
             var cls = (img.className || '') + ' ' + (img.getAttribute('alt') || '');
-            var isAvatar = /rounded-full|rounded-circle|img-profile|picture|avatar|user/i.test(cls);
+            var isAvatar = /img-profile|picture|avatar|user/i.test(cls);
+            // BENTUK bulat HANYA bila kelas memang bulat (rounded-full/circle) —
+            // bukan sekadar konteks avatar. Foto profil (class "rounded") = kotak
+            // rounded; avatar topbar (class "rounded-full") tetap bulat.
+            var isCircle = /rounded-full|rounded-circle|img-profile/i.test(cls);
             var icon = isAvatar ? 'fa-user' : 'fa-image';
 
             // Ukuran placeholder mengikuti dimensi gambar bila ada
@@ -93,7 +97,7 @@
             box.className = 'img-placeholder ' + (img.className || '');
             box.style.cssText = 'display:inline-flex;align-items:center;justify-content:center;' +
                 'width:' + w + 'px;height:' + h + 'px;background:#f1f5f9;color:#94a3b8;' +
-                (isAvatar ? 'border-radius:9999px;' : 'border-radius:.5rem;');
+                (isCircle ? 'border-radius:9999px;' : 'border-radius:.5rem;');
             box.innerHTML = '<i class="fas ' + icon + '" style="font-size:' + Math.max(14, Math.min(w, h) * 0.45) + 'px"></i>';
             if (img.parentNode) img.parentNode.replaceChild(box, img);
         }

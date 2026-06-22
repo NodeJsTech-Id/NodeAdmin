@@ -21,7 +21,7 @@ userRoute.get('admin.v1.access.user.create', '/admin/v1/access/user/create', ens
 userRoute.post('admin.v1.access.user.store', '/admin/v1/access/user/store', ensureAuthenticated, AccessMiddleware, upload.any(), UserCreateValidator, handler(UserController, 'store'))
 userRoute.get('admin.v1.access.user.edit', '/admin/v1/access/user/:id/edit', ensureAuthenticated, AccessMiddleware, handler(UserController, 'edit'))
 userRoute.put('admin.v1.access.user.update', '/admin/v1/access/user/:id/update', ensureAuthenticated, AccessMiddleware, upload.any(), UserUpdateValidator, handler(UserController, 'update'))
-userRoute.get('admin.v1.access.user.delete', '/admin/v1/access/user/:id/delete', ensureAuthenticated, AccessMiddleware, handler(UserController, 'delete'))
+userRoute.delete('admin.v1.access.user.delete', '/admin/v1/access/user/:id/delete', ensureAuthenticated, AccessMiddleware, handler(UserController, 'delete'))
 userRoute.post('admin.v1.access.user.delete_selected', '/admin/v1/access/user/delete_selected', ensureAuthenticated, AccessMiddleware, handler(UserController, 'delete_selected'))
 
 // define route & set middleware access
@@ -32,7 +32,7 @@ permissionRoute.get('admin.v1.access.permission.create', '/admin/v1/access/permi
 permissionRoute.post('admin.v1.access.permission.store', '/admin/v1/access/permission/store', ensureAuthenticated, AccessMiddleware, permissionValidationRules(), handler(PermissionController, 'store'))
 permissionRoute.get('admin.v1.access.permission.edit', '/admin/v1/access/permission/:id/edit', ensureAuthenticated, AccessMiddleware, handler(PermissionController, 'edit'))
 permissionRoute.put('admin.v1.access.permission.update', '/admin/v1/access/permission/:id/update', ensureAuthenticated, AccessMiddleware, permissionValidationRules(), handler(PermissionController, 'update'))
-permissionRoute.get('admin.v1.access.permission.delete', '/admin/v1/access/permission/:id/delete', ensureAuthenticated, AccessMiddleware, handler(PermissionController, 'delete'))
+permissionRoute.delete('admin.v1.access.permission.delete', '/admin/v1/access/permission/:id/delete', ensureAuthenticated, AccessMiddleware, handler(PermissionController, 'delete'))
 permissionRoute.post('admin.v1.access.permission.delete_selected', '/admin/v1/access/permission/delete_selected', ensureAuthenticated, AccessMiddleware, handler(PermissionController, 'delete_selected'))
 
 // define route & set middleware role
@@ -48,7 +48,7 @@ roleRoute.get('admin.v1.access.role.permission.unassign', '/admin/v1/access/role
 roleRoute.post('admin.v1.access.role.permission.unassign_selected', '/admin/v1/access/role/:id/permission/unassign_selected', ensureAuthenticated, AccessMiddleware, handler(RoleController, 'permission_unassign_selected'))
 roleRoute.get('admin.v1.access.role.edit', '/admin/v1/access/role/:id/edit', ensureAuthenticated, AccessMiddleware, handler(RoleController, 'edit'))
 roleRoute.put('admin.v1.access.role.update', '/admin/v1/access/role/:id/update', ensureAuthenticated, AccessMiddleware, roleValidationRules(), handler(RoleController, 'update'))
-roleRoute.get('admin.v1.access.role.delete', '/admin/v1/access/role/:id/delete', ensureAuthenticated, AccessMiddleware, handler(RoleController, 'delete'))
+roleRoute.delete('admin.v1.access.role.delete', '/admin/v1/access/role/:id/delete', ensureAuthenticated, AccessMiddleware, handler(RoleController, 'delete'))
 roleRoute.post('admin.v1.access.role.delete_selected', '/admin/v1/access/role/delete_selected', ensureAuthenticated, AccessMiddleware, handler(RoleController, 'delete_selected'))
 
 router.use(userRoute,permissionRoute,roleRoute)

@@ -33,11 +33,14 @@ export default class PermissionService implements IPermissionService {
         for (const route of routes) {
             const name = named.getNameByPathAndMethod(route.path, route.method)
             if (!name) continue // only persist named routes
-            let permission = await this.permissionRepository.findOne({ where: { name, method: route.method } })
+            // Jalur auth dari nama/route: 'api.*' → guard api, selain itu web.
+            const guard = name.startsWith('api.') ? 'api' : 'web'
+            let permission = await this.permissionRepository.findOne({ where: { name, method: route.method, guard_name: guard } })
             if (!permission) {
                 permission = this.permissionRepository.create({
                     name,
-                    method: route.method
+                    method: route.method,
+                    guard_name: guard
                 })
                 await this.permissionRepository.save(permission)
             }
@@ -57,6 +60,9 @@ export default class PermissionService implements IPermissionService {
 		}
 		if (cleanConditions.status) {
             query = query.andWhere(`permissions.status = :status`, { status: cleanConditions.status })
+		}
+		if (cleanConditions.guard) {
+            query = query.andWhere(`permissions.guard_name = :guard`, { guard: cleanConditions.guard })
 		}
 		if (cleanConditions.desc) {
             query = query.andWhere(...ciLike('permissions.desc', 'desc', cleanConditions.desc))
