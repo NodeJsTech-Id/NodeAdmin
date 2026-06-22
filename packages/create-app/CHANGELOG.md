@@ -1,5 +1,11 @@
 # @flazhost-nodeadmin/create-app
 
+## 1.0.21
+
+### Patch Changes
+
+- Point bundled template to template-v1.0.14: delete=DELETE (web+api), route-driven RBAC + role-permission management page, verbose API paths, auth register/reset API, profile form parity + inline validation, FE-template folded to Setting.
+
 ## 1.0.20
 
 ### Patch Changes
