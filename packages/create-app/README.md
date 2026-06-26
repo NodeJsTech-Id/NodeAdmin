@@ -84,8 +84,8 @@ to update, just run `npm update`.
 - **Default Home as a Sample** — the default template (EJS) binds to the **Setting** data (name, logo, description, contact, copyright) as a living example; change Setting → the home page changes too. It serves as the reference pattern when building a custom home page.
 - **Multi-Database** — dialect-agnostic via TypeORM (MySQL, MariaDB, PostgreSQL, SQLite, MSSQL, Oracle) just by changing `DB_TYPE`.
 - **Multi-Timezone** — date display follows the user's timezone (dayjs).
-- **File Storage** — upload to Alibaba Cloud OSS (image re-encoding via sharp).
-- **Stateless** — sessions in Redis, files in OSS → ready for horizontal scaling.
+- **File Storage** — upload to object storage (Alibaba Cloud OSS or AWS S3 / S3-compatible: MinIO, Cloudflare R2, Backblaze B2) with image re-encoding via sharp.
+- **Stateless** — sessions in Redis, files in object storage → ready for horizontal scaling.
 
 ---
 
@@ -114,7 +114,7 @@ src/                     # application code
 ├── config/          # env (centralized & validated), ormconfig, app
 ├── container.ts     # DI registration (tsyringe)
 ├── tokens.ts        # DI tokens
-├── services/        # fileService (OSS), mailer, settingCache
+├── services/        # fileService (storage adapter), mailer, settingCache
 ├── resources/       # EJS layouts & partials (be/default = active Tailwind theme)
 └── modules/
     ├── access/      # user, role, permission (RBAC)
@@ -175,12 +175,18 @@ JWT_EXPIRES_IN=1h
 BCRYPT_ROUNDS=10
 OTP_EXPIRY_MINUTES=10
 
-# Alibaba OSS (file storage)
-OSS_ACCESS_ID=
-OSS_ACCESS_KEY=
-OSS_ENDPOINT=oss-ap-southeast-5.aliyuncs.com
-OSS_BUCKET=
-OSS_SSL=true
+# File storage — STORAGE_DRIVER: oss | s3
+# oss: Alibaba Cloud OSS (isi STORAGE_ENDPOINT)
+# s3 : AWS S3 atau S3-compatible (MinIO, Cloudflare R2, Backblaze B2, dll)
+#      AWS S3 murni: kosongkan STORAGE_ENDPOINT, isi STORAGE_REGION
+#      S3-compatible custom: isi STORAGE_ENDPOINT + STORAGE_REGION
+STORAGE_DRIVER=oss
+STORAGE_ACCESS_KEY_ID=
+STORAGE_SECRET_ACCESS_KEY=
+STORAGE_ENDPOINT=oss-ap-southeast-5.aliyuncs.com
+STORAGE_BUCKET=
+STORAGE_REGION=
+STORAGE_SSL=true
 ```
 
 ### 3. Migrate + seed
@@ -294,7 +300,7 @@ npx nodeadmin add-ui     # upgrade an API-only install → Full (add the UI laye
 
 ## 🧩 Tech Stack
 
-TypeScript · Express · TypeORM · MySQL/PostgreSQL/etc. · Redis (session) · EJS + Tailwind · tsyringe (DI) · Passport (local + JWT) · Joi · Jest + supertest · Playwright · Cucumber · Alibaba OSS · Helmet.
+TypeScript · Express · TypeORM · MySQL/PostgreSQL/etc. · Redis (session) · EJS + Tailwind · tsyringe (DI) · Passport (local + JWT) · Joi · Jest + supertest · Playwright · Cucumber · Object Storage (OSS / S3-compatible) · Helmet.
 
 ---
 
