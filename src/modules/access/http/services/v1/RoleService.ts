@@ -30,10 +30,6 @@ export default class RoleService implements IRoleService {
 		if (cleanConditions.status) {
 			query = query.andWhere(`roles.status = :status`, { status: cleanConditions.status })
 		}
-		if (cleanConditions.guard) {
-			query = query.andWhere(`roles.guard_name = :guard`, { guard: cleanConditions.guard })
-		}
-
 		return paginate(query, cleanConditions)
 	}
 

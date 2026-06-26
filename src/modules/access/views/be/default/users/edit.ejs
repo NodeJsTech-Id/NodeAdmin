@@ -60,7 +60,9 @@
     </div>
     <div class="mb-3">
       <label class="form-label fw-semibold d-block">Blocked</label>
-      <input id="blocked" type="checkbox" class="form-check-input" name="blocked" value="1" <%= (data.blocked) ? 'checked' : '' %>>
+      <div class="d-flex flex-wrap gap-3 p-2 rounded border">
+        <label class="d-flex align-items-center gap-2"><input id="blocked" type="checkbox" name="blocked" value="1" class="w-4 h-4" <%= (data.blocked) ? 'checked' : '' %>><span>Blokir akun</span></label>
+      </div>
     </div>
     <div class="mb-3" id="div_blocked_reason">
       <label for="blocked_reason" class="form-label fw-semibold">Blocked Reason</label>
@@ -69,13 +71,10 @@
     </div>
     <div class="mb-4">
       <label class="form-label fw-semibold d-block">Role</label>
-      <div class="d-flex flex-wrap gap-3 p-2 rounded <% if(getError('roles')) { %>border border-danger<% } %>">
+      <div class="d-flex flex-wrap gap-3 p-2 rounded border <% if(getError('roles')) { %>border-danger<% } %>">
         <% let i = 0; %>
         <% roles.forEach(role => { %>
-          <div class="form-check">
-            <input id="roles<%= i %>" type="checkbox" class="form-check-input" name="roles[]" value="<%= role.id %>" <% if(data.roles.some(r => r.name === role.name)) { %>checked<% } %>>
-            <label for="roles<%= i %>" class="form-check-label"><%= role.name %></label>
-          </div>
+          <label class="d-flex align-items-center gap-2"><input id="roles<%= i %>" type="checkbox" name="roles[]" value="<%= role.id %>" class="w-4 h-4" <% if(data.roles.some(r => r.name === role.name)) { %>checked<% } %>><span><%= role.name %></span></label>
         <% i++; }); %>
       </div>
     </div>

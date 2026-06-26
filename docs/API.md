@@ -45,8 +45,8 @@ Registrasi publik (role default "User"; field `roles` dari klien diabaikan demi 
 { "name": "Budi", "email": "budi@example.com", "password": "password123" }
 ```
 
-### GET `/api/v1/auth/logout`
-Header `Authorization: Bearer <token>`. Token di-blacklist (berlaku sampai expiry).
+### POST `/api/v1/auth/logout`
+Header `Authorization: Bearer <token>`. Token di-blacklist (berlaku sampai expiry). **POST** karena logout adalah mutasi (GET tak boleh punya efek samping).
 
 ### POST `/api/v1/auth/reset/request`
 ```json
@@ -106,7 +106,7 @@ Contoh body store:
 | Method | Path | Aksi |
 |--------|------|------|
 | GET | `/api/v1/access/permission` | List |
-| POST | `/api/v1/access/permission/store` | Buat (`{ name, method, status }`) |
+| POST | `/api/v1/access/permission/store` | Buat (`{ name, method, guard_name, status }`) |
 | GET | `/api/v1/access/permission/:id/edit` | Detail |
 | PUT | `/api/v1/access/permission/:id/update` | Update |
 | DELETE | `/api/v1/access/permission/:id/delete` | Hapus |

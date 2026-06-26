@@ -17,12 +17,6 @@ export class Role {
   @Index('roles__name', { unique: true })
   name!: string
 
-  // guard_name = jalur auth role ('web' panel sesi / 'api' REST+JWT) — dipakai
-  // untuk filter & kategorisasi. varchar (bukan ENUM) agar portabel lintas dialek.
-  @Column({ type: 'varchar', length: 20, default: 'web' })
-  @Index('roles__guard')
-  guard_name!: string
-
   // varchar + enum TS (bukan native ENUM) agar seragam di semua dialek TypeORM
   @Column({ type: 'varchar', length: 20, default: StatusEnum.ACTIVE })
   @Index('roles__status')

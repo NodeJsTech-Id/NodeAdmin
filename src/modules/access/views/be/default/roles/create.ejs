@@ -11,13 +11,6 @@
       <% if(getError('name')) { %><div class="invalid-feedback"><%= getError('name')['msg'] %></div><% } %>
     </div>
     <div class="mb-3">
-      <label for="guard_name" class="form-label fw-semibold">Guard</label>
-      <select name="guard_name" id="guard_name" class="form-control">
-        <option value="web">web</option>
-        <option value="api">api</option>
-      </select>
-    </div>
-    <div class="mb-3">
       <label for="desc" class="form-label fw-semibold">Description</label>
       <input id="desc" type="text" class="form-control <% if(getError('desc')) { %>is-invalid<% } %>" name="desc" value="">
       <% if(getError('desc')) { %><div class="invalid-feedback"><%= getError('desc')['msg'] %></div><% } %>

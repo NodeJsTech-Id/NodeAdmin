@@ -78,8 +78,8 @@ describe('Auth (API/web)', () => {
             .set('Authorization', `Bearer ${token}`)
         expect(before.status).toBe(200)
 
-        // logout → blacklist
-        const logout = await request(app).get('/api/v1/auth/logout')
+        // logout → blacklist (POST: logout adalah mutasi, GET tak boleh punya efek samping)
+        const logout = await request(app).post('/api/v1/auth/logout')
             .set('Authorization', `Bearer ${token}`)
         expect(logout.status).toBe(200)
 
