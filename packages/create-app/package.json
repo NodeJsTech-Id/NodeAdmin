@@ -1,6 +1,6 @@
 {
   "name": "@flazhost-nodeadmin/create-app",
-  "version": "1.0.22",
+  "version": "1.0.23",
   "description": "Scaffolder aplikasi NodeAdmin — `npm create @flazhost-nodeadmin/app myapp`.",
   "license": "ISC",
   "type": "commonjs",
