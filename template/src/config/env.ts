@@ -72,12 +72,14 @@ export const env = {
         fromAddress: process.env.MAIL_FROM_ADDRESS || 'no-reply@example.com',
     },
 
-    oss: {
-        accessId: process.env.OSS_ACCESS_ID as string,
-        accessKey: process.env.OSS_ACCESS_KEY as string,
-        endpoint: process.env.OSS_ENDPOINT,
-        bucket: process.env.OSS_BUCKET,
-        secure: bool('OSS_SSL', true),
+    storage: {
+        driver: (process.env.STORAGE_DRIVER || 'oss') as 'oss' | 's3',
+        accessKeyId: process.env.STORAGE_ACCESS_KEY_ID as string,
+        secretAccessKey: process.env.STORAGE_SECRET_ACCESS_KEY as string,
+        endpoint: process.env.STORAGE_ENDPOINT,
+        bucket: process.env.STORAGE_BUCKET,
+        region: process.env.STORAGE_REGION,
+        ssl: bool('STORAGE_SSL', true),
     },
 
     pagination: {
