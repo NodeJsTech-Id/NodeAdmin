@@ -1,0 +1,76 @@
+================================================================================
+INSTRUKSI AGENT DEPLOYMENT — flazhost-runner/nodeadmin
+Topik : Fix OOM heap saat migration-on-boot
+File  : docker-entrypoint.sh
+Status: SIAP DITERAPKAN — tidak ada dependensi lain yang harus dipenuhi dulu
+Dibuat: 2026-06-30
+================================================================================
+
+--------------------------------------------------------------------------------
+MASALAH
+--------------------------------------------------------------------------------
+Entrypoint menjalankan `npm run migration:run` = `ts-node typeorm migration:run`.
+ts-node mengompilasi seluruh TypeScript app di memori → V8 heap (~256MB default)
+terlampaui → "FATAL ERROR: Reached heap limit ... JavaScript heap out of memory"
+→ tabel tak terbuat → server crash-loop → 502.
+
+Menaikkan App Size di PaaS TIDAK menolong — batasnya heap V8, bukan RAM container.
+
+--------------------------------------------------------------------------------
+SOLUSI
+--------------------------------------------------------------------------------
+Ganti perintah migration dari ts-node ke `node` biasa menggunakan output BUILD
+(dist/*.js) — tanpa kompilasi TS runtime → heap jauh lebih kecil, muat di micro.
+Plus: entrypoint GAGAL KERAS bila migration gagal (bukan lanjut diam-diam).
+
+Dockerfile sudah menjalankan `npm run build` (tsc) → dist/config/ormconfig.js
+dan dist/modules/**/migrations/*.js tersedia. Tidak perlu ubah Dockerfile.
+
+--------------------------------------------------------------------------------
+PERUBAHAN (satu file, satu blok)
+--------------------------------------------------------------------------------
+File : docker-entrypoint.sh
+Repo : flazhost-runner/nodeadmin (edit LANGSUNG di sini — file milik repo ini)
+
+CARI blok ini (sekitar baris 55–60):
+
+    echo "[entrypoint] Running database migrations..."
+    if npm run migration:run; then
+        echo "[entrypoint] Migrations applied."
+    else
+        echo "[entrypoint] WARN: migration:run exited non-zero (already applied or transient); continuing boot."
+    fi
+
+GANTI DENGAN:
+
+    echo "[entrypoint] Running database migrations (compiled, low-memory)..."
+    if node ./node_modules/typeorm/cli.js migration:run -d ./dist/config/ormconfig.js; then
+        echo "[entrypoint] Migrations applied."
+    else
+        echo "[entrypoint] FATAL: migration gagal — abort boot. Cek koneksi DB & log di atas." >&2
+        exit 1
+    fi
+
+--------------------------------------------------------------------------------
+CARA TERAPKAN
+--------------------------------------------------------------------------------
+1. Edit docker-entrypoint.sh di flazhost-runner/nodeadmin (ganti blok di atas).
+2. Commit:
+       git add docker-entrypoint.sh
+       git commit -m "fix(entrypoint): migrate via compiled JS — hilangkan OOM heap ts-node"
+       git push origin main
+3. Deploy ulang service NodeAdmin di PaaS — image baru akan pakai entrypoint ini.
+
+--------------------------------------------------------------------------------
+CATATAN
+--------------------------------------------------------------------------------
+- File ini TIDAK akan tertimpa oleh sync dari FlazHost-Com (ada di daftar
+  --exclude sync-runner.yml). Aman diedit langsung.
+- `exit 1` saat migration gagal: container stop → Swarm/PaaS retry. Bila DB
+  sudah benar, migration jalan sekali lalu sukses selamanya.
+- App existing yang SUDAH 502: jalankan migrasi manual sekali lalu restart:
+      docker run --rm -e NODE_OPTIONS=--max-old-space-size=2048 \
+        --env-file <env-service> \
+        registry.flazhost.com/paas/nodeadmin:<tag> npm run migration:run
+
+================================================================================

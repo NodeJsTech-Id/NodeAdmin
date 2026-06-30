@@ -1,0 +1,101 @@
+================================================================================
+PATCH — Opsi 2: NodeAdmin migration dari JS terkompilasi (bukan ts-node)
+Tujuan: hilangkan "JavaScript heap out of memory" saat migrate-on-boot.
+Untuk: agen maintainer NodeJsTech-Id/NodeAdmin + repo deploy flazhost-runner.
+Dibuat: 2026-06-30
+================================================================================
+
+## MASALAH (terbukti dari log produksi)
+Entrypoint menjalankan `npm run migration:run` = `ts-node typeorm migration:run`.
+ts-node mengompilasi SELURUH TypeScript app di memori → V8 heap (~256MB default,
+INDEPENDEN dari RAM container) terlampaui →
+
+    FATAL ERROR: Reached heap limit Allocation failed - JavaScript heap out of memory
+    Aborted (core dumped)
+
+→ tabel tak terbuat → server query `settings` → ER_NO_SUCH_TABLE → crash-loop → 502.
+Menaikkan App Size TIDAK menolong (batasnya heap V8, bukan RAM container).
+Entrypoint juga MENELAN error migration lalu tetap start server (menyamarkan masalah).
+
+## SOLUSI
+Jalankan migration dari output BUILD (dist/*.js) pakai `node` biasa — tanpa
+kompilasi TS runtime → memori jauh lebih kecil, muat bahkan di micro (256MB).
+Plus: entrypoint GAGAL KERAS bila migration gagal (bukan lanjut diam-diam).
+
+Hanya 2 file berubah. package.json TIDAK perlu diubah (entrypoint panggil typeorm
+langsung, tak lewat npm script).
+
+--------------------------------------------------------------------------------
+FILE 1 (APP — di repo SUMBER, folder template/):  src/config/ormconfig.ts
+--------------------------------------------------------------------------------
+Glob migration harus mengikuti ekstensi runtime: '.ts' saat ts-node (dev),
+'.js' saat dijalankan dari dist (produksi). Sekarang hardcoded '*.ts' → saat
+`node dist/...` dijalankan, glob mencari '*.ts' di dist (isinya '.js') → 0 migrasi.
+
+  // TAMBAHKAN dekat import (path sudah di-import):
+  const migExt = path.extname(__filename); // '.ts' (ts-node) | '.js' (compiled/dist)
+
+  // GANTI baris migrations:
+  //   migrations: [path.resolve(__dirname, '../modules/**/migrations/*.ts')],
+  // MENJADI:
+      migrations: [path.resolve(__dirname, `../modules/**/migrations/*${migExt}`)],
+
+(Dengan ini: ts-node → cocok *.ts; node dist → cocok *.js. Dua-duanya jalan.)
+
+--------------------------------------------------------------------------------
+FILE 2 (DEPLOY — di repo flazhost-runner/nodeadmin):  docker-entrypoint.sh
+--------------------------------------------------------------------------------
+GANTI blok migration (bagian "--- 3. ... migrations ---" paling bawah):
+
+  # SEBELUM:
+  echo "[entrypoint] Running database migrations..."
+  if npm run migration:run; then
+      echo "[entrypoint] Migrations applied."
+  else
+      echo "[entrypoint] WARN: migration:run exited non-zero (already applied or transient); continuing boot."
+  fi
+
+  # SESUDAH:
+  echo "[entrypoint] Running database migrations (compiled, low-memory)..."
+  if node ./node_modules/typeorm/cli.js migration:run -d ./dist/config/ormconfig.js; then
+      echo "[entrypoint] Migrations applied."
+  else
+      echo "[entrypoint] FATAL: migration gagal — abort boot. Cek koneksi DB & log di atas." >&2
+      exit 1
+  fi
+
+Catatan:
+- Pakai `node` (bukan ts-node) + `./dist/config/ormconfig.js` (hasil build).
+- Dockerfile sudah `npm run build` (tsc) → dist/config/ormconfig.js & dist/modules/
+  **/migrations/*.js tersedia. Tak perlu ubah Dockerfile.
+- `exit 1` saat gagal: app TIDAK start dengan DB setengah jadi → error kelihatan
+  jelas (bukan crash-loop misterius). Swarm akan retry; bila DB benar, migrasi
+  jalan sekali lalu sukses selamanya.
+- Karena `node` tanpa kompilasi TS, heap kecil → muat di micro. min_size_code
+  NodeAdmin boleh diturunkan lagi ke micro bila mau (opsional).
+
+--------------------------------------------------------------------------------
+CARA TERAPKAN (via pipeline yang sudah ada)
+--------------------------------------------------------------------------------
+1. FILE 1 (ormconfig.ts) → edit di repo SUMBER NodeJsTech-Id/NodeAdmin di
+   template/src/config/ormconfig.ts. Commit.
+2. FILE 2 (docker-entrypoint.sh) → edit LANGSUNG di flazhost-runner/nodeadmin
+   (file deploy milik repo itu; lihat ~/workflow.txt Bagian E).
+3. Rilis app: di sumber, `git tag template-v<naik> && git push origin main --tags`
+   → mirror → FlazHost-Com → sync-runner → flazhost-runner ter-update.
+4. Deploy NodeAdmin BARU akan migrate via JS terkompilasi → tak ada lagi OOM heap.
+
+CATATAN: app yang SUDAH ada (snapshot lama di repo user) tak otomatis dapat fix
+ini — hanya deploy baru. Untuk app lama yang masih 502, jalankan migrasi manual
+sekali (lihat di bawah) atau redeploy.
+
+--------------------------------------------------------------------------------
+RECOVERY MANUAL app existing yang 502 (sekali, tanpa ubah kode)
+--------------------------------------------------------------------------------
+Di master node:
+  docker run --rm -e NODE_OPTIONS=--max-old-space-size=2048 \
+    --env-file <env-service> \
+    registry.flazhost.com/paas/nodeadmin:<tag> npm run migration:run
+→ tabel terbuat → service pulih pada restart berikutnya.
+(Sudah dilakukan untuk DB u019da5_nodeadmin_database → cpqc/gbgc kembali 200.)
+================================================================================
