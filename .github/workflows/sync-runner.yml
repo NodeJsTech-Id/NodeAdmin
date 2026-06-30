@@ -12,32 +12,50 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    # File ini ikut ter-mirror ke repo sumber & repo lain.
-    # Sync HANYA boleh berjalan di repo bersih FlazHost-Com/NodeAdmin.
+    # Hanya berjalan di repo bersih FlazHost-Com/NodeAdmin.
+    # File ini ikut ter-mirror tapi TIDAK boleh jalan di repo lain.
     if: github.repository == 'FlazHost-Com/NodeAdmin'
     steps:
-      - name: Checkout monorepo (ref yang memicu)
+      - name: Checkout FlazHost-Com/NodeAdmin
         uses: actions/checkout@v4
 
-      - name: Rakit starter (template + overlay runner)
+      - name: Clone flazhost-runner/nodeadmin
+        env:
+          TOKEN: ${{ secrets.RUNNER_SYNC_TOKEN }}
+        run: |
+          git clone \
+            "https://x-access-token:${TOKEN}@github.com/flazhost-runner/nodeadmin.git" \
+            _runner
+          cd _runner
+          git config user.name  flazhost-bot
+          git config user.email bot@flazhost.com
+
+      - name: Sync kode app (preserve deployment files di flazhost-runner)
         run: |
           set -euo pipefail
-          rm -rf _out && mkdir _out
-          cp -a template/. _out/          # 1) kode app
-          cp -a runner/.  _out/           # 2) glue deploy (menang saat bentrok)
-          rm -f _out/.npmrc _out/pnpm-workspace.yaml _out/turbo.json 2>/dev/null || true
-          echo "Isi starter:"; ls -a _out
+          # Sync template/ (kode app) ke clone flazhost-runner.
+          # File deployment milik flazhost-runner (Dockerfile, entrypoint, .github/, dll)
+          # TIDAK disentuh — rsync hanya update apa yang ada di template/.
+          rsync -a --delete \
+            --exclude='.git/' \
+            --exclude='Dockerfile' \
+            --exclude='docker-entrypoint.sh' \
+            --exclude='.dockerignore' \
+            --exclude='.github/' \
+            template/ _runner/
+          echo "Diff:"
+          git -C _runner diff --stat || true
 
-      - name: Push ke flazhost-runner/nodeadmin
+      - name: Commit & push bila ada perubahan
         env:
           TOKEN: ${{ secrets.RUNNER_SYNC_TOKEN }}
         run: |
           set -euo pipefail
-          cd _out
-          git init -q
-          git checkout -q -b main
-          git config user.name  flazhost-bot
-          git config user.email bot@flazhost.com
+          cd _runner
           git add -A
-          git commit -q -m "sync: ${GITHUB_REF_NAME:-manual} from ${GITHUB_REPOSITORY}@${GITHUB_SHA::7}"
-          git push -f "https://x-access-token:${TOKEN}@github.com/flazhost-runner/nodeadmin.git" main
+          if git diff --cached --quiet; then
+            echo "Tidak ada perubahan kode app di flazhost-runner."
+          else
+            git commit -m "sync: ${GITHUB_REF_NAME:-manual} from ${GITHUB_REPOSITORY}@${GITHUB_SHA::7}"
+            git push origin main
+          fi
