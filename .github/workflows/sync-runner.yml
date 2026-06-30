@@ -12,51 +12,44 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    # Hanya berjalan di repo bersih FlazHost-Com/NodeAdmin dan bila token tersedia.
+    # Hanya berjalan di repo bersih FlazHost-Com/NodeAdmin.
     # File ini ikut ter-mirror tapi TIDAK boleh jalan di repo lain.
-    # Alternatif tanpa token: lihat workflow pull-based di flazhost-runner/nodeadmin.
-    if: github.repository == 'FlazHost-Com/NodeAdmin' && secrets.RUNNER_SYNC_TOKEN != ''
+    if: github.repository == 'FlazHost-Com/NodeAdmin'
     steps:
-      - name: Checkout FlazHost-Com/NodeAdmin
+      - name: Checkout monorepo (ref yang memicu)
         uses: actions/checkout@v4
 
-      - name: Clone flazhost-runner/nodeadmin
-        env:
-          TOKEN: ${{ secrets.RUNNER_SYNC_TOKEN }}
-        run: |
-          git clone \
-            "https://x-access-token:${TOKEN}@github.com/flazhost-runner/nodeadmin.git" \
-            _runner
-          cd _runner
-          git config user.name  flazhost-bot
-          git config user.email bot@flazhost.com
+      - name: Mint GitHub App token (scoped, 1 jam)
+        id: apptoken
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.RUNNER_SYNC_APP_ID }}
+          private-key: ${{ secrets.RUNNER_SYNC_APP_KEY }}
+          owner: flazhost-runner
+          repositories: nodeadmin
 
-      - name: Sync kode app (preserve deployment files di flazhost-runner)
+      - name: Sync kode app → flazhost-runner (file deploy dipertahankan)
+        env:
+          TOKEN: ${{ steps.apptoken.outputs.token }}
         run: |
           set -euo pipefail
-          # Sync template/ (kode app) ke clone flazhost-runner.
-          # File deployment milik flazhost-runner (Dockerfile, entrypoint, .github/, dll)
-          # TIDAK disentuh — rsync hanya update apa yang ada di template/.
+          git clone --depth 1 "https://x-access-token:${TOKEN}@github.com/flazhost-runner/nodeadmin.git" target
+          # Update HANYA kode app dari template/. File milik flazhost-runner di
+          # --exclude TIDAK terhapus maupun tertimpa.
           rsync -a --delete \
             --exclude='.git/' \
-            --exclude='Dockerfile' \
-            --exclude='docker-entrypoint.sh' \
-            --exclude='.dockerignore' \
-            --exclude='.github/' \
-            template/ _runner/
-          echo "Diff:"
-          git -C _runner diff --stat || true
-
-      - name: Commit & push bila ada perubahan
-        env:
-          TOKEN: ${{ secrets.RUNNER_SYNC_TOKEN }}
-        run: |
-          set -euo pipefail
-          cd _runner
+            --exclude='/Dockerfile' \
+            --exclude='/docker-entrypoint.sh' \
+            --exclude='/.dockerignore' \
+            --exclude='/.github/' \
+            template/ target/
+          cd target
           git add -A
           if git diff --cached --quiet; then
-            echo "Tidak ada perubahan kode app di flazhost-runner."
-          else
-            git commit -m "sync: ${GITHUB_REF_NAME:-manual} from ${GITHUB_REPOSITORY}@${GITHUB_SHA::7}"
-            git push origin main
+            echo "Tidak ada perubahan kode app — lewati."
+            exit 0
           fi
+          git config user.name  flazhost-bot
+          git config user.email bot@flazhost.com
+          git commit -q -m "sync app: ${GITHUB_REF_NAME:-manual} from ${GITHUB_REPOSITORY}@${GITHUB_SHA::7}"
+          git push origin HEAD:main
