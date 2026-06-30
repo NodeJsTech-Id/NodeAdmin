@@ -6,11 +6,14 @@ name: Mirror to clean repo
 #
 # Prasyarat: secret MIRROR_TOKEN = PAT (fine-grained, Contents: write ke
 # FlazHost-Com/NodeAdmin) di Settings → Secrets repo ini.
-
-# Flow berurutan (gated): push main → CI → (LOLOS) → mirror → FlazHost-Com → release npm.
-# Mirror untuk main hanya jalan SETELAH workflow CI selesai dengan sukses, jadi
-# repo rilis tak pernah menerima kode yang gagal test. Tag (template-v*, paket)
-# di-mirror langsung karena tag tak melewati CI.
+#
+# Flow otomatis (push ke main sudah cukup untuk publish npm):
+#   push main → CI (harus lolos) → mirror ke FlazHost-Com
+#              → cek versi paket vs npm → push tag versi baru
+#              → release.yml di FlazHost-Com → changeset publish → npmjs
+#
+# Cara publish: bump versi di packages/*/package.json, push ke main — selesai.
+# Tag tidak perlu di-push manual.
 on:
   workflow_run:
     workflows: ["CI"]
@@ -92,3 +95,31 @@ jobs:
           cd "$RUNNER_TEMP/dest"
           git tag -f "$TAG"
           git push -f "https://x-access-token:${MIRROR_TOKEN}@github.com/${DEST}.git" "refs/tags/${TAG}"
+
+      # Auto-publish: cek tiap paket vs versi yang sudah ada di npm.
+      # Bila ditemukan versi baru, push tag versi → memicu release.yml di repo bersih.
+      # Step ini hanya jalan saat push ke main (bukan saat trigger dari tag push,
+      # karena tag push sudah ditangani "Forward tag" di atas).
+      - name: Auto-publish paket baru ke npm
+        if: github.event_name != 'push'
+        env:
+          MIRROR_TOKEN: ${{ secrets.MIRROR_TOKEN }}
+        run: |
+          set -e
+          DEST="FlazHost-Com/NodeAdmin"
+          REMOTE="https://x-access-token:${MIRROR_TOKEN}@github.com/${DEST}.git"
+
+          for PKG_JSON in packages/core/package.json packages/cli/package.json packages/create-app/package.json; do
+            NAME=$(node -p "require('./${PKG_JSON}').name")
+            VERSION=$(node -p "require('./${PKG_JSON}').version")
+            TAG="${NAME}@${VERSION}"
+
+            PUBLISHED=$(npm view "${NAME}@${VERSION}" version 2>/dev/null || true)
+            if [ -z "$PUBLISHED" ]; then
+              echo "Versi baru: ${TAG} — push tag ke ${DEST}"
+              git -C "$RUNNER_TEMP/dest" tag -f "${TAG}"
+              git -C "$RUNNER_TEMP/dest" push -f "${REMOTE}" "refs/tags/${TAG}"
+            else
+              echo "${TAG} sudah di npm, skip."
+            fi
+          done
