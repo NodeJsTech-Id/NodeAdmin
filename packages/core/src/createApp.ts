@@ -74,6 +74,11 @@ export function createApp(opts: CreateAppOptions): Application {
     const isApi = opts.mode === 'api'
     const app = express()
 
+    // Di belakang reverse proxy (CapRover/nginx): percayai X-Forwarded-* supaya
+    // req.secure benar & express-session memasang cookie `secure`. Tanpa ini,
+    // cookie sesi tak terpasang → sesi hilang → CSRF "Invalid token" saat login.
+    app.set('trust proxy', 1)
+
     // Named routes + helper route builder di app.locals
     namedRoutes.extendExpress(app)
     app.locals.route = (name: string, params?: Record<string, string | number>) =>
