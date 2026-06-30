@@ -1,0 +1,219 @@
+================================================================================
+INSTRUKSI AGEN MAINTAINER  —  NodeJsTech-Id/NodeAdmin  (REPO SUMBER)
+Topik : rantai SUMBER → mirror (FlazHost-Com) → starter (flazhost-runner)
+Model : PEMISAHAN KONSERN — app open-source vs file deploy terpisah tegas.
+Status: setup awal dianggap SUDAH dieksekusi. Dokumen ini = verifikasi + rutinitas.
+Update: 2026-06-30
+================================================================================
+
+--------------------------------------------------------------------------------
+A. ARSITEKTUR & PEMBAGIAN TANGGUNG JAWAB  (BACA DULU)
+--------------------------------------------------------------------------------
+  NodeJsTech-Id/NodeAdmin        ← SUMBER. Kamu (agen) edit KODE APP di sini.
+        │  MIRROR (workflow yg kamu kontrol): snapshot tree + FORWARD tag
+        ▼
+  FlazHost-Com/NodeAdmin         ← repo PUBLIK / open-source. Workflow JALAN di sini.
+        │                          Berisi APP saja (template/). TANPA file deploy.
+        ├─► release.yml      → npm @flazhost-nodeadmin/core   (jalur library)
+        └─► sync-runner.yml  → update KODE APP ke flazhost-runner   (jalur starter)
+                                  │
+                                  ▼
+  flazhost-runner/nodeadmin     ← repo DEPLOY. is_template:true. starter_repo_url PaaS.
+                                  = kode app (auto-sync) + FILE DEPLOY (milik repo ini)
+
+  >>> PRINSIP PEMISAHAN <<<
+  - APP (sering berubah)  : sumber kebenaran = NodeJsTech-Id → mirror → FlazHost-Com
+                            → di-sync OTOMATIS ke flazhost-runner.
+  - FILE DEPLOY (jarang)  : HANYA hidup di flazhost-runner. TIDAK ada di FlazHost-Com
+                            maupun di sumber. Sync TIDAK menyentuhnya.
+  File deploy yang dimaksud (milik flazhost-runner saja):
+      Dockerfile, docker-entrypoint.sh, .dockerignore, .github/  (build-check dll)
+
+  Kenapa begitu: FlazHost-Com untuk publik (app murni), flazhost-runner untuk
+  deployment ke PaaS. Detail deploy (CapRover, port, redis bundled, migrate-on-boot)
+  tidak perlu & tidak boleh mengotori repo open-source.
+
+--------------------------------------------------------------------------------
+B. PRASYARAT (verifikasi semua ADA; kalau sudah, lewati)
+--------------------------------------------------------------------------------
+  Di repo SUMBER (NodeJsTech-Id/NodeAdmin):
+    [ ] template/                         → KODE APP (source of truth). APP SAJA.
+    [ ] .github/workflows/sync-runner.yml → ada guard:
+            if: github.repository == 'FlazHost-Com/NodeAdmin'   (lihat Lampiran)
+    [ ] TIDAK ada folder runner/ / Dockerfile di hulu (desain ini tak memakainya).
+
+  Di repo PUBLIK (FlazHost-Com/NodeAdmin) — hasil mirror harus memuat:
+    [ ] template/ dan .github/workflows/sync-runner.yml MUNCUL di sana.
+    [ ] TIDAK ada file deploy (Dockerfile dll) — biarkan bersih.
+
+  Di repo DEPLOY (flazhost-runner/nodeadmin) — harus SUDAH berisi file deploy:
+    [ ] Dockerfile, docker-entrypoint.sh, .dockerignore,
+        .github/workflows/build-check.yml   (ini MILIK repo ini, dipertahankan sync)
+    [ ] is_template: true
+
+  Kredensial (GitHub App "flazhost-runner-sync"):
+    [ ] App permission Contents: Read & write
+    [ ] App TERINSTAL di org flazhost-runner untuk repo `nodeadmin`
+    [ ] ORG SECRET di FlazHost-Com: RUNNER_SYNC_APP_ID, RUNNER_SYNC_APP_KEY
+        (di-share ke FlazHost-Com/NodeAdmin)
+
+--------------------------------------------------------------------------------
+C. KUNCI — KONFIGURASI MIRROR (yang KAMU kontrol di repo sumber)  *** PENTING ***
+--------------------------------------------------------------------------------
+  Rantai sampai ke flazhost-runner HANYA jika MIRROR memenuhi 2 syarat:
+
+  C1. MIRROR MEMBAWA template/ DAN .github/workflows/sync-runner.yml ke FlazHost-Com.
+      Snapshot full-tree otomatis memenuhi ini. Jika mirror selektif per-path,
+      pastikan kedua path itu ikut. Tanpa sync-runner.yml di FlazHost-Com → tak jalan.
+      (File deploy TIDAK perlu diurus di sini — memang tidak ada di hulu.)
+
+  C2. MIRROR MEM-FORWARD TAG `template-v*` MEMAKAI PAT (bukan GITHUB_TOKEN).
+      - sync-runner.yml terpicu push tag `template-v*` DI FlazHost-Com.
+      - GITHUB_TOKEN bawaan TIDAK memicu workflow turunan (anti-rekursi GitHub),
+        jadi mirror WAJIB push tag pakai PAT/App token — sama seperti yang sudah
+        dipakai meneruskan tag npm `@flazhost-nodeadmin/*@*`.
+      - PASTIKAN pola tag yang diforward MENCAKUP `template-v*`, bukan hanya tag npm.
+
+      >>> Ini satu-satunya kemungkinan PERUBAHAN di sisi kamu. <<<
+
+--------------------------------------------------------------------------------
+D. RUTINITAS — APP (yang sering, OTOMATIS)
+--------------------------------------------------------------------------------
+  Di repo sumber NodeJsTech-Id/NodeAdmin:
+  (1) Edit KODE APP di  template/  (UI, REST, storageClient, .env.example, dll).
+  (2) Commit ke branch default (main).
+  (3) Tag rilis, versi NAIK, pola `template-v<major>.<minor>.<patch>`:
+        git tag -l 'template-v*' | sort -V | tail -1     # cek terakhir (mis. v1.0.15)
+        git tag template-v1.0.16
+        git push origin main --tags
+  (4) Diam. Otomatis:
+        mirror → snapshot + tag ke FlazHost-Com (via PAT)
+        FlazHost-Com → sync-runner.yml jalan → rsync template/ ke flazhost-runner
+                       (file deploy DIPERTAHANKAN via --exclude) → commit → push
+        flazhost-runner ter-update; deploy PaaS berikutnya pakai versi baru.
+
+--------------------------------------------------------------------------------
+E. RUTINITAS — FILE DEPLOY (yang jarang, MANUAL di flazhost-runner)
+--------------------------------------------------------------------------------
+  Jika yang berubah hanya hal DEPLOY (versi node base image, paket OS, entrypoint,
+  port, build-check), edit LANGSUNG di flazhost-runner/nodeadmin:
+      Dockerfile / docker-entrypoint.sh / .dockerignore / .github/workflows/build-check.yml
+  Tidak perlu menyentuh sumber, tidak perlu tag template-v*. Sync app berikutnya
+  TIDAK akan menimpa file-file ini (ada di daftar --exclude).
+  CATATAN: ini SATU-SATUNYA pengecualian dari aturan "jangan edit flazhost-runner".
+           Diizinkan KHUSUS untuk 4 file deploy itu, karena memang miliknya.
+
+--------------------------------------------------------------------------------
+F. VERIFIKASI SETIAP RILIS APP (jangan asумsi)
+--------------------------------------------------------------------------------
+  a. Tag sampai:   api.github.com/repos/FlazHost-Com/NodeAdmin/tags → ada template-v1.0.16
+  b. Sync hijau:   Actions FlazHost-Com/NodeAdmin → "Sync starter → flazhost-runner" sukses
+  c. Runner baru:  api.github.com/repos/flazhost-runner/nodeadmin → pushed_at baru,
+                   commit "sync app: template-v1.0.16 from FlazHost-Com/NodeAdmin@<sha>"
+  d. App benar:    flazhost-runner/.../src/config/storageClient.ts ada buildLocalClient;
+                   .env.example: STORAGE_DRIVER=local, STORAGE_BASE_PATH=storage/uploads
+  e. Deploy utuh:  Dockerfile, docker-entrypoint.sh, .dockerignore, .github/ MASIH ADA
+                   di flazhost-runner (TIDAK terhapus oleh sync).
+  f. Template flag: api.github.com/repos/flazhost-runner/nodeadmin → "is_template": true
+
+--------------------------------------------------------------------------------
+G. ATURAN EMAS (DO / DON'T)
+--------------------------------------------------------------------------------
+  DO  : edit kode app           → di  template/ (repo sumber)
+  DO  : edit 4 file deploy      → LANGSUNG di flazhost-runner/nodeadmin
+  DO  : edit library            → di  packages/core (lalu changeset → npm)
+  DON'T: edit FlazHost-Com langsung (akan tertimpa mirror)
+  DON'T: edit KODE APP di flazhost-runner langsung (akan tertimpa sync app)
+  DON'T: taruh file deploy di FlazHost-Com/sumber (langgar pemisahan)
+  DON'T: simpan secret di file repo (pakai org secret / App key)
+
+--------------------------------------------------------------------------------
+H. TROUBLESHOOTING
+--------------------------------------------------------------------------------
+  • Tag dibuat tapi sync-runner TIDAK terpicu:
+      - mirror meneruskan tag pakai GITHUB_TOKEN → ganti ke PAT.                     [C2]
+      - pola tag yang diforward tak mencakup template-v* → tambahkan.               [C2]
+      - sync-runner.yml belum hadir di default branch FlazHost-Com → cek mirror.    [C1]
+  • Sync hijau tapi file DEPLOY hilang dari flazhost-runner:
+      - daftar --exclude di sync-runner.yml tak lengkap → samakan dgn Lampiran.
+  • Sync gagal mint token / push (403 / "Resource not accessible"):
+      - RUNNER_SYNC_APP_ID/KEY salah/kosong; App belum diinstal utk nodeadmin;
+        App tak punya Contents:write; `repositories:` tak cocok; org secret tak di-share.
+  • sync-runner jalan di repo yang salah:
+      - guard `if: github.repository == 'FlazHost-Com/NodeAdmin'` hilang → pasang lagi.
+  • flazhost-runner kehilangan flag template:
+      - Settings → Template repository → ON (push tidak mengubah setting).
+  • Konflik: template/ menambah file bernama sama dgn file deploy (mis. Dockerfile):
+      - file deploy menang (di-exclude) → file dari template/ TIDAK masuk. Hindari
+        menamai file app sama dengan file deploy.
+
+--------------------------------------------------------------------------------
+LAMPIRAN — isi .github/workflows/sync-runner.yml (referensi, sudah ter-deploy)
+--------------------------------------------------------------------------------
+name: Sync starter → flazhost-runner
+
+on:
+  push:
+    tags: ['template-v*']
+  workflow_dispatch:
+
+concurrency:
+  group: sync-runner
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    if: github.repository == 'FlazHost-Com/NodeAdmin'
+    steps:
+      - name: Checkout monorepo (ref yang memicu)
+        uses: actions/checkout@v4
+
+      - name: Mint GitHub App token (scoped, 1 jam)
+        id: apptoken
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.RUNNER_SYNC_APP_ID }}
+          private-key: ${{ secrets.RUNNER_SYNC_APP_KEY }}
+          owner: flazhost-runner
+          repositories: nodeadmin
+
+      - name: Sync kode app → flazhost-runner (file deploy dipertahankan)
+        env:
+          TOKEN: ${{ steps.apptoken.outputs.token }}
+        run: |
+          set -euo pipefail
+          git clone --depth 1 "https://x-access-token:${TOKEN}@github.com/flazhost-runner/nodeadmin.git" target
+          # Update HANYA kode app dari template/. File milik flazhost-runner di
+          # --exclude TIDAK terhapus maupun tertimpa.
+          rsync -a --delete \
+            --exclude='.git/' \
+            --exclude='/Dockerfile' \
+            --exclude='/docker-entrypoint.sh' \
+            --exclude='/.dockerignore' \
+            --exclude='/.github/' \
+            template/ target/
+          cd target
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Tidak ada perubahan kode app — lewati."
+            exit 0
+          fi
+          git config user.name  flazhost-bot
+          git config user.email bot@flazhost.com
+          git commit -q -m "sync app: ${GITHUB_REF_NAME:-manual} from ${GITHUB_REPOSITORY}@${GITHUB_SHA::7}"
+          git push origin HEAD:main
+
+================================================================================
+CHEAT-SHEET
+  Edit app:    template/ (repo sumber)  → tag template-v<naik> → push  (OTOMATIS ke runner)
+  Edit deploy: langsung di flazhost-runner/nodeadmin  (4 file: Dockerfile/entrypoint/
+               .dockerignore/.github)  — tak terpengaruh sync
+  Lib→npm:     packages/core → changeset
+  Syarat sampai ke runner:
+               (C1) mirror bawa template/ + sync-runner.yml
+               (C2) mirror forward tag template-v* via PAT (bukan GITHUB_TOKEN)
+  Verifikasi:  tag di FlazHost-Com → Actions hijau → runner pushed_at baru →
+               file deploy MASIH UTUH
+  Jangan:      file deploy di FlazHost-Com; edit app di runner; secret di file
+================================================================================

@@ -1,0 +1,88 @@
+Lanjut F3 (guardrails). Cek state GoAdmin dulu.
+
+● Bash(cd /home/mulyawan/Project/Admin/GoAdmin && git log --oneline -8 2>/dev/null; echo "---TREE---"; find . -type f -name '*.go' | grep -iE
+      'check|convention|guard|l…)
+  ⎿  ---TREE---
+     ---TODO/PHASES---
+     total 44
+     … +9 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to /home/mulyawan/Project/Admin/NodeAdmin
+  
+● Bash(cd /home/mulyawan/Project/Admin/GoAdmin && echo "=== git ==="; git log --oneline -8 2>/dev/null || echo "no git"; echo "=== go files ==="; find
+      . -type f -name…)
+  ⎿  === git ===
+     no git
+     === go files ===
+     … +59 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to /home/mulyawan/Project/Admin/NodeAdmin
+  
+● F2 green. F3 = guardrails: port NodeAdmin's lint:conventions checker to Go (go/ast). Let me study the reference checker + GoAdmin patterns to
+  enforce.
+
+  Searched for 1 pattern, read 1 file (ctrl+o to expand)
+
+● Now I understand the reference checker. Let me study GoAdmin's actual patterns so the Go checker enforces the right idioms.
+
+● Bash(cd /home/mulyawan/Project/Admin/GoAdmin
+      echo "=== service interface ==="; sed -n '1,40p' internal/modules/access/service/interfaces.go…)
+  ⎿  === service interface ===
+     // Package service berisi logika bisnis modul access. Tiap service:
+     //   - mengimplementasi interface I*Service (Dependency Inversion),
+     … +130 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to /home/mulyawan/Project/Admin/NodeAdmin
+
+● Bash(cd /home/mulyawan/Project/Admin/GoAdmin
+      echo "=== model/user ==="; cat internal/modules/access/model/user.go…)
+  ⎿  === model/user ===
+     package model
+     … +194 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to /home/mulyawan/Project/Admin/NodeAdmin
+
+● Enough context. Let me check a couple more idioms (controller error handling, validator location, helpers DB) before writing.
+
+● Bash(cd /home/mulyawan/Project/Admin/GoAdmin
+      echo "=== api user controller (error handling) ==="; sed -n '1,60p' internal/modules/access/controller/api/user_controll…)
+  ⎿  === api user controller (error handling) ===
+     package api
+     … +182 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to /home/mulyawan/Project/Admin/NodeAdmin
+
+● Have full pattern picture. NodeAdmin checker → Go AST equivalent. Mapping rules:
+
+  ┌───────────────────────────────────┬────────────────────────────────────────────────────────────────────────────┐
+  │             NodeAdmin             │                               GoAdmin (AST)                                │
+  ├───────────────────────────────────┼────────────────────────────────────────────────────────────────────────────┤
+  │ instanceof Error/return error     │ service must not create bare errors (errors.New/fmt.Errorf) → use apperr.* │
+  ├───────────────────────────────────┼────────────────────────────────────────────────────────────────────────────┤
+  │ route new XService()              │ controller/route must not call service.New*Service( (DI only)              │
+  ├───────────────────────────────────┼────────────────────────────────────────────────────────────────────────────┤
+  │ service @injectable+implements I* │ service file needs var _ IXxxService = (*XxxService)(nil)                  │
+  ├───────────────────────────────────┼────────────────────────────────────────────────────────────────────────────┤
+  │ web res.render(path)              │ web controller must not call c.HTML( → view.RenderView                     │
+  ├───────────────────────────────────┼────────────────────────────────────────────────────────────────────────────┤
+  │ entity portable types             │ model gorm tags ban longtext/datetime/enum/collation                       │
+  ├───────────────────────────────────┼────────────────────────────────────────────────────────────────────────────┤
+  │ modules raw .query()/LIKE :       │ modules ban db.Raw/Exec + literal LIKE → CiLike                            │
+  ├───────────────────────────────────┼────────────────────────────────────────────────────────────────────────────┤
+  │ modules process.env               │ modules ban os.Getenv → config                                             │
+  └───────────────────────────────────┴────────────────────────────────────────────────────────────────────────────┘
+
+  Writing the checker.
+
+● Bash(cd /home/mulyawan/Project/Admin/GoAdmin; head -1 go.mod; echo "---existing migration check---"; ls internal/modules/access/migration/; echo
+      "---error helper pat…)
+  ⎿  module goadmin
+     ---existing migration check---
+     000001_create_access_tables.down.sql
+     … +34 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to /home/mulyawan/Project/Admin/NodeAdmin
+
+● Bash(cd /home/mulyawan/Project/Admin/GoAdmin; grep -rn 'errors.New\|fmt.Errorf\|errors.Is\|return apperr\|return err'
+      internal/modules/access/service/ | head -40)
+  ⎿  internal/modules/access/service/auth_service.go:48:                if errors.Is(err, gorm.ErrRecordNotFound) {
+     internal/modules/access/service/auth_service.go:82:                return apperr.Internal("gagal mencabut token: " + err.Error())
+     internal/modules/access/service/auth_service.go:93:                if errors.Is(err, gorm.ErrRecordNotFound) {
+     … +16 lines (ctrl+o to expand)
+  ⎿  Shell cwd was reset to /home/mulyawan/Project/Admin/NodeAdmin
+
+✻ API error · Retrying in 0s · attempt 2/10

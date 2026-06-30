@@ -64,57 +64,6 @@ This repo itself is a **monorepo** (npm workspaces): the reference app lives in 
 
 ---
 
-## 🚢 Publishing to npm (maintainer)
-
-**Publishing is fully automated through git tags + GitHub Actions — never run `npm publish` by hand.** This maintain repo (`NodeJsTech-Id/NodeAdmin`) mirrors a clean snapshot to the public release repo (`FlazHost-Com/NodeAdmin`), which is the single source for both the npm packages and the giget template that `create-app` pulls.
-
-### Pipeline (gated)
-
-```
-push main → CI (test) → ✅ → mirror → FlazHost-Com → (on package tag) release.yml → npm
-```
-
-- **`.github/workflows/ci.yml`** — runs the test suite on every push to `main`.
-- **`.github/workflows/mirror.yml`** — after CI passes, rebuilds `template/` + `template-api/` (`tools/buildTemplate.js`), builds a clean snapshot (`tools/buildCleanMirror.js`, drops porting/spec material), and pushes it to the clean repo. It also **forwards tags** (`template-v*`, `@flazhost-nodeadmin/*@*`) to the clean repo.
-- **`.github/workflows/release.yml`** — runs **only** on the clean repo when a `@flazhost-nodeadmin/*@*` tag arrives; it runs `npx changeset publish` using the `NPM_TOKEN` secret (an npm Automation token that bypasses 2FA). No local OTP needed.
-
-### Two kinds of tag
-
-| Tag | Effect |
-|-----|--------|
-| `template-v<x.y.z>` | New snapshot of the scaffolded app for **giget**. `create-app` references it via `TEMPLATE_TAG` in `packages/create-app/index.js`. |
-| `@flazhost-nodeadmin/<pkg>@<ver>` | Triggers `release.yml` → publishes that package to npm. |
-
-### Release steps
-
-1. **Land the change** on `main` (PR or push) and confirm CI is green.
-2. **Bump the package(s)** that changed. The repo uses changesets:
-   ```bash
-   npx changeset            # describe the change, pick semver bump per package
-   npx changeset version    # writes new versions + CHANGELOG entries
-   git commit -am "release: <pkg>@<ver>"
-   git push origin main
-   ```
-3. **If the scaffolded app changed** (anything under `src/`, `public/`, `tests/`, `docs/` that ships in `template/`): cut a **new `template-v*` tag** and point `create-app` at it:
-   ```bash
-   # edit TEMPLATE_TAG in packages/create-app/index.js → template-v<new>
-   git commit -am "release: create-app@<ver> → template-v<new>"
-   git tag template-v<new>
-   git push origin main --tags
-   ```
-   > Skipping this means scaffolded apps keep getting the **old** template even though `create-app` was republished.
-4. **Tag the package release(s)** to trigger npm publish:
-   ```bash
-   git tag @flazhost-nodeadmin/create-app@<ver>
-   git tag @flazhost-nodeadmin/core@<ver>      # only if core changed
-   git push origin --tags
-   ```
-5. **Verify** once Actions finish: `npm view @flazhost-nodeadmin/<pkg> version`.
-
-> Docs-only change to a package README still needs a **patch bump + tag** — npm cannot overwrite a published version, so the page only refreshes on a new release.
-
----
-
 ## 🖼️ Screenshots
 
 | Login | Dashboard |

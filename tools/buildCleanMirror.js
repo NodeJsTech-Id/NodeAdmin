@@ -19,9 +19,9 @@ const OUT = path.resolve(process.argv[2] || path.join(ROOT, '.mirror-out'))
 // Materi pabrik / multi-bahasa & artefak lokal yang TAK boleh ikut ke repo bersih.
 // Path relatif terhadap ROOT.
 const EXCLUDE_PATHS = new Set([
-    // Materi porting bahasa lain (root + cermin di template sudah bersih sendiri).
-    'docs/PORTING_GUIDE.md',
-    'docs/examples',
+    // Folder khusus maintainer (arsitektur internal, audit app turunan, flow deploy).
+    // Tidak dipublikasikan ke repo bersih maupun flazhost-runner.
+    'maintainer',
     'spec',
     // Workflow mirror tinggal di repo maintain saja — repo bersih tak mirror dirinya.
     '.github/workflows/mirror.yml',
@@ -78,15 +78,15 @@ function main() {
     // File internal generator tak perlu di repo bersih.
     fs.rmSync(path.join(OUT, 'tools/templates'), { recursive: true, force: true })
 
-    // Sanity: pastikan materi porting benar-benar absen.
-    const mustAbsent = ['docs/PORTING_GUIDE.md', 'docs/examples', 'spec',
+    // Sanity: pastikan materi internal benar-benar absen dari snapshot.
+    const mustAbsent = ['maintainer', 'spec',
         'template/docs/PORTING_GUIDE.md', 'template/docs/examples', 'template/spec']
     const leaks = mustAbsent.filter((p) => fs.existsSync(path.join(OUT, p)))
     if (leaks.length) {
-        console.error('[mirror] GAGAL — materi porting masih ada:', leaks)
+        console.error('[mirror] GAGAL — materi internal masih ada:', leaks)
         process.exit(1)
     }
-    console.log('[mirror] OK — snapshot bersih (porting & spec dikecualikan)')
+    console.log('[mirror] OK — snapshot bersih (maintainer & spec dikecualikan)')
 }
 
 main()

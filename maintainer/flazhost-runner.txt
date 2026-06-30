@@ -1,0 +1,210 @@
+================================================================================
+INSTRUKSI UNTUK AGEN MAINTAINER  —  NodeJsTech-Id/NodeAdmin (REPO SUMBER)
+Tujuan: update mengalir mulus  SUMBER → mirror → starter deploy (flazhost-runner)
+Ditulis: 2026-06-30
+================================================================================
+
+--------------------------------------------------------------------------------
+0. TOPOLOGI (WAJIB DIPAHAMI DULU)
+--------------------------------------------------------------------------------
+
+  NodeJsTech-Id/NodeAdmin        ← SUMBER. KAMU (agen) maintain HANYA di sini.
+        │  (mirror workflow yg sudah ada: snapshot tree + forward tag)
+        ▼
+  FlazHost-Com/NodeAdmin         ← "repo bersih" / monorepo open-source publik.
+        │                          GENERATED dari mirror — JANGAN diedit langsung.
+        │                          Di sinilah workflow release.yml & sync-runner.yml
+        │                          benar-benar BERJALAN.
+        ├──► npm @flazhost-nodeadmin/core   (jalur library, lewat release.yml + changeset)
+        │
+        └──► flazhost-runner/nodeadmin      (jalur starter deploy, lewat sync-runner.yml)
+                  ← GENERATED. is_template:true. JANGAN diedit langsung.
+                  ← inilah starter_repo_url yang dipakai PaaS FlazHost saat user deploy.
+
+  Prinsip: SATU SUMBER (repo ini), propagasi SATU ARAH ke hilir.
+  - FlazHost-Com  = artefak mirror dari sumber.
+  - flazhost-runner = artefak rakit dari FlazHost-Com.
+  Kamu TIDAK PERNAH commit ke FlazHost-Com maupun flazhost-runner.
+  Semua perubahan dilakukan di NodeJsTech-Id/NodeAdmin, sisanya otomatis.
+
+--------------------------------------------------------------------------------
+1. STRUKTUR FOLDER YANG HARUS ADA DI REPO SUMBER
+--------------------------------------------------------------------------------
+
+  NodeJsTech-Id/NodeAdmin/
+  ├── template/                         APP starter (UI + REST). SOURCE OF TRUTH
+  │      src/ public/ package.json .env.example tsconfig.json ...
+  │      (kode local-storage ada di template/src/config/storageClient.ts)
+  ├── template-api/                     varian REST-only (dipakai create-app --api)
+  ├── packages/                         library yg dipublish ke npm
+  │      core/ cli/ create-app/
+  ├── runner/                           >>> BARU <<< overlay glue DEPLOY
+  │      Dockerfile
+  │      docker-entrypoint.sh
+  │      .dockerignore
+  │      .github/workflows/build-check.yml
+  └── .github/workflows/
+         release.yml                    (sudah ada) publish npm
+         sync-runner.yml                >>> BARU <<< rakit template/+runner/ → push flazhost-runner
+
+  CATATAN: folder `runner/` & file `sync-runner.yml` HARUS hidup di repo sumber
+  ini supaya ikut ter-mirror ke FlazHost-Com (tempat workflow benar2 jalan).
+  Glue deploy (Dockerfile dll) DULU cuma ada di flazhost-runner & diedit manual —
+  itu sumber masalah "repot maintain banyak repo". Sekarang rumahnya di sini.
+
+--------------------------------------------------------------------------------
+2. ATURAN EMAS (DO / DON'T)
+--------------------------------------------------------------------------------
+  DO  : edit kode app   → di  template/  (atau template-api/)
+  DO  : edit glue deploy → di  runner/   (Dockerfile, entrypoint, build-check, dockerignore)
+  DO  : edit library    → di  packages/core (lalu changeset utk npm)
+  DON'T: edit FlazHost-Com/NodeAdmin langsung   (akan ditimpa mirror berikutnya)
+  DON'T: edit flazhost-runner/nodeadmin langsung (akan ditimpa sync berikutnya)
+  DON'T: taruh rahasia/secret di file repo. Secret hidup di GitHub Settings.
+
+--------------------------------------------------------------------------------
+3. SETUP SEKALI JALAN (lakukan sekali, lalu tidak diulang)
+--------------------------------------------------------------------------------
+  [3a] Tambahkan ke repo sumber (commit biasa):
+       - folder  runner/  (isi diambil dari kondisi flazhost-runner saat ini;
+         sudah saya siapkan di server di  /tmp/nodeadmin-sync/runner/ )
+       - file    .github/workflows/sync-runner.yml
+         (isi final ada di BAGIAN 6 di bawah — SUDAH termasuk guard repo)
+
+  [3b] Secret di repo BERSIH FlazHost-Com/NodeAdmin (bukan di sumber!):
+       Settings → Secrets and variables → Actions → New repository secret
+         Name : RUNNER_SYNC_TOKEN
+         Value: fine-grained PAT
+                resource owner = flazhost-runner
+                repo           = nodeadmin
+                permission     = Contents: Read and write
+       (alternatif: classic PAT scope `repo`, atau deploy key + ubah URL push ke SSH)
+
+       Kenapa di FlazHost-Com, bukan di sumber? Karena sync-runner.yml BERJALAN
+       di FlazHost-Com (lihat guard `if: github.repository == 'FlazHost-Com/NodeAdmin'`).
+
+  [3c] Pastikan mirror workflow (yg sudah ada, NodeJsTech-Id → FlazHost-Com):
+       - ikut mem-mirror folder  runner/  dan  .github/workflows/sync-runner.yml
+         (kalau mirror selektif per-path, tambahkan kedua path ini ke daftarnya).
+       - mem-FORWARD tag ke FlazHost-Com memakai PAT (BUKAN GITHUB_TOKEN bawaan).
+         Ini sudah jadi syarat release.yml ("tag diteruskan oleh workflow mirror"),
+         jadi mekanismenya sudah ada — sync-runner menumpang mekanisme yang sama.
+         (GITHUB_TOKEN bawaan TIDAK memicu workflow turunan; PAT memicu.)
+
+--------------------------------------------------------------------------------
+4. PROSEDUR RILIS RUTIN (yang KAMU jalankan tiap mau update starter)
+--------------------------------------------------------------------------------
+  Langkah di repo sumber NodeJsTech-Id/NodeAdmin:
+
+  (1) Buat perubahan di template/ dan/atau runner/.
+  (2) Commit ke branch default (mis. main).
+  (3) Beri tag rilis starter dengan konvensi `template-v<major>.<minor>.<patch>`:
+        git tag template-v1.0.16
+        git push origin main --tags
+      Pakai versi NAIK dari tag terakhir (cek: `git tag -l 'template-v*' | sort -V | tail`).
+      Saat tulisan ini dibuat tag terakhir = template-v1.0.15 → berikutnya 1.0.16.
+
+  (4) Selesai. Otomatis terjadi:
+        mirror  → snapshot tree + tag template-v1.0.16 ke FlazHost-Com/NodeAdmin
+        FlazHost-Com → sync-runner.yml jalan (terpicu push tag template-v*)
+                     → rakit: cp template/ + overlay runner/  → push -f ke flazhost-runner/nodeadmin
+        flazhost-runner/nodeadmin ter-update (is_template tetap)
+        → deploy PaaS berikutnya pakai starter terbaru (termasuk local-storage)
+
+  CATATAN library/npm (jalur TERPISAH):
+  - Kalau yang berubah ada di packages/core (bukan template/), itu jalur npm:
+    buat changeset → tag paket `@flazhost-nodeadmin/core@x.y.z` → release.yml publish.
+  - Untuk fitur LOCAL-STORAGE saat ini: kodenya di template/src/config/storageClient.ts
+    (BUKAN core), jadi cukup jalur template-v* di atas. npm tidak terlibat.
+
+--------------------------------------------------------------------------------
+5. VERIFIKASI (cek setelah rilis)
+--------------------------------------------------------------------------------
+  a. Tag muncul di FlazHost-Com:
+       GET https://api.github.com/repos/FlazHost-Com/NodeAdmin/tags  → ada template-v1.0.16
+  b. Run sync-runner sukses:
+       Actions tab di FlazHost-Com/NodeAdmin → job "Sync starter → flazhost-runner" hijau
+  c. flazhost-runner ter-update:
+       GET https://api.github.com/repos/flazhost-runner/nodeadmin  → pushed_at = baru
+       commit terakhir berpesan "sync: template-v1.0.16 from FlazHost-Com/NodeAdmin@<sha>"
+  d. Konten benar:
+       flazhost-runner/nodeadmin/src/config/storageClient.ts ada buildLocalClient(...)
+       .env.example punya STORAGE_DRIVER=local & STORAGE_BASE_PATH=storage/uploads
+  e. is_template masih true:
+       GET https://api.github.com/repos/flazhost-runner/nodeadmin → "is_template": true
+
+--------------------------------------------------------------------------------
+6. ISI FILE  .github/workflows/sync-runner.yml  (final, dengan guard)
+--------------------------------------------------------------------------------
+name: Sync starter → flazhost-runner
+
+on:
+  push:
+    tags: ['template-v*']
+  workflow_dispatch:
+
+concurrency:
+  group: sync-runner
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    # File ini ikut ter-mirror ke repo sumber & repo lain.
+    # Sync HANYA boleh berjalan di repo bersih FlazHost-Com/NodeAdmin.
+    if: github.repository == 'FlazHost-Com/NodeAdmin'
+    steps:
+      - name: Checkout monorepo (ref yang memicu)
+        uses: actions/checkout@v4
+
+      - name: Rakit starter (template + overlay runner)
+        run: |
+          set -euo pipefail
+          rm -rf _out && mkdir _out
+          cp -a template/. _out/          # 1) kode app
+          cp -a runner/.  _out/           # 2) glue deploy (menang saat bentrok)
+          rm -f _out/.npmrc _out/pnpm-workspace.yaml _out/turbo.json 2>/dev/null || true
+          echo "Isi starter:"; ls -a _out
+
+      - name: Push ke flazhost-runner/nodeadmin
+        env:
+          TOKEN: ${{ secrets.RUNNER_SYNC_TOKEN }}
+        run: |
+          set -euo pipefail
+          cd _out
+          git init -q
+          git checkout -q -b main
+          git config user.name  flazhost-bot
+          git config user.email bot@flazhost.com
+          git add -A
+          git commit -q -m "sync: ${GITHUB_REF_NAME:-manual} from ${GITHUB_REPOSITORY}@${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${TOKEN}@github.com/flazhost-runner/nodeadmin.git" main
+
+--------------------------------------------------------------------------------
+7. TROUBLESHOOTING
+--------------------------------------------------------------------------------
+  • sync-runner tidak terpicu setelah tag:
+      - mirror mem-forward tag pakai GITHUB_TOKEN (tidak memicu). Ganti ke PAT.
+      - tag tidak cocok pola `template-v*`.
+      - file sync-runner.yml belum sampai ke default branch FlazHost-Com (cek mirror).
+  • sync jalan tapi gagal push (403):
+      - RUNNER_SYNC_TOKEN tak ada / tak punya Contents:write ke flazhost-runner/nodeadmin.
+  • sync jalan di repo yang salah (mis. di sumber):
+      - guard `if: github.repository == 'FlazHost-Com/NodeAdmin'` hilang. Pasang lagi.
+  • flazhost-runner kehilangan flag template:
+      - push tidak mengubah setting; nyalakan lagi Settings → Template repository.
+      - (jarang) kalau perlu via API: PATCH repos/flazhost-runner/nodeadmin {"is_template":true}
+  • Dockerfile starter error "COPY package.json not found":
+      - pastikan template/ menyediakan package.json & runner/Dockerfile ada di root hasil rakit.
+  • Mau pertahankan history flazhost-runner (bukan force-push):
+      - ganti langkah push: clone runner → rsync --delete isi _out → commit → push (fast-forward).
+
+--------------------------------------------------------------------------------
+8. RINGKAS (cheat-sheet untuk agen)
+--------------------------------------------------------------------------------
+  Edit di:     template/ (app) | runner/ (deploy) | packages/core (lib→npm)
+  Rilis app:   git tag template-v<naik> && git push origin main --tags
+  Hasil:       FlazHost-Com (mirror) → sync-runner → flazhost-runner (starter) → PaaS
+  Jangan:      sentuh FlazHost-Com / flazhost-runner langsung; taruh secret di file
+  Sekali:      runner/ + sync-runner.yml ke sumber; secret RUNNER_SYNC_TOKEN di FlazHost-Com
+================================================================================
