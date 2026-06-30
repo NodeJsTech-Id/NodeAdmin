@@ -1,0 +1,43 @@
+name: Sync starter → flazhost-runner
+
+on:
+  push:
+    tags: ['template-v*']
+  workflow_dispatch:
+
+concurrency:
+  group: sync-runner
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    # File ini ikut ter-mirror ke repo sumber & repo lain.
+    # Sync HANYA boleh berjalan di repo bersih FlazHost-Com/NodeAdmin.
+    if: github.repository == 'FlazHost-Com/NodeAdmin'
+    steps:
+      - name: Checkout monorepo (ref yang memicu)
+        uses: actions/checkout@v4
+
+      - name: Rakit starter (template + overlay runner)
+        run: |
+          set -euo pipefail
+          rm -rf _out && mkdir _out
+          cp -a template/. _out/          # 1) kode app
+          cp -a runner/.  _out/           # 2) glue deploy (menang saat bentrok)
+          rm -f _out/.npmrc _out/pnpm-workspace.yaml _out/turbo.json 2>/dev/null || true
+          echo "Isi starter:"; ls -a _out
+
+      - name: Push ke flazhost-runner/nodeadmin
+        env:
+          TOKEN: ${{ secrets.RUNNER_SYNC_TOKEN }}
+        run: |
+          set -euo pipefail
+          cd _out
+          git init -q
+          git checkout -q -b main
+          git config user.name  flazhost-bot
+          git config user.email bot@flazhost.com
+          git add -A
+          git commit -q -m "sync: ${GITHUB_REF_NAME:-manual} from ${GITHUB_REPOSITORY}@${GITHUB_SHA::7}"
+          git push -f "https://x-access-token:${TOKEN}@github.com/flazhost-runner/nodeadmin.git" main
