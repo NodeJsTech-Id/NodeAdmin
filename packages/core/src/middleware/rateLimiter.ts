@@ -12,7 +12,7 @@ export const authLimiter = rateLimit({
     max: 10,                  // maks 10 percobaan / IP / window
     standardHeaders: true,
     legacyHeaders: false,
-    skip: (req) => isLoopback(req.ip ?? ''),
+    skip: (req) => process.env.NODE_ENV !== 'test' && isLoopback(req.ip ?? ''),
     message: { message: 'Too many attempts, please try again later.' },
 })
 
@@ -22,6 +22,6 @@ export const otpLimiter = rateLimit({
     max: 5,
     standardHeaders: true,
     legacyHeaders: false,
-    skip: (req) => isLoopback(req.ip ?? ''),
+    skip: (req) => process.env.NODE_ENV !== 'test' && isLoopback(req.ip ?? ''),
     message: { message: 'Too many attempts, please try again later.' },
 })
