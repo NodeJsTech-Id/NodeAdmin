@@ -12,9 +12,10 @@ concurrency:
 jobs:
   sync:
     runs-on: ubuntu-latest
-    # Hanya berjalan di repo bersih FlazHost-Com/NodeAdmin.
+    # Hanya berjalan di repo bersih FlazHost-Com/NodeAdmin dan bila token tersedia.
     # File ini ikut ter-mirror tapi TIDAK boleh jalan di repo lain.
-    if: github.repository == 'FlazHost-Com/NodeAdmin'
+    # Alternatif tanpa token: lihat workflow pull-based di flazhost-runner/nodeadmin.
+    if: github.repository == 'FlazHost-Com/NodeAdmin' && secrets.RUNNER_SYNC_TOKEN != ''
     steps:
       - name: Checkout FlazHost-Com/NodeAdmin
         uses: actions/checkout@v4
