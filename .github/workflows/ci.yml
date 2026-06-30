@@ -94,10 +94,12 @@ jobs:
           DB_DATABASE: nodeadmin_test
           SESSION_SECRET: ci-session-secret
           JWT_SECRET: ci-jwt-secret
-          OSS_ACCESS_ID: ci
-          OSS_ACCESS_KEY: ci
-          OSS_BUCKET: ci
-          OSS_ENDPOINT: oss-ci.aliyuncs.com
+          SESSION_DRIVER: database
+          STORAGE_DRIVER: local
+          STORAGE_ACCESS_KEY_ID: ci
+          STORAGE_SECRET_ACCESS_KEY: ci
+          STORAGE_BUCKET: ci
+          STORAGE_ENDPOINT: ci
         run: npm run migration:run
 
   # Catatan: E2E (Playwright, 3 browser) sengaja TIDAK dijalankan di CI.
