@@ -93,7 +93,9 @@
                 <div class="dropdown-menu dropdown-menu-end">
                   <a href="<%= route('admin.v1.access.user.edit', { id: data.id }) %>" class="dropdown-item"><i class="fas fa-pen fa-fw"></i> Edit</a>
                   <div class="dropdown-divider"></div>
-                  <a href="<%= route('admin.v1.access.user.delete', { id: data.id }) %>" data-confirm="Confirm Delete" class="dropdown-item danger"><i class="fas fa-trash fa-fw"></i> Delete</a>
+                  <form method="post" action="<%= route('admin.v1.access.user.delete', { id: data.id }) %>?_method=DELETE" class="m-0">
+                    <button type="submit" data-confirm="Confirm Delete" class="dropdown-item danger"><i class="fas fa-trash fa-fw"></i> Delete</button>
+                  </form>
                 </div>
               </div>
             </td>

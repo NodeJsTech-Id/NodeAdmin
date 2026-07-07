@@ -11,7 +11,9 @@ import bcrypt from 'bcryptjs'
 import { createApp, ResponseHandler } from '@flazhost-nodeadmin/core'
 import { User } from './modules/access/models/user.entity'
 import AppDataSource from './config/ormconfig'
-import { clientRedis, RedisStore, cntRedis } from './services/redisClient'
+import { clientRedis, cntRedis } from './services/redisClient'
+import { buildSessionStore } from './services/sessionStore'
+import { LOCAL_URL_PREFIX, localStorageDir } from './config/storageClient'
 import env from './config/env'
 import appConfig from './config/app'
 import './container' // registrasi DI (repository factories + services)
@@ -100,11 +102,22 @@ const app = createApp({
     isProd: env.isProd,
     isTest,
     cors: { origin: `${env.app.host}:${PORT}` },
+    // Storage lokal: sajikan direktori upload agar gambar bisa dirender.
+    // Untuk oss/s3 tidak dikirim → getFile() mengembalikan URL absolut presigned/public.
+    // Switch driver cukup via .env (STORAGE_DRIVER), tanpa perubahan kode/view.
+    ...(env.storage.driver === 'local' ? {
+        storageStatic: { urlPath: LOCAL_URL_PREFIX, dir: localStorageDir(), maxAge: env.isProd ? '7d' : 0 },
+    } : {}),
     // Aset statik & sesi web hanya untuk mode full (api stateless JWT).
     ...(isApi ? {} : {
         static: { dir: 'public', maxAge: env.isProd ? '7d' : 0 },
         session: { secret: env.session.secret, ttlMs: env.session.ttlMs },
-        sessionStore: isTest ? undefined : new RedisStore({ client: clientRedis as any, ttl: env.session.ttlMs }),
+        sessionStore: isTest ? undefined : buildSessionStore({
+            driver: env.session.driver,
+            redisClient: clientRedis,
+            dataSource: AppDataSource,
+            ttlMs: env.session.ttlMs,
+        }),
         globalLocals,
     }),
     ensureRedisConnected,

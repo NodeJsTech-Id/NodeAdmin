@@ -233,12 +233,16 @@ r.get('admin.v1.product.create', '/admin/v1/product/create', ensureAuthenticated
 r.post('admin.v1.product.store', '/admin/v1/product/store', ensureAuthenticated, AccessMiddleware, ProductValidator, handler(ProductController, 'store'))
 r.get('admin.v1.product.edit', '/admin/v1/product/:id/edit', ensureAuthenticated, AccessMiddleware, handler(ProductController, 'edit'))
 r.put('admin.v1.product.update', '/admin/v1/product/:id/update', ensureAuthenticated, AccessMiddleware, ProductValidator, handler(ProductController, 'update'))
-r.get('admin.v1.product.delete', '/admin/v1/product/:id/delete', ensureAuthenticated, AccessMiddleware, handler(ProductController, 'delete'))
+r.delete('admin.v1.product.delete', '/admin/v1/product/:id/delete', ensureAuthenticated, AccessMiddleware, handler(ProductController, 'delete'))
 
 router.use(r)
 export default router
 ```
 Modul dimuat otomatis oleh `loadRoutes` (tak perlu daftar manual di index.ts).
+
+> **Method update/delete (WAJIB):** `update = PUT`, `delete = DELETE`. Form HTML hanya GET/POST → picu lewat method-override `action=".../update?_method=PUT"` / `action=".../delete?_method=DELETE"`. Tombol delete di view index = **form** `<form method="post" action=".../delete?_method=DELETE">` + `<button data-confirm>`, BUKAN `<a href>` (lihat `UI_COMPONENTS.md` + "Method-override" di PORTING_GUIDE).
+
+> **RBAC route-driven:** `AccessMiddleware` dipasang **tanpa argumen** — ia menurunkan `(nama-route, method)` dari request lalu mencocokkan permission `name`+`method` milik role user (Administrator bypass). Permission **di-scan otomatis dari route bernama** (bukan daftar subject hardcoded). Karena itu cukup pasang `AccessMiddleware` di chain; granularitas mengikuti named-route. Lihat **"RBAC (Route-Driven)"** di `ARCHITECTURE.md`.
 
 ## 10. Views (`views/be/default/product/`)
 Salin pola dari `modules/access/views/be/default/users/` (index = tabel + search + pagination `mt-4`; create/edit = form). Form mutasi: token CSRF di-inject otomatis (foot.ejs). Status pakai ikon FontAwesome (`fa-check-circle`/`fa-times-circle`).

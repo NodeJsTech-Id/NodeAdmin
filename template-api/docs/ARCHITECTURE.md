@@ -29,6 +29,19 @@ Request
 | Entity | `modules/*/models/*.entity.ts` | Model TypeORM. Tipe kolom portabel (dialect-agnostic). |
 | View | `modules/*/views/be/default`, `src/resources/layouts/be/default` | EJS + Tailwind. Dirender via `renderView()`. |
 
+## RBAC (Route-Driven)
+
+Model otorisasi **bukan subject-based** (mis. bukan `user.delete`), melainkan **diturunkan dari route**:
+
+- **Permission = `(name, method, guard_name)`** — `name` = **nama named-route** (mis. `admin.v1.access.user.delete`), `method` = HTTP method (GET/POST/PUT/DELETE), `guard_name` = `api` bila nama berawalan `api.`, selain itu `web`.
+- **Auto-sync dari registry route** — `PermissionService.getAllRegisteredRoute(app)` memindai SELURUH named-route yang terdaftar dan meng-upsert permission yang belum ada (idempoten). Dipicu lazy saat membuka halaman Permission. **Tidak ada daftar permission hardcoded.**
+- **`AccessMiddleware` tanpa argumen** — middleware menurunkan `(name, method)` dari request berjalan (`req.route.path` + `req.method` → `getNameByPathAndMethod`) lalu mengecek apakah salah satu role user punya permission dengan **`name` DAN `method`** yang cocok. Karena itu `GET` vs `DELETE` pada path yang sama = izin berbeda.
+- **Administrator bypass** — role `Administrator` melewati semua pengecekan.
+- **Gating UI** — sidebar memakai `hasAccess(name, method)` (mis. `hasAccess('admin.v1.access.user.index','GET')`) untuk menyembunyikan menu yang tak diizinkan.
+- **Urutan middleware WAJIB**: `authenticated → authorize` (autentikasi dulu, baru cek izin).
+
+> **Catatan lintas-port:** registry named-route adalah sumber kebenaran RBAC. Port lain WAJIB meniru model ini (mis. Go/Gin: reverse-lookup `(method, FullPath)` → nama route dari registry, middleware `Authorize()` tanpa argumen). **JANGAN** memakai daftar subject tetap — itu menyimpang dari NodeAdmin (lihat anti-pattern di PORTING_GUIDE).
+
 ## Dependency Injection (SOLID-D)
 
 Menggunakan **tsyringe** (`reflect-metadata` + decorator).

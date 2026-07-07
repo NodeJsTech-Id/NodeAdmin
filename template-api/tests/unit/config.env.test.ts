@@ -13,7 +13,7 @@ describe('config/env', () => {
 
     it('parsing boolean (db.synchronize)', () => {
         expect(env.db.synchronize).toBe(true) // DB_SYNCHRONIZE=true di .env.test
-        expect(typeof env.oss.secure).toBe('boolean')
+        expect(typeof env.storage.ssl).toBe('boolean')
     })
 
     it('secret terbaca dari env', () => {

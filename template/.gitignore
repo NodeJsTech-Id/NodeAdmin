@@ -3,8 +3,9 @@ dist
 *.tsbuildinfo
 .env
 .env.*.bak
-# Database lokal (SQLite dev)
+# Database lokal (SQLite / SQLite-based dev db)
 *.sqlite
+*.db
 # Runtime logs
 dev.log
 *.log
@@ -16,5 +17,6 @@ coverage/
 public/fe/templates/*
 !public/fe/templates/agency-consulting-002-creative-agency.html
 
-# Debug screenshots (lokal, jangan dikomit)
-bug/
+# Upload user (driver local) — data runtime, bukan source
+/storage/uploads/*
+!/storage/uploads/.gitkeep

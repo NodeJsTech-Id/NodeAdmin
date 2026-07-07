@@ -30,7 +30,6 @@ export default class RoleService implements IRoleService {
 		if (cleanConditions.status) {
 			query = query.andWhere(`roles.status = :status`, { status: cleanConditions.status })
 		}
-
 		return paginate(query, cleanConditions)
 	}
 
@@ -50,6 +49,9 @@ export default class RoleService implements IRoleService {
 
 	public async edit(id: string) {
 		const data = await this.roleRepository.findOne({ where: { id } })
+		if (!data) {
+			throw new NotFoundError('Role not found')
+		}
 		return data
 	}
 

@@ -47,6 +47,7 @@ export const env = {
     },
 
     session: {
+        driver: (process.env.SESSION_DRIVER || 'database') as 'redis' | 'database',
         secret: required('SESSION_SECRET'),
         ttlMs: num('SESSION_TTL_HOURS', 6) * 60 * 60 * 1000,
     },
@@ -73,7 +74,8 @@ export const env = {
     },
 
     storage: {
-        driver: (process.env.STORAGE_DRIVER || 'oss') as 'oss' | 's3',
+        driver: (process.env.STORAGE_DRIVER || 'local') as 'local' | 'oss' | 's3',
+        basePath: process.env.STORAGE_BASE_PATH || 'storage/uploads',
         accessKeyId: process.env.STORAGE_ACCESS_KEY_ID as string,
         secretAccessKey: process.env.STORAGE_SECRET_ACCESS_KEY as string,
         endpoint: process.env.STORAGE_ENDPOINT,

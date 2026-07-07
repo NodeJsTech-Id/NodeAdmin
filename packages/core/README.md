@@ -113,6 +113,15 @@ import {
 | Env | `makeEnvHelpers` |
 | Themes | `getTheme`, `THEMES`, `THEME_NAMES`, `DEFAULT_THEME` |
 
+### `createApp` static serving
+
+- `static: { dir, maxAge }` — serves the app's public assets (UI mode only).
+- `storageStatic: { urlPath, dir, maxAge }` — **optional**, serves the local file-storage
+  directory at `urlPath` so uploads render when `STORAGE_DRIVER=local`. The app passes it
+  only for the `local` driver; for `oss`/`s3`, `getFile()` returns absolute presigned URLs
+  and this mount is omitted. Mounted before session/CSRF so image serving stays cheap.
+  See the host app's README ("Storage & switching backends").
+
 ## Principles
 
 - Services `throw AppError` (not `return error`); `errorHandler` formats the response centrally.

@@ -16,6 +16,12 @@ export class Permission {
   @Index('permissions__name')
   name!: string
 
+  // guard_name = jalur auth permission ('web' panel / 'api' REST+JWT) — untuk
+  // filter & kategorisasi. varchar (bukan ENUM) agar portabel lintas dialek.
+  @Column({ type: 'varchar', length: 20, default: 'web' })
+  @Index('permissions__guard')
+  guard_name!: string
+
   @Column()
   @Index('permissions__method')
   method!: string

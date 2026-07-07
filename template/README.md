@@ -34,8 +34,8 @@ Node Admin is a **starter pack / bootstrap** for building Node.js-based admin pa
 - **Default Home as a Sample** — the default template (EJS) binds to the **Setting** data (name, logo, description, contact, copyright) as a living example; change Setting → the home page changes too. It serves as the reference pattern when building a custom home page.
 - **Multi-Database** — dialect-agnostic via TypeORM (MySQL, MariaDB, PostgreSQL, SQLite, MSSQL, Oracle) just by changing `DB_TYPE`.
 - **Multi-Timezone** — date display follows the user's timezone (dayjs).
-- **File Storage** — upload to Alibaba Cloud OSS (image re-encoding via sharp).
-- **Stateless** — sessions in Redis, files in OSS → ready for horizontal scaling.
+- **File Storage** — driver-switchable via `.env`: local filesystem or object storage (Alibaba Cloud OSS, AWS S3 / S3-compatible: MinIO, Cloudflare R2, Backblaze B2), with image re-encoding via sharp. See [Storage & switching backends](#️-storage--switching-backends).
+- **Stateless** — sessions in Redis, files in object storage → ready for horizontal scaling.
 
 ---
 
@@ -64,7 +64,7 @@ src/                     # application code
 ├── config/          # env (centralized & validated), ormconfig, app
 ├── container.ts     # DI registration (tsyringe)
 ├── tokens.ts        # DI tokens
-├── services/        # fileService (OSS), mailer, settingCache
+├── services/        # fileService (storage adapter), mailer, settingCache
 ├── resources/       # EJS layouts & partials (be/default = active Tailwind theme)
 └── modules/
     ├── access/      # user, role, permission (RBAC)
@@ -74,7 +74,7 @@ src/                     # application code
     ├── profile/
     └── setting/     # setting + template switcher
 tests/               # unit, integration, api, security, smoke, e2e, bdd
-docs/                # ARCHITECTURE.md, TESTING.md, API.md
+docs/                # ARCHITECTURE.md, TESTING.md, API.md, postman/
 ```
 
 ---
@@ -125,12 +125,21 @@ JWT_EXPIRES_IN=1h
 BCRYPT_ROUNDS=10
 OTP_EXPIRY_MINUTES=10
 
-# Alibaba OSS (file storage)
-OSS_ACCESS_ID=
-OSS_ACCESS_KEY=
-OSS_ENDPOINT=oss-ap-southeast-5.aliyuncs.com
-OSS_BUCKET=
-OSS_SSL=true
+# File storage — STORAGE_DRIVER: local | oss | s3  (lihat section Storage di bawah)
+# local: filesystem lokal; file disajikan di /storage/<key> (butuh STORAGE_BASE_PATH).
+#        Cocok dev / single-host (+ persistent volume di produksi).
+# oss  : Alibaba Cloud OSS (isi STORAGE_ENDPOINT)
+# s3   : AWS S3 atau S3-compatible (MinIO, Cloudflare R2, Backblaze B2, dll)
+#        AWS S3 murni: kosongkan STORAGE_ENDPOINT, isi STORAGE_REGION
+#        S3-compatible custom: isi STORAGE_ENDPOINT + STORAGE_REGION
+STORAGE_DRIVER=oss
+STORAGE_BASE_PATH=storage/uploads   # dipakai driver local
+STORAGE_ACCESS_KEY_ID=
+STORAGE_SECRET_ACCESS_KEY=
+STORAGE_ENDPOINT=oss-ap-southeast-5.aliyuncs.com
+STORAGE_BUCKET=
+STORAGE_REGION=
+STORAGE_SSL=true
 ```
 
 ### 3. Migrate + seed
@@ -171,6 +180,32 @@ The application is dialect-agnostic. Change `DB_TYPE` + install the appropriate 
 | Oracle | `oracle` | `oracledb` |
 
 SQLite: set `DB_DATABASE` to a file path (e.g. `./dev.sqlite`). Then run `npm run migration:run`.
+
+---
+
+## 🗂️ Storage & switching backends
+
+File storage is driver-agnostic behind a single adapter (`src/config/storageClient.ts`). Switch backends by changing **`STORAGE_DRIVER`** in `.env` (then **restart** — the driver is read at boot); no code or view changes.
+
+| Driver | Files stored in | What `getFile(key)` returns |
+|--------|-----------------|-----------------------------|
+| `local` | filesystem at `STORAGE_BASE_PATH` (default `storage/uploads`) | `/storage/<key>` — served by a static mount; no signature/expiry |
+| `oss` | Alibaba Cloud OSS bucket | a **presigned URL** (signed, 6h TTL, generated per render) |
+| `s3` | AWS S3 / S3-compatible bucket | a presigned SigV4 URL (6h TTL) |
+
+**How rendering works.** The DB stores only the **object key** (e.g. `modules/access/user/abc.webp`) — driver-agnostic. The URL is (re)built at render time by `getFile()`, so there are no stored URLs that expire. Views always call `getFile(...)`, so switching drivers needs no template changes.
+
+**Switching backends does NOT migrate existing files.** Bytes uploaded while on one driver stay in that backend; after switching, only **new** uploads render — old ones 404 (their key exists in the DB, but the object isn't in the new backend). To keep old files, copy them once, **preserving the key path** (i.e. upload the *contents* of `storage/uploads/`, not the folder as a prefix):
+
+```bash
+# local → OSS (Alibaba ossutil). For S3: aws s3 sync storage/uploads/ s3://<bucket>/
+ossutil cp -r storage/uploads/ oss://<bucket>/ --update
+```
+
+**Notes**
+- **Local in production is ephemeral** — the container filesystem resets on redeploy. Map `STORAGE_BASE_PATH` to a **persistent volume**, or use `oss`/`s3` for multi-instance deploys.
+- Uploaded files are runtime data and are **git-ignored** (`/storage/uploads/*`, keeping `.gitkeep`) — never committed.
+- `oss`/`s3` require `STORAGE_ACCESS_KEY_ID` + `STORAGE_SECRET_ACCESS_KEY`; without them the app can't sign URLs.
 
 ---
 
@@ -217,7 +252,7 @@ CI (GitHub Actions, `.github/workflows/ci.yml`): typecheck + Jest + audit + DB m
 
 ## 🔌 API
 
-REST endpoints at `/api/v1/*` (auth via JWT Bearer). The full list + request/response examples are in [`docs/API.md`](docs/API.md).
+REST endpoints at `/api/v1/*` (auth via JWT Bearer). The full list + request/response examples are in [`docs/API.md`](docs/API.md). A ready-to-import **Postman collection** lives at [`docs/postman/NodeAdmin.postman_collection.json`](docs/postman/NodeAdmin.postman_collection.json) (set the `base_url` variable, default `http://localhost:3000`).
 
 Summary:
 - `POST /api/v1/auth/login` → obtain an `access_token`
@@ -244,7 +279,7 @@ npx nodeadmin add-ui     # upgrade an API-only install → Full (add the UI laye
 
 ## 🧩 Tech Stack
 
-TypeScript · Express · TypeORM · MySQL/PostgreSQL/etc. · Redis (session) · EJS + Tailwind · tsyringe (DI) · Passport (local + JWT) · Joi · Jest + supertest · Playwright · Cucumber · Alibaba OSS · Helmet.
+TypeScript · Express · TypeORM · MySQL/PostgreSQL/etc. · Redis (session) · EJS + Tailwind · tsyringe (DI) · Passport (local + JWT) · Joi · Jest + supertest · Playwright · Cucumber · Object Storage (OSS / S3-compatible) · Helmet.
 
 ---
 

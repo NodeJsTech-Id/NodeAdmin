@@ -1,6 +1,11 @@
 import path from 'path'
-import { getStorageClient, storageConfig } from '../config/storageClient'
+import { getStorageClient, storageConfig, LOCAL_URL_PREFIX } from '../config/storageClient'
 import sharp from 'sharp'
+
+// Avatar placeholder default — aset publik statis, tidak bergantung driver storage
+// (dulu di-route ke storage key 'modules/access/user/user.png' → 404 di local & oss).
+const DEFAULT_AVATAR_KEY = 'modules/access/user/user.png'
+const DEFAULT_AVATAR_URL = '/be/default/img/avatar.svg'
 
 class FileService {
     async uploadFile(fileName: string, fileContent: Buffer, is_public: boolean = false): Promise<string> {
@@ -35,8 +40,8 @@ class FileService {
     }
 
     getFile(fileName: string, is_public: boolean = false): string {
-        // Graceful degradation: bila storage belum dikonfigurasi, sajikan path lokal
-        if (!storageConfig.accessKeyId || !storageConfig.secretAccessKey) {
+        if (fileName === DEFAULT_AVATAR_KEY) return DEFAULT_AVATAR_URL
+        if (storageConfig.driver !== 'local' && (!storageConfig.accessKeyId || !storageConfig.secretAccessKey)) {
             return fileName.startsWith('/') ? fileName : `/${fileName}`
         }
         if (is_public) {
@@ -46,14 +51,14 @@ class FileService {
     }
 
     getSignedUrl(fileName: string, ttlSeconds: number = 600): string {
-        if (!storageConfig.accessKeyId || !storageConfig.secretAccessKey) {
+        if (storageConfig.driver !== 'local' && (!storageConfig.accessKeyId || !storageConfig.secretAccessKey)) {
             return fileName.startsWith('/') ? fileName : `/${fileName}`
         }
         return getStorageClient().signatureUrl(fileName, ttlSeconds)
     }
 
     async listFiles(prefix: string, urlFor?: (key: string) => string): Promise<{ name: string; url: string }[]> {
-        if (!storageConfig.accessKeyId || !storageConfig.secretAccessKey) return []
+        if (storageConfig.driver !== 'local' && (!storageConfig.accessKeyId || !storageConfig.secretAccessKey)) return []
         try {
             const objects = await getStorageClient().list(prefix, 100)
             return objects.map((o) => ({ name: o.name, url: urlFor ? urlFor(o.name) : this.getFile(o.name) }))
@@ -75,6 +80,9 @@ class FileService {
     private _publicUrl(fileName: string): string {
         const { driver, bucket, endpoint, region, ssl } = storageConfig
         const protocol = ssl ? 'https' : 'http'
+        if (driver === 'local') {
+            return `${LOCAL_URL_PREFIX}/${fileName}`.replace(/\/+/g, '/')
+        }
         if (driver === 's3') {
             if (endpoint) {
                 // Path-style: MinIO, Cloudflare R2, S3-compatible custom

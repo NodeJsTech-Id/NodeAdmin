@@ -9,30 +9,25 @@
         </a>
     </div>
 
-    <!-- User dropdown (Bootstrap dropdown — JS sudah dimuat di head) -->
+    <!-- User dropdown — diseragamkan dgn GoAdmin (struktur div + data-toggle-dd,
+         avatar gambar bila ada / ikon fallback, gear). Logout tetap POST (lebih
+         aman) via hidden form. -->
     <div class="dropdown">
-        <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" role="button"
-           id="twUserDropdown" data-toggle-dd aria-expanded="false">
-            <span class="d-none d-lg-inline me-2 text-secondary">Welcome, <%= auth.name %></span>
-            <img class="rounded-circle" style="width:38px;height:38px;object-fit:cover"
-                 src="<%= getFile(auth.picture??'modules/access/user/user.png') %>">
-            <i class="bi bi-gear ms-2 text-primary-tw"></i>
+        <a class="flex items-center gap-2 no-underline cursor-pointer" href="#" data-toggle-dd>
+            <span class="hidden lg:inline text-gray-500">Welcome, <%= auth.name %></span>
+            <% if (auth.picture) { %>
+            <img class="rounded-full" style="width:38px;height:38px;object-fit:cover" src="<%= getFile(auth.picture) %>" alt="user">
+            <% } else { %>
+            <span class="w-9 h-9 rounded-full bg-gray-200 flex items-center justify-center text-gray-500"><i class="fas fa-user"></i></span>
+            <% } %>
+            <i class="bi bi-gear" style="color:var(--primary)"></i>
         </a>
-        <ul class="dropdown-menu dropdown-menu-end shadow" aria-labelledby="twUserDropdown">
-            <li>
-                <a class="dropdown-item" href="<%= route('admin.v1.profile.index') %>">
-                    <i class="fas fa-user fa-sm fa-fw me-2 text-secondary"></i> Profile
-                </a>
-            </li>
-            <li><hr class="dropdown-divider"></li>
-            <li>
-                <a class="dropdown-item" href="/"
-                   onclick="event.preventDefault(); document.getElementById('logout-form').submit();">
-                    <i class="fas fa-sign-out-alt fa-sm fa-fw me-2 text-secondary"></i> Logout
-                </a>
-                <form id="logout-form" action="<%= route('web.auth.logout') %>" method="POST" style="display:none;"></form>
-            </li>
-        </ul>
+        <div class="dropdown-menu">
+            <a class="dropdown-item" href="<%= route('admin.v1.profile.index') %>"><i class="fas fa-user fa-fw"></i> Profile</a>
+            <div class="dropdown-divider"></div>
+            <a class="dropdown-item" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();"><i class="fas fa-sign-out-alt fa-fw"></i> Logout</a>
+            <form id="logout-form" action="<%= route('web.auth.logout') %>" method="POST" style="display:none;"></form>
+        </div>
     </div>
 </header>
 <!-- End Topbar -->

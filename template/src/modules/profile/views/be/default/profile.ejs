@@ -54,10 +54,12 @@
     </div>
     <div class="mb-4">
       <label for="picture" class="form-label fw-semibold">Picture</label>
-      <div class="preview mb-3" id="preview">
-        <img src="<%= getFile(data.picture??'modules/access/user/user.png') %>" style="max-width:160px" class="rounded border p-1">
+      <div class="d-flex align-items-center gap-3">
+        <img id="picturePreview" src="<%= getFile(data.picture??'modules/access/user/user.png') %>" width="90" height="90"
+             class="rounded border p-1" style="object-fit:contain;background:#f8fafc"
+             onerror="this.style.visibility='hidden'">
+        <input id="picture" type="file" name="picture" accept="image/*" class="form-control <% if(getError('picture')) { %>is-invalid<% } %>">
       </div>
-      <input id="picture" type="file" class="form-control <% if(getError('picture')) { %>is-invalid<% } %>" name="picture" onchange="previewImage(event)">
       <% if(getError('picture')) { %><div class="text-danger small mt-1"><%= getError('picture')['msg'] %></div><% } %>
     </div>
     <button type="submit" class="btn btn-primary-tw px-4 py-2"><i class="fas fa-save me-1"></i> Save</button>
@@ -65,19 +67,13 @@
 </div>
 
 <script>
-  function previewImage(event) {
-    const preview = document.getElementById('preview');
-    preview.innerHTML = '';
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        const img = document.createElement('img');
-        img.src = e.target.result; img.style.maxWidth = '160px';
-        img.className = 'rounded border p-1';
-        preview.appendChild(img);
-      };
-      reader.readAsDataURL(file);
-    } else { preview.innerHTML = '<p>No image selected</p>'; }
-  }
+  // Preview gambar sebelum submit (sama dengan File Upload di UI Components).
+  (function () {
+    var input = document.getElementById('picture'), prev = document.getElementById('picturePreview');
+    if (!input || !prev) return;
+    input.addEventListener('change', function () {
+      var f = this.files && this.files[0];
+      if (f && f.type.startsWith('image/')) { prev.src = URL.createObjectURL(f); prev.style.visibility = 'visible'; }
+    });
+  })();
 </script>

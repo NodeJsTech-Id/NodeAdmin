@@ -79,9 +79,12 @@ Varian: `alert-success` (hijau), `alert-danger` (merah), `alert-info` (biru), `a
 <div class="btn-group">
   <button type="button" class="btn btn-sm btn-primary dropdown-toggle" data-toggle-dd aria-expanded="false">Action</button>
   <div class="dropdown-menu dropdown-menu-end">
-    <a href="#" class="dropdown-item"><i class="fas fa-pen fa-fw"></i> Edit</a>
+    <a href="<%= route('admin.v1.x.edit', { id: data.id }) %>" class="dropdown-item"><i class="fas fa-pen fa-fw"></i> Edit</a>
     <div class="dropdown-divider"></div>
-    <a href="#" class="dropdown-item danger"><i class="fas fa-trash fa-fw"></i> Delete</a>
+    <!-- Delete = DELETE (method-override): FORM POST + ?_method=DELETE, BUKAN <a href> GET -->
+    <form method="post" action="<%= route('admin.v1.x.delete', { id: data.id }) %>?_method=DELETE" class="m-0">
+      <button type="submit" data-confirm="Confirm Delete" class="dropdown-item danger"><i class="fas fa-trash fa-fw"></i> Delete</button>
+    </form>
   </div>
 </div>
 ```
@@ -113,11 +116,15 @@ Modal.close()
 confirmDialog('Yakin hapus?').then(function(ok){ if (ok) { /* lanjut */ } })
 ```
 
-**Otomatis di link/tombol** — cukup atribut `data-confirm` (tanpa JS):
+**Otomatis di form/tombol** — cukup atribut `data-confirm` (tanpa JS); handler konfirmasi lalu submit form induk (`el.form.submit()`):
 ```html
-<a href="<%= route('admin.v1.x.delete', { id: data.id }) %>" data-confirm="Confirm Delete" class="dropdown-item danger">Delete</a>
+<!-- Delete single = method DELETE via override (FORM POST + ?_method=DELETE, BUKAN <a href> GET) -->
+<form method="post" action="<%= route('admin.v1.x.delete', { id: data.id }) %>?_method=DELETE" class="m-0">
+  <button type="submit" data-confirm="Confirm Delete" class="dropdown-item danger">Delete</button>
+</form>
 <button form="selection" formaction="..." data-confirm="Confirm Delete" class="btn btn-danger btn-sm">Delete Selected</button>
 ```
+> CSRF: `foot.ejs` meng-inject `_csrf` ke semua form non-GET otomatis (Express parse body DELETE by Content-Type). Catatan port Go: `net/http` tak parse body form untuk DELETE → taruh `_csrf` di **query** (`&_csrf=…`) + middleware CSRF baca query. Lihat "Method-override + DELETE-delete" di PORTING_GUIDE.
 → confirm bertema muncul; jika OK, link diikuti / form di-submit otomatis. (Menggantikan `onclick="return confirm(...)"`.)
 
 **Flash → Toast (global, otomatis di semua halaman admin).** Dipasang **sekali** di layout `main.ejs` (setelah include `foot.ejs`, agar `Toast()` sudah terdefinisi). Baca `res.locals.flashMessage` (`{ key, message }`) dan tampilkan sebagai toast — tak perlu kode per-view:

@@ -45,8 +45,8 @@ Registrasi publik (role default "User"; field `roles` dari klien diabaikan demi 
 { "name": "Budi", "email": "budi@example.com", "password": "password123" }
 ```
 
-### GET `/api/v1/auth/logout`
-Header `Authorization: Bearer <token>`. Token di-blacklist (berlaku sampai expiry).
+### POST `/api/v1/auth/logout`
+Header `Authorization: Bearer <token>`. Token di-blacklist (berlaku sampai expiry). **POST** karena logout adalah mutasi (GET tak boleh punya efek samping).
 
 ### POST `/api/v1/auth/reset/request`
 ```json
@@ -69,7 +69,7 @@ Mengirim OTP ke email (hashed + expiry 10 menit). Rate-limited.
 | POST | `/api/v1/access/user/store` | Buat user |
 | GET | `/api/v1/access/user/:id/edit` | Detail untuk edit |
 | PUT | `/api/v1/access/user/:id/update` | Update |
-| GET | `/api/v1/access/user/:id/delete` | Hapus |
+| DELETE | `/api/v1/access/user/:id/delete` | Hapus |
 | POST | `/api/v1/access/user/delete_selected` | Hapus banyak (`{ selected: [id,...] }`) |
 
 Contoh body store:
@@ -92,7 +92,7 @@ Contoh body store:
 | POST | `/api/v1/access/role/store` | Buat (`{ name, status, desc }`) |
 | GET | `/api/v1/access/role/:id/edit` | Detail |
 | PUT | `/api/v1/access/role/:id/update` | Update |
-| GET | `/api/v1/access/role/:id/delete` | Hapus |
+| DELETE | `/api/v1/access/role/:id/delete` | Hapus |
 | GET | `/api/v1/access/role/:id/permission` | Daftar permission untuk role |
 | GET | `/api/v1/access/role/:id/permission/:permission_id/assign` | Assign 1 permission |
 | GET | `/api/v1/access/role/:id/permission/:permission_id/unassign` | Unassign 1 permission |
@@ -106,10 +106,10 @@ Contoh body store:
 | Method | Path | Aksi |
 |--------|------|------|
 | GET | `/api/v1/access/permission` | List |
-| POST | `/api/v1/access/permission/store` | Buat (`{ name, method, status }`) |
+| POST | `/api/v1/access/permission/store` | Buat (`{ name, method, guard_name, status }`) |
 | GET | `/api/v1/access/permission/:id/edit` | Detail |
 | PUT | `/api/v1/access/permission/:id/update` | Update |
-| GET | `/api/v1/access/permission/:id/delete` | Hapus |
+| DELETE | `/api/v1/access/permission/:id/delete` | Hapus |
 | POST | `/api/v1/access/permission/delete_selected` | Hapus banyak |
 
 ---

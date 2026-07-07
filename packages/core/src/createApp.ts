@@ -34,6 +34,12 @@ export interface CreateAppOptions {
     cors: { origin: string }
     /** UI-only (mode 'all'). Direktori static assets. */
     static?: { dir: string; maxAge: string | number }
+    /**
+     * Storage lokal (STORAGE_DRIVER=local): sajikan direktori upload di `urlPath`
+     * agar file yang di-upload bisa dirender. Untuk driver oss/s3, app TIDAK
+     * mengirim opsi ini (getFile mengembalikan URL absolut presigned/public).
+     */
+    storageStatic?: { urlPath: string; dir: string; maxAge: string | number }
     /** UI-only (mode 'all'). Konfigurasi session web. */
     session?: { secret: string; ttlMs: number }
     /** Store session non-test (mis. RedisStore). Test → MemoryStore default. */
@@ -105,6 +111,17 @@ export function createApp(opts: CreateAppOptions): Application {
     if (!isApi && opts.static) {
         app.use(express.static(opts.static.dir, {
             maxAge: opts.static.maxAge,
+            etag: true,
+        }))
+    }
+
+    // Storage lokal (driver=local): sajikan direktori upload di urlPath. Dipasang
+    // seawal static publik (sebelum session/csrf) supaya render gambar cepat &
+    // tak menyentuh session store. Tak digate mode — file upload perlu dilayani
+    // baik di web maupun api. Untuk oss/s3 opsi ini tak dikirim app.
+    if (opts.storageStatic) {
+        app.use(opts.storageStatic.urlPath, express.static(opts.storageStatic.dir, {
+            maxAge: opts.storageStatic.maxAge,
             etag: true,
         }))
     }

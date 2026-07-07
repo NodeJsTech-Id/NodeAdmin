@@ -1,4 +1,6 @@
 import crypto from 'crypto'
+import fs from 'fs'
+import path from 'path'
 import env from './env'
 
 export interface StorageClient {
@@ -60,6 +62,50 @@ function s3PresignedUrl(opts: {
 
     const protocol = ssl ? 'https' : 'http'
     return `${protocol}://${host}${canonicalUri}?${canonicalQS}&X-Amz-Signature=${signature}`
+}
+
+// ---------------------------------------------------------------------------
+// Storage lokal: prefix URL stabil (dipisah dari path filesystem). createApp
+// me-mount `localStorageDir()` di prefix ini, sehingga file lokal bisa dirender.
+// Dipisah dari basePath agar STORAGE_BASE_PATH absolut (mis. /app/storage di
+// Docker) tetap menghasilkan URL yang valid (/storage/<key>, bukan //app/...).
+// ---------------------------------------------------------------------------
+export const LOCAL_URL_PREFIX = '/storage'
+
+/** Direktori absolut penyimpanan lokal (resolusi STORAGE_BASE_PATH). */
+export function localStorageDir(): string {
+    const bp = env.storage.basePath
+    return path.isAbsolute(bp) ? bp : path.join(process.cwd(), bp)
+}
+
+// ---------------------------------------------------------------------------
+// Driver: Local filesystem
+// ---------------------------------------------------------------------------
+function buildLocalClient(basePath: string): StorageClient {
+    const absBase = path.isAbsolute(basePath) ? basePath : path.join(process.cwd(), basePath)
+
+    return {
+        async put(key, buffer) {
+            const dest = path.join(absBase, key)
+            fs.mkdirSync(path.dirname(dest), { recursive: true })
+            fs.writeFileSync(dest, buffer)
+        },
+        signatureUrl(key) {
+            // URL web di bawah prefix static yang di-mount createApp (lihat LOCAL_URL_PREFIX)
+            return `${LOCAL_URL_PREFIX}/${key}`.replace(/\/+/g, '/')
+        },
+        async list(prefix) {
+            const dir = path.join(absBase, prefix)
+            if (!fs.existsSync(dir)) return []
+            return fs.readdirSync(dir)
+                .filter((f) => !fs.statSync(path.join(dir, f)).isDirectory())
+                .map((f) => ({ name: `${prefix}/${f}`.replace(/\/+/g, '/') }))
+        },
+        async delete(key) {
+            const dest = path.join(absBase, key)
+            if (fs.existsSync(dest)) fs.unlinkSync(dest)
+        },
+    }
 }
 
 // ---------------------------------------------------------------------------
@@ -133,11 +179,15 @@ let _client: StorageClient | null = null
 
 export function getStorageClient(): StorageClient {
     if (!_client) {
-        const { accessKeyId, secretAccessKey } = env.storage
-        if (!accessKeyId || !secretAccessKey) {
-            throw new Error('Storage belum dikonfigurasi (STORAGE_ACCESS_KEY_ID/STORAGE_SECRET_ACCESS_KEY kosong)')
+        const { driver, basePath, accessKeyId, secretAccessKey } = env.storage
+        if (driver === 'local') {
+            _client = buildLocalClient(basePath)
+        } else {
+            if (!accessKeyId || !secretAccessKey) {
+                throw new Error('Storage belum dikonfigurasi (STORAGE_ACCESS_KEY_ID/STORAGE_SECRET_ACCESS_KEY kosong)')
+            }
+            _client = driver === 's3' ? buildS3Client() : buildOssClient()
         }
-        _client = env.storage.driver === 's3' ? buildS3Client() : buildOssClient()
     }
     return _client
 }
