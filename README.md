@@ -140,7 +140,7 @@ src/                     # reference app (consumes @flazhost-nodeadmin/core)
     ├── profile/
     └── setting/     # setting + template switcher
 tests/               # unit, integration, api, security, smoke, e2e, bdd
-docs/                # ARCHITECTURE.md, TESTING.md, API.md
+docs/                # ARCHITECTURE.md, TESTING.md, API.md, postman/
 .changeset/          # release entries (changesets)
 ```
 
@@ -290,7 +290,7 @@ CI (GitHub Actions, `.github/workflows/ci.yml`): typecheck + Jest + audit + DB m
 
 ## 🔌 API
 
-REST endpoints at `/api/v1/*` (auth via JWT Bearer). The full list + request/response examples are in [`docs/API.md`](docs/API.md).
+REST endpoints at `/api/v1/*` (auth via JWT Bearer). The full list + request/response examples are in [`docs/API.md`](docs/API.md). A ready-to-import **Postman collection** lives at [`docs/postman/NodeAdmin.postman_collection.json`](docs/postman/NodeAdmin.postman_collection.json) (set the `base_url` variable, default `http://localhost:3000`).
 
 Summary:
 - `POST /api/v1/auth/login` → obtain an `access_token`
